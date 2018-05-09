@@ -53,7 +53,7 @@ def cut(csv_name, video_name, threshold):
         if index_frame == res[index][0]:
             start, end = res[index]
             file_name = video_name[:-4] + "-" + str(start) + "-" + str(end) + ".avi"
-            outVideo = cv2.VideoWriter(file_name, fourcc, 7, (image.shape[1], image.shape[0]))
+            outVideo = cv2.VideoWriter(file_name, fourcc, 25, (image.shape[1], image.shape[0]))
             print(file_name)
 
             while index_frame < end:
