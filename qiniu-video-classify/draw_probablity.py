@@ -6,9 +6,8 @@ import cv2
 from sys import argv
 
 
-
 # plot video and probablity curve
-def simple_plot(csv_name, video_name):
+def simple_plot(csv_name, video_name, threhold=0.9):
     """
     simple plot
     """
@@ -31,7 +30,6 @@ def simple_plot(csv_name, video_name):
     cap = cv2.VideoCapture(video_name)
     plt.figure(figsize=(8, 6), dpi=80)
     ax = plt.subplot()
-    threhold = 0.9
     index_frame = 0
     windows_size = 50
     index = 0
@@ -75,7 +73,13 @@ def simple_plot(csv_name, video_name):
         if index_frame % 200 == 0:
             plt.clf()
     return
+
+
 if __name__ == '__main__':
     csv_name = argv[1]
     video_name = argv[2]
-    simple_plot(csv_name,video_name)
+    if len(argv) > 3:
+        threshold = float(argv[3])
+        simple_plot(csv_name, video_name, threshold)
+    else:
+        simple_plot(csv_name, video_name)

@@ -33,7 +33,9 @@ def cut(csv_name, video_name, threshold):
         while data[index] >= threshold:
             if start == -1:
                 start = frames[index][0]
-            end = frames[index][1]
+                end = frames[index][1]
+            if frames[index][1] <= end:
+                end = frames[index][1]
             index += 1
         index += 1
         if start != -1:
