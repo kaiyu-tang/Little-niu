@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 
 import cv2
@@ -62,16 +63,15 @@ def cut(csv_name, video_name, threshold):
     if not os.path.exists(os.path.join(video_root, "negative")):
         os.mkdir(os.path.join(video_root, "negative"))
     ret, image = cap.read()
-    size = (image.shape[1], image.shape[0])
     while index_frame < num_frames:  # find and save the segments that probablity larger than
         # threshold
-        video_name = str(random.randint(0, 99999999))
+
         if index < res_length and res[index][0] <= index_frame:
             start, end = res[index]
             file_name = os.path.join(video_root, "positive",
                                      "positive-" + video_name + "-" + str(start) + "-" + str(end) + ".flv")
             file_name.strip()
-            outVideo = cv2.VideoWriter(file_name, fourcc, fps, size)
+            outVideo = cv2.VideoWriter(file_name, fourcc, fps, (image.shape[1], image.shape[0]))
 
             while index_frame < end:
                 ret, image = cap.read()
@@ -92,7 +92,7 @@ def cut(csv_name, video_name, threshold):
             print(file_name)
             print(index_frame)
             print(end_)
-            outVideo = cv2.VideoWriter(file_name, fourcc, fps, size)
+            outVideo = cv2.VideoWriter(file_name, fourcc, fps, (image.shape[1], image.shape[0]))
             print(file_name)
 
             while index_frame < end_:
@@ -111,6 +111,11 @@ def cut_dir(csv_root, video_root, threshold):
     print("start")
     csv_file_name = [name for name in os.listdir(csv_root)]
     video_file_name = [name for name in os.listdir(video_root)]
+    for index_csv, item in enumerate(csv_file_name):
+        if csv_file_name[index_csv][:7] == "result-":
+            tmp = item
+            csv_file_name[index_csv] = csv_file_name[index_csv][7:]
+            os.rename(os.path.join(csv_root, tmp), os.path.join(csv_root, csv_file_name[index_csv]))
     csv_file_name.sort()
     video_file_name.sort()
     csv_nums = len(csv_file_name)
@@ -119,11 +124,12 @@ def cut_dir(csv_root, video_root, threshold):
     index_video = 0
     while index_csv < csv_nums and index_video < video_nums:
         while index_video < video_nums:
-            if video_file_name[index_video] + ".csv" != csv_file_name[index_csv] and \
-                    ("result-" + video_file_name[index_video] + ".csv" != csv_file_name[index_csv]):
-                index_video += 1
-            else:
+            #print(video_file_name[index_video])
+            #print(csv_file_name[index_csv])
+            if video_file_name[index_video] + ".csv" == csv_file_name[index_csv]:
                 break
+            else:
+                index_video += 1
         if index_video < video_nums:
 
             video_name_ = os.path.join(video_root, video_file_name[index_video])
