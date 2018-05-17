@@ -4,14 +4,17 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : qiniu-qiuxing-pachong.py
+import random
 import time
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import json
+import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 import re
+from requests.exceptions import ConnectionError
 from bs4 import BeautifulSoup
 
 from threading import Thread
@@ -62,7 +65,7 @@ headers = {
 proxy = {'http': '125.46.0.62:53281'}
 
 
-def get_match_info(url, header, re_match_jieshuo, re_match_time, re_match_bifen):
+def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen, connect_times=0):
     """
     :param url:需要爬的网址
     :param header: 请求头
@@ -70,7 +73,12 @@ def get_match_info(url, header, re_match_jieshuo, re_match_time, re_match_bifen)
     """
 
     res = []
-    page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
+    try:
+        page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
+    except ConnectionError as connection:
+        time.sleep(2)
+        return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
+                              connect_times + 1)
     # option = webdriver.ChromeOptions()
     # option.add_argument('headless')
     # response = requests.get(url, headers=headers, proxies=proxy)
@@ -78,16 +86,15 @@ def get_match_info(url, header, re_match_jieshuo, re_match_time, re_match_bifen)
     # browser.add_cookie(cookie)
     # browser.get(url)
     # page = browser.page_source
-
-    match_basic = re.findall(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+?)/(\d+?)】', page)
-    text = re.findall(r'<p class="float_l livelistcontext">(.+?)</p>', page, re.S | re.M)
-    timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
-    bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
-                       r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
-
-    # text = re_match_jieshuo.findall(page)
-    # timeline = re_match_time.findall(page)
-    # bifen = re_match_bifen.findall(page)
+    # match_basic = re.findall(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+?)/(\d+?)】', page)
+    # text = re.findall(r'<p class="float_l livelistcontext">(.+?)</p>', page, re.S | re.M)
+    # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
+    # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
+    #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
+    match_basic = re_match_basic.findall(page)
+    text = re_match_jieshuo.findall(page)
+    timeline = re_match_time.findall(page)
+    bifen = re_match_bifen.findall(page)
     for txt, time_, bf in zip(text, timeline, bifen):
         res.append((txt, time_, bf))
     res.reverse()
@@ -155,32 +162,47 @@ def get_player_url(url):
 
 if __name__ == "__main__":
 
-    file_result = "result.json"
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
+    threads = []
+    match_start_id = 100000
+    match_end_id = 9999999
+    batch_size = 500
+    count = 0
+    base_dir = "matches/{}"
+    if not os.path.exists("matches"):
+        os.mkdir("matches")
+
+    re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+)|(\d+)】')
     re_match_jieshuo = re.compile(r'<p class="float_l livelistcontext">(.+?)</p>')
     re_match_timeline = re.compile(r'<b class="float_l livelistcontime">(\d+).</b>')
     re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
                                 r'<b class=".+?">(\d)</b></p>')
-    threads = []
-    match_start_id = 900000
-    match_end_id = 999999
-    for match_id in range(match_start_id, match_end_id):
-        url = base.format(match_id)
-        start_time = time.clock()
-        thread = ThreadWithReturnValue(target=get_match_info,
-                                       args=(url, headers, re_match_jieshuo, re_match_timeline, re_match_bifen))
-        # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
-        threads.append(thread)
-        thread.start()
-        end_time = time.clock()
-        # print('runtime of ' + url + " : " + str(end_time - start_time))
-    with open(file_result, 'w') as f_w:
+
+    for loop in range((match_end_id - match_start_id) // batch_size):
+        time.sleep(random.randrange(0, 10))
+        match_cur_start_id = match_start_id + loop * batch_size
+        for match_id in range(match_cur_start_id, min(match_cur_start_id + batch_size, match_end_id)):
+            url = base.format(match_id)
+            start_time = time.clock()
+            thread = ThreadWithReturnValue(target=get_match_info,
+                                           args=(url, headers, re_match_basic, re_match_jieshuo, re_match_timeline,
+                                                 re_match_bifen))
+            # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
+            threads.append(thread)
+            thread.start()
+            end_time = time.clock()
+            print("id: {} runtime: {}".format(match_id, end_time - start_time))
         for index, thread in enumerate(threads):
             cur_res = thread.join()
             if len(cur_res[1]) > 2:
-                print(cur_res)
-                json.dump({str(cur_res[0]): cur_res[1]}, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
-                all_matches[index + match_start_id] = cur_res
+                # print(cur_res)
+                with open(base_dir.format(str(cur_res[0])), 'w') as f_w:
+                    print(base_dir.format(str(cur_res[0])))
+                    json.dump({str(cur_res[0]): cur_res[1]}, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                count += 1
 
-    print(len(all_matches))
+                # all_matches[index + match_start_id] = cur_res
+    print(count)
+
+    # print(len(all_matches))
