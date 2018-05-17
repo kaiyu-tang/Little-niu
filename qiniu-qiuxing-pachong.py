@@ -163,8 +163,8 @@ if __name__ == "__main__":
     re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
                                 r'<b class=".+?">(\d)</b></p>')
     threads = []
-    match_start_id = 973000  # 900000
-    match_end_id = 973771  # 999999
+    match_start_id = 900000
+    match_end_id = 999999
     for match_id in range(match_start_id, match_end_id):
         url = base.format(match_id)
         start_time = time.clock()
