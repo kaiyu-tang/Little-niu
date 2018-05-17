@@ -3,7 +3,7 @@
 # @Time    : 2018/5/15 下午1:15  
 # @Author  : Kaiyu  
 # @Site    :   
-# @File    : qiniu-qiuxing-pachong.py
+# @File    : qiniu-okooo.com-match.py
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -69,7 +69,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     """
     :param url:需要爬的网址
     :param header: 请求头
-    :return: 列表[(文本，时间，当前比分)]
+    :return: 列表[(比赛基本信息)，[(文本，时间，当前比分)]]
     """
 
     res = []
@@ -77,8 +77,11 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
         page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
     except ConnectionError as connection:
         time.sleep(2)
-        return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
-                              connect_times + 1)
+        if connect_times < 100:
+            return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
+                                  connect_times + 1)
+        else:
+            return [], []
     # option = webdriver.ChromeOptions()
     # option.add_argument('headless')
     # response = requests.get(url, headers=headers, proxies=proxy)
@@ -101,63 +104,6 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     if len(match_basic) == 0:
         return [], res
     return match_basic[0], res
-
-
-def get_player_info(url, root="http://www.okooo.com"):
-    browser = webdriver.Chrome()
-    browser.get(url)
-    page = browser.page_source
-    matches = re.findall(
-        r'<td><a href="/soccer/league/\d+?/schedule/" target="_blank">(.+?)</a><a></a></td>'  # match_name
-        r'\n\s+?<td>(\d+)-(\d+)\s(\d+):(\d+)</td>'  # match time
-        r'\n\s+?<td align="right"><a href=".+?" target="_blank" class=".+?">(.+?)</a>\s</td>'  # match team1
-        r'\n\s+?<td><b><a\shref="(.+?)"\starget=".+?">(\d+) - (\d)</a></b></td>'  # match bifen
-        r'\n\s+?<td align="left"> <a href=".+?" target=".+?">(.+?)</a></td>'  # match team2
-        r'\n\s+?<td>(.+?)</td>'  # if shoufa
-        r'\n\s+?<td>(\d+?).</td>'  # shangchang time
-        r'\n\s+?<td>(\d)</td>', page)  # jinqiushu
-
-    # print(page)
-    # print(matches)
-    res = []
-    # for match in matches:
-    #    res.append(get_match(root+match))
-    return res
-
-
-def get_player_url(url):
-    browser = webdriver.Chrome()
-    browser.get(url)
-
-    page = browser.page_source
-    ls_selector = Select(browser.find_element_by_id("select_ls"))
-    ls_ids = {option.text: option.get_attribute('value') for option in ls_selector.options}
-    team_ids = {}
-    player_ids = {}
-    # print(ls_selector.is_multiple)
-    for sl_l in ls_selector.options:
-        if sl_l.get_attribute('value') == '0':
-            continue
-        sl_l.click()
-        print(sl_l.text)
-        ls_selector = Select(browser.find_element_by_id("select_ls"))
-        team_selector = Select(browser.find_element_by_id("select_team"))
-
-        # print(team_selector.options[-1].text)
-        for sl_t in team_selector.options:
-            if sl_t.get_attribute('value') == "0":
-                continue
-            team_ids[sl_t.text] = sl_t.get_attribute('value')
-            print(sl_t.text + " " + sl_t.get_attribute('value'))
-            sl_t.click()
-            player_selector = Select(browser.find_element_by_id("select_team"))
-            for sl_p in player_selector.options:
-                if sl_p.get_attribute('value') == "0":
-                    continue
-                player_ids[sl_p.text] = sl_p.get_attribute('value')
-
-    # players = re.findall(r'<li><a href="(.+?)" target="_blank" title="(.+?)"><p><span><img src="(.+?)"\s'
-    #                    r'alt=".+?" title=".+?"></span></p><i>.+?</i></a></li>', page)
 
 
 if __name__ == "__main__":
