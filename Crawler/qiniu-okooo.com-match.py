@@ -97,16 +97,16 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     if len(match_basic) == 0:
         return res
     res["Url"] = url
-    res["主队"] = match_basic[0]
-    res["客队"] = match_basic[1]
-    res["联赛"] = match_basic[2]
-    res["轮次"] = match_basic[3]
-    res["比分"] = bifen[0][0] + "-" + bifen[0][1]
+    res["host"] = match_basic[0]
+    res["visiting"] = match_basic[1]
+    res["league"] = match_basic[2]
+    res["round"] = match_basic[3]
+    res["vs"] = bifen[0][0] + "-" + bifen[0][1]
     jieshuo = []
     for txt, time_, bf in zip(text, timeline, bifen):
-        jieshuo.append({"实时解说": txt, "时间": time_, "实时比分": bf})
+        jieshuo.append({"text": txt, "time": time_, "vs": bf})
     jieshuo.reverse()
-    res["解说"] = jieshuo
+    res["narrate"] = jieshuo
     return res
 
 
@@ -115,9 +115,9 @@ if __name__ == "__main__":
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
     threads = []
-    match_start_id = 100000
-    match_end_id = 9999999
-    batch_size = 500
+    match_start_id = 954599#100000
+    match_end_id = 954600#9999999
+    batch_size = 1
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
@@ -143,6 +143,7 @@ if __name__ == "__main__":
             threads.append(thread)
             thread.start()
             end_time = time.clock()
+
             print("id: {} runtime: {}".format(match_id, end_time - start_time))
         for index, thread in enumerate(threads):
             cur_res = thread.join()
