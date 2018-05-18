@@ -72,7 +72,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
         page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
     except ConnectionError as connection:
         time.sleep(2)
-        if connect_times < 100:
+        if connect_times < 10:
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   connect_times + 1)
         else:
@@ -148,12 +148,16 @@ if __name__ == "__main__":
             print("id: {} runtime: {}".format(match_id, end_time - start_time))
         for index, thread in enumerate(threads):
             cur_res = thread.join()
-            if len(cur_res) != 0:
-                # print(cur_res)
-                with open(base_dir.format(match_end_id + index), 'w') as f_w:
-                    print(base_dir.format(match_end_id + index))
-                    json.dump(cur_res, f_w, ensure_ascii=False,indent=4, separators=(',', ': '))
-                count += 1
+            try:
+                if len(cur_res) != 0:
+                    # print(cur_res)
+                    with open(base_dir.format(match_end_id + index), 'w') as f_w:
+                        print(base_dir.format(match_end_id + index))
+                        json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                    count += 1
+            except TypeError as e:
+                print(match_end_id + index)
+
                 # all_matches[index + match_start_id] = cur_res
     print(count)
 

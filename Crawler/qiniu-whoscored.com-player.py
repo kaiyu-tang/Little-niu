@@ -51,25 +51,24 @@ headers = {
 }
 
 
-def get_match_summary(url, header, re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
+def get_match_summary(url, re_match_summary, re_match_offensive=None, re_match_defensive=None, re_match_passing=None,
                       connect_times=0):
     res = {}
     try:
-        page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
+        page = requests.get(url).text  # .decode('gb2312', 'ignore')
     except ConnectionError as connection:
         time.sleep(2)
         if connect_times < 100:
-            return get_match_summary(url, header,
-                                     re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
+            return get_match_summary(url, re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
                                      connect_times + 1)
         else:
             return res
+    summary = re_match_summary.findall(page)
+    print()
+    return res
 
 
-
-
-
-
-response = requests.request("GET", url, headers=headers, params=querystring)
-
-print(response.text)
+if __name__ == "__main__":
+    re_match_summary = re.compile(
+        r'<table class="table table-hover dt-responsive nowrap stripe dataTable" id=".+?Table" cellspacing="0" width="100%">\n\s+<thead>.+?</thead>\n\s+?<tbody>.*?(<tr>.+?</tr>).*?</tbody>', re.DOTALL)
+    get_match_summary("http://www.tzuqiu.cc/players/797/show.do", re_match_summary)
