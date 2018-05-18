@@ -6,16 +6,11 @@
 # @File    : qiniu-okooo.com-match.py
 import random
 import time
-from concurrent.futures import ThreadPoolExecutor
-
 import requests
 import json
 import os
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
 import re
 from requests.exceptions import ConnectionError
-from bs4 import BeautifulSoup
 
 from threading import Thread
 
@@ -72,7 +67,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     :return: 列表[(比赛基本信息)，[(文本，时间，当前比分)]]
     """
 
-    res = []
+    res = {}
     try:
         page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
     except ConnectionError as connection:
@@ -81,7 +76,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   connect_times + 1)
         else:
-            return [], []
+            return res
     # option = webdriver.ChromeOptions()
     # option.add_argument('headless')
     # response = requests.get(url, headers=headers, proxies=proxy)
@@ -94,16 +89,25 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
     # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
     #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
-    match_basic = re_match_basic.findall(page)
+    match_basic = re_match_basic.findall(page)[0]
+    # Bifen = re_match_Bifen.findall(page)
     text = re_match_jieshuo.findall(page)
     timeline = re_match_time.findall(page)
     bifen = re_match_bifen.findall(page)
-    for txt, time_, bf in zip(text, timeline, bifen):
-        res.append((txt, time_, bf))
-    res.reverse()
     if len(match_basic) == 0:
-        return [], res
-    return match_basic[0], res
+        return res
+    res["Url"] = url
+    res["主队"] = match_basic[0]
+    res["客队"] = match_basic[1]
+    res["联赛"] = match_basic[2]
+    res["轮次"] = match_basic[3]
+    res["比分"] = bifen[0][0] + "-" + bifen[0][1]
+    jieshuo = []
+    for txt, time_, bf in zip(text, timeline, bifen):
+        jieshuo.append({"实时解说": txt, "时间": time_, "实时比分": bf})
+    jieshuo.reverse()
+    res["解说"] = jieshuo
+    return res
 
 
 if __name__ == "__main__":
@@ -115,11 +119,12 @@ if __name__ == "__main__":
     match_end_id = 9999999
     batch_size = 500
     count = 0
-    base_dir = "matches/{}"
+    base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
         os.mkdir("matches")
 
-    re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+)|(\d+)】')
+    re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(.+?)】')
+    # re_match_Bifen = re.compile(r'<div class="vs">\n\s+?<span class="vs_.+?">(\d+)</span>-<span class="vs_.+?">(\d+)</span>\n\s+?</div>')
     re_match_jieshuo = re.compile(r'<p class="float_l livelistcontext">(.+?)</p>')
     re_match_timeline = re.compile(r'<b class="float_l livelistcontime">(\d+).</b>')
     re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
@@ -141,13 +146,12 @@ if __name__ == "__main__":
             print("id: {} runtime: {}".format(match_id, end_time - start_time))
         for index, thread in enumerate(threads):
             cur_res = thread.join()
-            if len(cur_res[1]) > 2:
+            if len(cur_res) != 0:
                 # print(cur_res)
-                with open(base_dir.format(str(cur_res[0])), 'w') as f_w:
-                    print(base_dir.format(str(cur_res[0])))
-                    json.dump({str(cur_res[0]): cur_res[1]}, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                with open(base_dir.format(match_end_id + index), 'w') as f_w:
+                    print(base_dir.format(match_end_id + index))
+                    json.dump(cur_res, f_w, ensure_ascii=False,indent=4, separators=(',', ': '))
                 count += 1
-
                 # all_matches[index + match_start_id] = cur_res
     print(count)
 
