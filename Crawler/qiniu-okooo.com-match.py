@@ -89,13 +89,14 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
     # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
     #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
-    match_basic = re_match_basic.findall(page)[0]
+    match_basic = re_match_basic.findall(page)
     # Bifen = re_match_Bifen.findall(page)
     text = re_match_jieshuo.findall(page)
     timeline = re_match_time.findall(page)
     bifen = re_match_bifen.findall(page)
-    if len(match_basic) == 0:
+    if len(text) == 0:
         return res
+    match_basic = match_basic[0]
     res["Url"] = url
     res["host"] = match_basic[0]
     res["visiting"] = match_basic[1]
@@ -115,9 +116,9 @@ if __name__ == "__main__":
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
     threads = []
-    match_start_id = 100000
+    match_start_id = 100001
     match_end_id = 9999999
-    batch_size = 500
+    batch_size = 50
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
