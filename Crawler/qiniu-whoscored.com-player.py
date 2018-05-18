@@ -5,14 +5,13 @@
 # @Site    :   
 # @File    : qiniu-whoscored.com-player.py.py
 import json
+import time
 
 import requests
 from threading import Thread
 import re
-import pandas as pd
-tags = {"url", "Id" "summary" , "Offensive", "Defensive", "Passing"}
-summary = {""}
-df_player = pd.DataFrame(columns=tags)
+
+tags = {"url", "Summary", "Offensive", "Defensive", "Passing"}
 
 
 class ThreadWithReturnValue(Thread):
@@ -49,15 +48,25 @@ headers = {
     'x-requested-with': "XMLHttpRequest",
     'Cache-Control': "no-cache",
     'Postman-Token': "1496edb2-7ebf-470f-ab35-4bffbff5f703"
-    }
+}
 
-def get_match_summary(url, header, param):
-    page = requests.request('GET', url, headers=header, params=param).text
-    playerTableStats = json.loads(page)["playerTableStats"]
-    for match in playerTableStats:
-        match_data = []
-        for key in tags:
-            match_data.append(match[key])
+
+def get_match_summary(url, header, re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
+                      connect_times=0):
+    res = {}
+    try:
+        page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
+    except ConnectionError as connection:
+        time.sleep(2)
+        if connect_times < 100:
+            return get_match_summary(url, header,
+                                     re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
+                                     connect_times + 1)
+        else:
+            return res
+
+
+
 
 
 

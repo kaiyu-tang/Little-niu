@@ -115,9 +115,9 @@ if __name__ == "__main__":
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
     threads = []
-    match_start_id = 954599#100000
-    match_end_id = 954600#9999999
-    batch_size = 1
+    match_start_id = 100000
+    match_end_id = 9999999
+    batch_size = 500
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
