@@ -94,7 +94,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     text = re_match_jieshuo.findall(page)
     timeline = re_match_time.findall(page)
     bifen = re_match_bifen.findall(page)
-    if len(text) == 0:
+    if len(text) == 0 or len(bifen) == 0:
         return res
     match_basic = match_basic[0]
     res["Url"] = url
@@ -116,9 +116,9 @@ if __name__ == "__main__":
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
     threads = []
-    match_start_id = 100001
-    match_end_id = 9999999
-    batch_size = 2000
+    match_start_id = 100000
+    match_end_id =   9999999
+    batch_size = 3000
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
@@ -151,8 +151,8 @@ if __name__ == "__main__":
             try:
                 if len(cur_res) != 0:
                     # print(cur_res)
-                    with open(base_dir.format(match_end_id + index), 'w') as f_w:
-                        print(base_dir.format(match_end_id + index))
+                    with open(base_dir.format(cur_res["Url"].split("/")[-2]), 'w') as f_w:
+                        print(cur_res["Url"])
                         json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
                     count += 1
             except TypeError as e:

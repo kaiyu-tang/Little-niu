@@ -10,6 +10,7 @@ import time
 import requests
 from threading import Thread
 import re
+from lxml import etree
 
 tags = {"url", "Summary", "Offensive", "Defensive", "Passing"}
 
@@ -55,7 +56,7 @@ def get_match_summary(url, re_match_summary, re_match_offensive=None, re_match_d
                       connect_times=0):
     res = {}
     try:
-        page = requests.get(url).text  # .decode('gb2312', 'ignore')
+        response = requests.get(url)  # .decode('gb2312', 'ignore')
     except ConnectionError as connection:
         time.sleep(2)
         if connect_times < 100:
@@ -63,7 +64,11 @@ def get_match_summary(url, re_match_summary, re_match_offensive=None, re_match_d
                                      connect_times + 1)
         else:
             return res
-    summary = re_match_summary.findall(page)
+    #print(response.text)
+    html = etree.HTML(response.content)
+    print(etree.tostring(html))
+    print(html)
+    #summary = re_match_summary.findall(response.text)
     print()
     return res
 
