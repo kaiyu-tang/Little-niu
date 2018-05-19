@@ -10,7 +10,7 @@ import requests
 import json
 import os
 import re
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, ConnectTimeout,ReadTimeout
 
 from threading import Thread
 
@@ -69,9 +69,9 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
 
     res = {}
     try:
-        page = requests.get(url, headers=header).content.decode('gb2312', 'ignore')
-    except ConnectionError as connection:
-        time.sleep(2)
+        page = requests.get(url, headers=header, timeout=0.8).content.decode('gb2312', 'ignore')
+    except (ConnectionError, ConnectTimeout, ReadTimeout):
+        time.sleep(1.2)
         if connect_times < 10:
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   connect_times + 1)
