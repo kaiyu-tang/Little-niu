@@ -161,9 +161,9 @@ if __name__ == "__main__":
     base = 'http://www.tzuqiu.cc/players/{}/show.do'
     all_matches = {}
     threads = []
-    player_start_id = 796
-    player_end_id = 798
-    batch_size = 1
+    player_start_id = 1
+    player_end_id = 50000
+    batch_size = 5000
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):
