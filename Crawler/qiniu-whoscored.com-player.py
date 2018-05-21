@@ -173,7 +173,7 @@ if __name__ == "__main__":
     threads = []
     player_start_id = 1
     player_end_id = 50000
-    batch_size = 2000
+    batch_size = 5000
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):
