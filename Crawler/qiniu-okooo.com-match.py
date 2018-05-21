@@ -69,10 +69,10 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
 
     res = {}
     try:
-        page = requests.get(url, headers=header, timeout=0.8).content.decode('gb2312', 'ignore')
+        page = requests.get(url, headers=header, timeout=0.7).content.decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
-        time.sleep(1.2)
-        if connect_times < 10:
+        time.sleep(0.5)
+        if connect_times < 2:
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   connect_times + 1)
         else:
@@ -89,13 +89,13 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
     # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
     #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
-    match_basic = re_match_basic.findall(page)
-    # Bifen = re_match_Bifen.findall(page)
     text = re_match_jieshuo.findall(page)
-    timeline = re_match_time.findall(page)
     bifen = re_match_bifen.findall(page)
     if len(text) == 0 or len(bifen) == 0:
         return res
+    match_basic = re_match_basic.findall(page)
+    # Bifen = re_match_Bifen.findall(page)
+    timeline = re_match_time.findall(page)
     match_basic = match_basic[0]
     res["Url"] = url
     res["host"] = match_basic[0]
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 3000
+    batch_size = 300
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):

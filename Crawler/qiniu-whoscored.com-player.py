@@ -1,5 +1,5 @@
 #!/usr/bin/env python  
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 # @Time    : 2018/5/17 下午6:06  
 # @Author  : Kaiyu  
 # @Site    :   
@@ -10,6 +10,7 @@ import time
 import requests
 from threading import Thread
 import re
+from requests.exceptions import ConnectionError, ConnectTimeout,ReadTimeout
 from lxml import etree
 
 tags = {"url", "Summary", "Offensive", "Defensive", "Passing"}
@@ -39,41 +40,41 @@ querystring = {"category": "summary", "subcategory": "{}", "statsAccumulationTyp
                "timeOfTheGameEnd": "", "timeOfTheGameStart": "", "isMinApp": "false", "page": "",
                "includeZeroValues": "true", "numberOfPlayersToPick": ""}  # playerId and sybcategray is useful there
 
-headers = {
-    'accept': "application/json, text/javascript, */*; q=0.01",
-    'accept-encoding': "gzip, deflate, br",
-    'accept-language': "zh-CN,zh;q=0.9",
-    'dnt': "1",
-    'model-last-mode': "X5wigIWFrhjVrViOFCg/GiyJwa5gZzPkmiECc3VfKO4=",
-    'user-agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36",
-    'x-requested-with': "XMLHttpRequest",
+headers = headers = {
+    'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    'Accept-Encoding': "gzip, deflate",
+    'Accept-Language': "zh-CN,zh;q=0.9",
     'Cache-Control': "no-cache",
-    'Postman-Token': "1496edb2-7ebf-470f-ab35-4bffbff5f703"
-}
+    'Connection': "keep-alive",
+    #'Cookie': "announceId=20180103001; JSESSIONID=831C24BC2C1F2A3A6B31E37B63B65823; Hm_lvt_b83b828716a7230e966a4555be5f6151=1526278774,1526374337,1526552611; Hm_lpvt_b83b828716a7230e966a4555be5f6151=1526552621",
+    'DNT': "1",
+    'Host': "www.tzuqiu.cc",
+    'Referer': "http://www.tzuqiu.cc/stats.do",
+    'Upgrade-Insecure-Requests': "1",
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36",
+    #'Postman-Token': "82796269-b881-47bb-a673-963c70be9c33"
+    }
 
 
-def get_match_summary(url, re_match_summary, re_match_offensive=None, re_match_defensive=None, re_match_passing=None,
-                      connect_times=0):
+def get_match_summary(url, connect_times=0):
     res = {}
     try:
-        response = requests.get(url)  # .decode('gb2312', 'ignore')
-    except ConnectionError as connection:
+        response = requests.get(url, headers=headers, timeout=0.8)  # .decode('gb2312', 'ignore')
+    except (ConnectionError, ConnectTimeout, ReadTimeout):
         time.sleep(2)
-        if connect_times < 100:
-            return get_match_summary(url, re_match_summary, re_match_offensive, re_match_defensive, re_match_passing,
-                                     connect_times + 1)
+        if connect_times < 2:
+            return get_match_summary(url, connect_times + 1)
         else:
             return res
     #print(response.text)
-    html = etree.HTML(response.content)
-    print(etree.tostring(html))
-    print(html)
+    html = etree.HTML(response.content.decode('utf-8'))
+    print(html.text)
+    for tr in html.xpath(u'//*[@id="summaryTable"]/tbody'):
+        print(tr.text)
     #summary = re_match_summary.findall(response.text)
-    print()
+    #print()
     return res
 
 
 if __name__ == "__main__":
-    re_match_summary = re.compile(
-        r'<table class="table table-hover dt-responsive nowrap stripe dataTable" id=".+?Table" cellspacing="0" width="100%">\n\s+<thead>.+?</thead>\n\s+?<tbody>.*?(<tr>.+?</tr>).*?</tbody>', re.DOTALL)
-    get_match_summary("http://www.tzuqiu.cc/players/797/show.do", re_match_summary)
+    get_match_summary("http://www.tzuqiu.cc/players/797/show.do")
