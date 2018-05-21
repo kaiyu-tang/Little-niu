@@ -154,6 +154,7 @@ if __name__ == "__main__":
                     with open(base_dir.format(cur_res["Url"].split("/")[-2]), 'w') as f_w:
                         print(cur_res["Url"])
                         json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                        f_w.flush()
                     count += 1
             except TypeError as e:
                 print(match_end_id + index)
