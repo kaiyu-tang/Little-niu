@@ -58,6 +58,11 @@ headers = headers = {
 
 
 def get_match_summary(url, connect_times=0):
+    '''
+    :param url: the url requests
+    :param connect_times: if connect_times larger than 2 than do not try
+    :return: dic{'player name': , 'url':, 'matches':[]}
+    '''
     base_url = url.split('/')[2]
     res = {}
     summary_res = []
@@ -177,7 +182,6 @@ if __name__ == "__main__":
             start_time = time.clock()
             thread = ThreadWithReturnValue(target=get_match_summary,
                                            args=(url, 0))
-            # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
             threads.append(thread)
             thread.start()
             end_time = time.clock()
