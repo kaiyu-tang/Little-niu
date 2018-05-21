@@ -58,19 +58,17 @@ headers = headers = {
 
 
 def get_match_summary(url, connect_times=0):
-    '''
+    """
     :param url: the url requests
     :param connect_times: if connect_times larger than 2 than do not try
     :return: dic{'player name': , 'url':, 'matches':[]}
-    '''
+    """
     base_url = url.split('/')[2]
     res = {}
     summary_res = []
     offensive_res = []
     defensive_res = []
     pass_res = []
-    summary_keys = ['url', 'league', 'offensive', 'defensive', 'goal', 'assist', 'red', 'yellow', 'PS%',
-                    'opportunity create', 'Strive for success', 'best', 'score']
     try:
         response = requests.get(url, headers=headers, timeout=0.6)  # .decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
@@ -80,7 +78,14 @@ def get_match_summary(url, connect_times=0):
         else:
             return res
     soup = BeautifulSoup(response.content, 'lxml')
-    summary = soup.find_all(id='summaryTable')[0].tbody.find_all('tr')[:-1]
+    summary = soup.find_all(id='summaryTable')
+    offensive = soup.find_all(id='offensiveTable')
+    defensive = soup.find_all(id='defensiveTable')
+    pas = soup.find_all(id='passTable')
+    if len(summary) == 0 or len(offensive) == 0 or len(defensive) == 0 or len(pas) == 0:
+        return res
+    summary = summary[0].tbody.find_all('tr')[:-1]
+
     for tr in summary:
         summary_res_ = {}
         td_list = tr.find_all('td')
@@ -104,7 +109,7 @@ def get_match_summary(url, connect_times=0):
         summary_res_['summary scores'] = td_list[10].get_text().strip()
         summary_res.append(summary_res_)
     # print(str(len(summary_res))+" : "+str(summary_res))
-    offensive = soup.find_all(id='offensiveTable')[0].tbody.find_all('tr')[:-1]
+    offensive = offensive[0].tbody.find_all('tr')[:-1]
     for tr in offensive:
         offensive_res_ = {}
         td_list = tr.find_all('td')
@@ -118,7 +123,7 @@ def get_match_summary(url, connect_times=0):
         offensive_res_['offensive score'] = td_list[11].get_text().strip()
         offensive_res.append(offensive_res_)
     # print(str(len(offensive_res)) + " : " + str(offensive_res))
-    defensive = soup.find_all(id='defensiveTable')[0].tbody.find_all('tr')[:-1]
+    defensive = defensive[0].tbody.find_all('tr')[:-1]
     for tr in defensive:
         defensive_res_ = {}
         td_list = tr.find_all('td')
@@ -133,7 +138,7 @@ def get_match_summary(url, connect_times=0):
         defensive_res_['defensive score'] = td_list[11].get_text().strip()
         defensive_res.append(defensive_res_)
     # print(str(len(defensive_res)) + " : " + str(defensive_res))
-    pas = soup.find_all(id='passTable')[0].tbody.find_all('tr')[:-1]
+    pas = pas[0].tbody.find_all('tr')[:-1]
     for tr in pas:
         pass_res_ = {}
         td_list = tr.find_all('td')
@@ -168,7 +173,7 @@ if __name__ == "__main__":
     threads = []
     player_start_id = 1
     player_end_id = 50000
-    batch_size = 5000
+    batch_size = 2000
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):
@@ -176,8 +181,8 @@ if __name__ == "__main__":
 
     for loop in range((player_end_id - player_start_id) // batch_size):
         time.sleep(random.randrange(0, 10))
-        match_cur_start_id = player_start_id + loop * batch_size
-        for player_id in range(match_cur_start_id, min(match_cur_start_id + batch_size, player_end_id)):
+        player_cur_start_id = player_start_id + loop * batch_size
+        for player_id in range(player_cur_start_id, min(player_cur_start_id + batch_size, player_end_id)):
             url = base.format(player_id)
             start_time = time.clock()
             thread = ThreadWithReturnValue(target=get_match_summary,
@@ -195,10 +200,8 @@ if __name__ == "__main__":
                     with open(base_dir.format(cur_res["url"].split("/")[-2]), 'w') as f_w:
                         print(cur_res["url"])
                         json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
-                        f_w.flush()
                     count += 1
             except TypeError as e:
                 print(player_end_id + index)
 
-                # all_matches[index + match_start_id] = cur_res
     print(count)
