@@ -118,7 +118,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 2000
+    batch_size = 60000
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
