@@ -99,6 +99,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     timeline = re_match_time.findall(page)
     start_time = re_match_start_time.findall(page)[0]
     timeline[-1] = '0'
+    timeline[0] = timeline[1]
     match_basic = match_basic[0]
     res["Url"] = url
     res["host"] = match_basic[0]
@@ -129,7 +130,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 50000
+    batch_size = 5000000
     count = 0
     base_dir = "okoo-matches/{}.json"
     if not os.path.exists("okoo-matches"):
