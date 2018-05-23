@@ -60,7 +60,8 @@ headers = {
 proxy = {'http': '125.46.0.62:53281'}
 
 
-def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen, connect_times=0):
+def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen, re_match_start_time,
+                   connect_times=0):
     """
     :param url:需要爬的网址
     :param header: 请求头
@@ -74,7 +75,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
         time.sleep(0.5)
         if connect_times < 2:
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
-                                  connect_times + 1)
+                                  re_match_start_time, connect_times + 1)
         else:
             return res
     # option = webdriver.ChromeOptions()
@@ -96,7 +97,8 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     match_basic = re_match_basic.findall(page)
     # Bifen = re_match_Bifen.findall(page)
     timeline = re_match_time.findall(page)
-    timeline[0] = '0'
+    start_time = re_match_start_time.findall(page)[0]
+    timeline[-1] = '0'
     match_basic = match_basic[0]
     res["Url"] = url
     res["host"] = match_basic[0]
@@ -104,6 +106,14 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     res["league"] = match_basic[2]
     res["round"] = match_basic[3]
     res["vs"] = bifen[0][0] + "-" + bifen[0][1]
+    time_res= {}
+    time_res['year']= start_time[0]
+    time_res['month'] = start_time[1]
+    time_res['day'] = start_time[2]
+    time_res['hour'] = start_time[3]
+    time_res['minute'] = start_time[4]
+    res['time'] = time_res
+
     jieshuo = []
     for txt, time_, bf in zip(text, timeline, bifen):
         jieshuo.append({"text": txt, "time": time_, "vs": bf})
@@ -119,7 +129,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 100000
+    batch_size = 50000
     count = 0
     base_dir = "okoo-matches/{}.json"
     if not os.path.exists("okoo-matches"):
@@ -131,7 +141,8 @@ if __name__ == "__main__":
     re_match_timeline = re.compile(r'<b class="float_l livelistcontime">(.+?)</b>')
     re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".*?">(\d)</b><b>-</b>'
                                 r'<b class=".*?">(\d)</b></p>')
-
+    re_match_start_time = re.compile(r'<div class="qbx_2">\s+?<p>(\d+)-(\d+)-(\d+?).*?(\d+):(\d+)</p>\s+?<p></p>\s+?'
+                                     r'<p><span style="display:inline-block;margin-left:10px"></span></p>\s+?</div>')
     for loop in range((match_end_id - match_start_id) // batch_size):
         time.sleep(random.randrange(0, 10))
         match_cur_start_id = match_start_id + loop * batch_size
@@ -140,7 +151,7 @@ if __name__ == "__main__":
             start_time = time.clock()
             thread = ThreadWithReturnValue(target=get_match_info,
                                            args=(url, headers, re_match_basic, re_match_jieshuo, re_match_timeline,
-                                                 re_match_bifen))
+                                                 re_match_bifen,re_match_start_time))
             # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
             threads.append(thread)
             thread.start()
