@@ -56,6 +56,7 @@ headers = headers = {
     # 'Postman-Token': "82796269-b881-47bb-a673-963c70be9c33"
 }
 
+proxy = {'http': 'http://122.193.14.102:80'}
 
 def get_match_summary(url, connect_times=0):
     """
@@ -73,7 +74,7 @@ def get_match_summary(url, connect_times=0):
         response = requests.get(url, headers=headers, timeout=0.6)  # .decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
         time.sleep(0.8)
-        if connect_times < 2:
+        if connect_times < 4:
             return get_match_summary(url, connect_times + 1)
         else:
             return res
@@ -159,7 +160,8 @@ def get_match_summary(url, connect_times=0):
         tmp_dict.update(defensive_res[i])
         tmp_dict.update(pass_res[i])
         res_.append(tmp_dict)
-    res['player'] = soup.head.title.get_text().split('|')[0]
+    res['player ch name'] = soup.head.title.get_text().split('|')[0]
+    res['player en name'] = ''
     res['url'] = url
     res['matches'] = res_
     # print(res)
@@ -173,7 +175,7 @@ if __name__ == "__main__":
     threads = []
     player_start_id = 1
     player_end_id = 50000
-    batch_size = 5000
+    batch_size = 200
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):

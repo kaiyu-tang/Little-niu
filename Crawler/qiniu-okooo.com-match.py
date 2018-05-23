@@ -96,6 +96,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     match_basic = re_match_basic.findall(page)
     # Bifen = re_match_Bifen.findall(page)
     timeline = re_match_time.findall(page)
+    timeline[0] = '0'
     match_basic = match_basic[0]
     res["Url"] = url
     res["host"] = match_basic[0]
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 60000
+    batch_size = 100000
     count = 0
     base_dir = "matches/{}.json"
     if not os.path.exists("matches"):
@@ -127,9 +128,9 @@ if __name__ == "__main__":
     re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(.+?)】')
     # re_match_Bifen = re.compile(r'<div class="vs">\n\s+?<span class="vs_.+?">(\d+)</span>-<span class="vs_.+?">(\d+)</span>\n\s+?</div>')
     re_match_jieshuo = re.compile(r'<p class="float_l livelistcontext">(.+?)</p>')
-    re_match_timeline = re.compile(r'<b class="float_l livelistcontime">(\d+).</b>')
-    re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
-                                r'<b class=".+?">(\d)</b></p>')
+    re_match_timeline = re.compile(r'<b class="float_l livelistcontime">(.+?)</b>')
+    re_match_bifen = re.compile(r'<p class="float_l livelistconbifen"><b class=".*?">(\d)</b><b>-</b>'
+                                r'<b class=".*?">(\d)</b></p>')
 
     for loop in range((match_end_id - match_start_id) // batch_size):
         time.sleep(random.randrange(0, 10))
