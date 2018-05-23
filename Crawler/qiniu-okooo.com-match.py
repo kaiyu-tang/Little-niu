@@ -121,9 +121,9 @@ if __name__ == "__main__":
     match_end_id =   9999999
     batch_size = 100000
     count = 0
-    base_dir = "matches/{}.json"
-    if not os.path.exists("matches"):
-        os.mkdir("matches")
+    base_dir = "okoo-matches/{}.json"
+    if not os.path.exists("okoo-matches"):
+        os.mkdir("okoo-matches")
 
     re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(.+?)】')
     # re_match_Bifen = re.compile(r'<div class="vs">\n\s+?<span class="vs_.+?">(\d+)</span>-<span class="vs_.+?">(\d+)</span>\n\s+?</div>')

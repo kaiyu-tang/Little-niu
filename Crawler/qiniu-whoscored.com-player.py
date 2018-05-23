@@ -161,7 +161,7 @@ def get_match_summary(url, connect_times=0):
         tmp_dict.update(pass_res[i])
         res_.append(tmp_dict)
     res['player ch name'] = soup.head.title.get_text().split('|')[0]
-    res['player en name'] = ''
+    res['player en name'] = re.findall(r'<tr>\n\s+?<th>英文名: </th>\n\s+?<td>(.*?)</td>\n\s+?</tr>',response.text)
     res['url'] = url
     res['matches'] = res_
     # print(res)
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     threads = []
     player_start_id = 1
     player_end_id = 50000
-    batch_size = 200
+    batch_size = 1000
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):
