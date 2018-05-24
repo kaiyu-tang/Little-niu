@@ -144,6 +144,8 @@ if __name__ == "__main__":
                                 r'<b class=".*?">(\d)</b></p>')
     re_match_start_time = re.compile(r'<div class="qbx_2">\s+?<p>(\d+)-(\d+)-(\d+?).*?(\d+):(\d+)</p>\s+?<p></p>\s+?'
                                      r'<p><span style="display:inline-block;margin-left:10px"></span></p>\s+?</div>')
+    res_f = open(base_dir.format('result.txt'), 'w')
+    res_f.write('start id: {}  end_id: {} batch_size: {} '.format(match_start_id,match_end_id,batch_size))
     for loop in range((match_end_id - match_start_id) // batch_size):
         time.sleep(random.randrange(0, 10))
         match_cur_start_id = match_start_id + loop * batch_size
@@ -166,6 +168,7 @@ if __name__ == "__main__":
                     # print(cur_res)
                     with open(base_dir.format(cur_res["Url"].split("/")[-2]), 'w') as f_w:
                         print(cur_res["Url"])
+                        res_f.write(cur_res['Url'])
                         json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
                         f_w.flush()
                     count += 1
@@ -174,5 +177,7 @@ if __name__ == "__main__":
 
                 # all_matches[index + match_start_id] = cur_res
     print(count)
-
+    res_f.write('total download url : {}'.format(count))
+    res_f.flush()
+    res_f.close()
     # print(len(all_matches))
