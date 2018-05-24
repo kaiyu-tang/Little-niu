@@ -73,7 +73,7 @@ def get_match_summary(url, connect_times=0):
     defensive_res = []
     pass_res = []
     try:
-        response = requests.get(url, headers=headers, timeout=0.6,proxies=proxies)  # .decode('gb2312', 'ignore')
+        response = requests.get(url, headers=headers, timeout=0.6)  # .decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
         time.sleep(0.8)
         if connect_times < 4:
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     threads = []
     player_start_id = 1
     player_end_id = 50000
-    batch_size = 20
+    batch_size = 500
     count = 0
     base_dir = "whoscored-matches/{}.json"
     if not os.path.exists("whoscored-matches"):

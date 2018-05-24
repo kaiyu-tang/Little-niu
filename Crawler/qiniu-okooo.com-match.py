@@ -70,10 +70,10 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
 
     res = {}
     try:
-        page = requests.get(url, headers=header, timeout=0.7).content.decode('gb2312', 'ignore')
+        page = requests.get(url, headers=header, timeout=0.9).content.decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
-        time.sleep(0.5)
-        if connect_times < 2:
+        time.sleep(1.5)
+        if connect_times < 4:
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   re_match_start_time, connect_times + 1)
         else:
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id =   9999999
-    batch_size = 5000000
+    batch_size = 1000000
     count = 0
     base_dir = "okoo-matches/{}.json"
     if not os.path.exists("okoo-matches"):
