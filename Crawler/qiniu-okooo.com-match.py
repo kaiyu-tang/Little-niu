@@ -10,7 +10,7 @@ import requests
 import json
 import os
 import re
-from requests.exceptions import ConnectionError, ConnectTimeout,ReadTimeout
+from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 
 from threading import Thread
 
@@ -70,10 +70,10 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
 
     res = {}
     try:
-        page = requests.get(url, headers=header, timeout=0.9).content.decode('gb2312', 'ignore')
+        page = requests.get(url, headers=header, timeout=2).content.decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
-        time.sleep(1.5)
-        if connect_times < 4:
+        time.sleep(random.randrange(1, 4))
+        if connect_times < random.randint(3, 6):
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
                                   re_match_start_time, connect_times + 1)
         else:
@@ -107,8 +107,8 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     res["league"] = match_basic[2]
     res["round"] = match_basic[3]
     res["vs"] = bifen[0][0] + "-" + bifen[0][1]
-    time_res= {}
-    time_res['year']= start_time[0]
+    time_res = {}
+    time_res['year'] = start_time[0]
     time_res['month'] = start_time[1]
     time_res['day'] = start_time[2]
     time_res['hour'] = start_time[3]
@@ -129,8 +129,8 @@ if __name__ == "__main__":
     all_matches = {}
     threads = []
     match_start_id = 100000
-    match_end_id =   9999999
-    batch_size = 1000000
+    match_end_id = 9999999
+    batch_size = 100000
     count = 0
     base_dir = "okoo-matches/{}.json"
     if not os.path.exists("okoo-matches"):
@@ -144,8 +144,8 @@ if __name__ == "__main__":
                                 r'<b class=".*?">(\d)</b></p>')
     re_match_start_time = re.compile(r'<div class="qbx_2">\s+?<p>(\d+)-(\d+)-(\d+?).*?(\d+):(\d+)</p>\s+?<p></p>\s+?'
                                      r'<p><span style="display:inline-block;margin-left:10px"></span></p>\s+?</div>')
-    res_f = open(base_dir.format('result.txt'), 'w')
-    res_f.write('start id: {}  end_id: {} batch_size: {} '.format(match_start_id,match_end_id,batch_size))
+    res_f = open(base_dir.format('result'), 'w')
+    res_f.write('start id: {} \n end_id: {} \nbatch_size: {} \n'.format(match_start_id, match_end_id, batch_size))
     for loop in range((match_end_id - match_start_id) // batch_size):
         time.sleep(random.randrange(0, 10))
         match_cur_start_id = match_start_id + loop * batch_size
@@ -154,7 +154,7 @@ if __name__ == "__main__":
             start_time = time.clock()
             thread = ThreadWithReturnValue(target=get_match_info,
                                            args=(url, headers, re_match_basic, re_match_jieshuo, re_match_timeline,
-                                                 re_match_bifen,re_match_start_time))
+                                                 re_match_bifen, re_match_start_time))
             # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
             threads.append(thread)
             thread.start()
@@ -168,7 +168,7 @@ if __name__ == "__main__":
                     # print(cur_res)
                     with open(base_dir.format(cur_res["Url"].split("/")[-2]), 'w') as f_w:
                         print(cur_res["Url"])
-                        res_f.write(cur_res['Url'])
+                        res_f.write('Url: '+cur_res['Url']+"\n")
                         json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
                         f_w.flush()
                     count += 1

@@ -57,7 +57,7 @@ headers = headers = {
 }
 
 proxies = {
-    'http': 'http://120.198.224.101:80'
+    'http': 'http://115.223.255.75:9000'
 }
 
 def get_match_summary(url, connect_times=0):
@@ -73,7 +73,7 @@ def get_match_summary(url, connect_times=0):
     defensive_res = []
     pass_res = []
     try:
-        response = requests.get(url, headers=headers, timeout=0.6)  # .decode('gb2312', 'ignore')
+        response = requests.get(url, headers=headers, timeout=0.6,proxies=proxies)  # .decode('gb2312', 'ignore')
     except (ConnectionError, ConnectTimeout, ReadTimeout):
         time.sleep(0.8)
         if connect_times < 4:
