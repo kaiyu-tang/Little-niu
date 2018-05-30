@@ -82,7 +82,7 @@ def get_dataset(root=''):
         file_dir = '/Users/harry/Downloads/okoo-matches-NoTime'
         data = read_from_dir(file_dir)
     else:
-        with open(os.path.join(base_dir, 'match-data-test.json')) as f:
+        with open(os.path.join(base_dir, 'match-data.json')) as f:
             data = json.load(f)
     data = data_clean(data)
     data = labelizeData(data)
