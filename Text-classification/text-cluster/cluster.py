@@ -70,7 +70,7 @@ def labelizeData(corpus):
 
 def get_dataset(root=''):
     print('loading data')
-    base_dir = '/Users/harry/PycharmProjects/toys/Text-classification/text-cluster'
+    base_dir = os.getcwd()
     if not os.path.exists(os.path.join(base_dir, 'match-data.json')):
         file_dir = '/Users/harry/Downloads/okoo-matches-NoTime'
         data = read_from_dir(file_dir)
