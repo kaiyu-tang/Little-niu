@@ -13,6 +13,7 @@ from itertools import chain
 
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, LabeledSentence
+from sklearn.externals import joblib
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
 from sklearn import preprocessing
@@ -34,6 +35,7 @@ kmeans_clusters = 8
 path_model = 'model'
 if not os.path.exists(os.path.join(os.getcwd(), path_model)):
     os.makedirs(os.path.join(os.getcwd(), path_model))
+
 
 def read_from_dir(root):
     file_list = os.listdir(root)
@@ -80,7 +82,7 @@ def get_dataset(root=''):
         file_dir = '/Users/harry/Downloads/okoo-matches-NoTime'
         data = read_from_dir(file_dir)
     else:
-        with open(os.path.join(base_dir, 'match-data.json')) as f:
+        with open(os.path.join(base_dir, 'match-data-test.json')) as f:
             data = json.load(f)
     data = data_clean(data)
     data = labelizeData(data)
@@ -113,8 +115,8 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     # train model each epoch permutate the data
     model_dbow.train(all_data, epochs=model_dbow.epochs, total_examples=model_dbow.corpus_count)
     model_dm.train(all_data, epochs=model_dm.epochs, total_examples=model_dm.corpus_count)
-    model_dm.save(os.path.join(path_model, 'model_dm'))
-    model_dbow.save(os.path.join(path_model, 'model_dbow'))
+    model_dm.save(os.path.join(path_model, 'doc2vec_dm'))
+    model_dbow.save(os.path.join(path_model, 'doc2vec_dbow'))
     print('finished train model')
     return model_dm, model_dbow
 
@@ -130,16 +132,18 @@ def Cluster(train_vecs, model_name=None, test_vecs=None):
     kmeans_model.fit(train_vecs)
     labels = kmeans_model.predict(train_vecs)
     cluster_centers = kmeans_model.cluster_centers_
-    #kmeans_model.save(os.path.join(path_model, model_name))
+    joblib.dump(kmeans_model, os.path.join(path_model, model_name))
+    # kmeans_model.save(os.path.join(path_model, model_name))
     print('finished cluster')
 
     return labels, cluster_centers
 
 
-def visualize(vecs, labels):
+def visualize(vecs, labels, model_name):
     tsne = TSNE(n_components=2, init='pca', random_state=0)
     X_tsne = tsne.fit(vecs)
-    #tsne.save(os.path.join(path_model, 'tsne.h5'))
+    joblib.dump(tsne, os.path.join(path_model, model_name))
+    # tsne.save(os.path.join(path_model, 'tsne.h5'))
     X_tsne = preprocessing.normalize(X_tsne.embedding_, norm='l2')
     fig = plt.figure()
     ax = plt.subplot(111)
@@ -148,7 +152,7 @@ def visualize(vecs, labels):
                  color=plt.cm.Set1(labels[i] / kmeans_clusters),
                  fontdict={'weight': 'bold', 'size': 3})
     plt.legend()
-    plt.show()
+    # plt.show()
     print()
 
 
@@ -156,9 +160,10 @@ if __name__ == '__main__':
     train_epoch = sys.argv[1]
     data = get_dataset()
     model_dm, model_dbow = train_doc2vec(data, new_model=True)
-    #vecs_dm = get_doc_vec(model_dm, data)
-    #vecs_dbow = get_doc_vec(model_dbow, data)
-    #labels_dm, cluster_centers_dm = Cluster(vecs_dm, 'dm.h5')
-    #labels_dbow, cluster_centers_dbow = Cluster(vecs_dbow, 'dbow.h5')
-    #visualize(vecs_dm, labels_dm)
+    vecs_dm = get_doc_vec(model_dm, data)
+    vecs_dbow = get_doc_vec(model_dbow, data)
+    labels_dm, cluster_centers_dm = Cluster(vecs_dm, 'kmeans_dm.pkl')
+    labels_dbow, cluster_centers_dbow = Cluster(vecs_dbow, 'kmeans_dbow.pkl')
+    visualize(vecs_dm, labels_dm, 'tsne_dm.pkl')
+    visualize(vecs_dbow, labels_dbow, 'tsne_dbow.pkl')
     print()
