@@ -9,7 +9,7 @@ import json
 import multiprocessing
 import os
 import sys
-from itertools import chain
+import pandas as pd
 import load_data
 import numpy as np
 from gensim.models.doc2vec import Doc2Vec, LabeledSentence
@@ -23,21 +23,18 @@ import matplotlib
 import seaborn as sns
 
 # doc2vec parameters
-vector_size = 64  # 300维
-window_size = 20
+vector_size = 256  # 300维
+window_size = 40
 min_count = 4
 sampling_threshold = 1e-5
 negative_size = 5
-train_epoch = 300
+train_epoch = 3000
 dm = 0  # 0 = dbow; 1 = dmpv
 worker_count = multiprocessing.cpu_count()  # number of parallel processes
 kmeans_clusters = 8
 path_model = 'model'
 if not os.path.exists(os.path.join(os.getcwd(), path_model)):
     os.makedirs(os.path.join(os.getcwd(), path_model))
-
-
-
 
 
 def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_size=window_size, workers=worker_count,
@@ -70,13 +67,26 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     return model_dm, model_dbow
 
 
-
-
-
-def train_cluster(train_vecs, model_name=None, test_vecs=None):
+def train_cluster(train_vecs, model_name=None, start_k=2, end_k=20):
     print('training cluster')
-    kmeans_model = KMeans(n_clusters=kmeans_clusters, n_jobs=worker_count, )
-    kmeans_model.fit(train_vecs)
+    SSE = []
+    SSE_d1 = []
+    SSE_d2 = []
+    models = []
+    for i in range(start_k, end_k):
+        kmeans_model = KMeans(n_clusters=kmeans_clusters, n_jobs=worker_count, )
+        kmeans_model.fit(train_vecs)
+        SSE.append(kmeans_model.inertia_)  # 保存每一个k值的SSE值
+        print('{} Means SSE loss = {}'.format(i, kmeans_model.inertia_))
+        models.append(kmeans_model)
+    # 通过sse方法计算最佳k值
+    SSE_length = len(SSE)
+    for i in range(1, SSE_length):
+        SSE_d1.append((SSE[i - 1] - SSE[i]) / 2)
+    for i in range(1, len(SSE_d1) - 1):
+        SSE_d2.append((SSE_d1[i - 1] - SSE_d1[i]) / 2)
+
+    kmeans_model = models[SSE_d2.index(max(SSE_d2)) + 1]
     labels = kmeans_model.predict(train_vecs)
     cluster_centers = kmeans_model.cluster_centers_
     joblib.dump(kmeans_model, os.path.join(path_model, model_name))

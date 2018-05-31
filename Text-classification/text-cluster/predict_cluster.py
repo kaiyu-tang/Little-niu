@@ -22,7 +22,7 @@ from sklearn.cluster import KMeans
 path_model = 'model'
 if not os.path.exists(os.path.join(os.getcwd(), path_model)):
     os.makedirs(os.path.join(os.getcwd(), path_model))
-path_data = 'Data'
+path_data = 'data'
 if not os.path.exists(os.path.join(os.getcwd(), path_data)):
     os.makedirs(os.path.join(os.getcwd(), path_data))
 
