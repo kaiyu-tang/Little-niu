@@ -48,7 +48,7 @@ def labelizeData(corpus):
     return labelized
 
 
-def get_dataset(root='', raw=False):
+def get_dataset(root='', raw=False, test=0):
     print('loading data')
     base_dir = os.getcwd()
     # print(base_dir)
@@ -56,7 +56,11 @@ def get_dataset(root='', raw=False):
         file_dir = '/Users/harry/Downloads/okoo-matches-NoTime'
         data = read_from_dir(file_dir)
     else:
-        with open(os.path.join(base_dir, 'match-data-test.json')) as f:
+        if test == 1:
+            name = 'match-data-test.json'
+        else:
+            name = 'match-data.json'
+        with open(os.path.join(base_dir, name)) as f:
             data = json.load(f)
     data = data_clean(data)
     print('loaded data')

@@ -118,7 +118,8 @@ def train_tsne(vecs, labels, model_name):
 
 if __name__ == '__main__':
     train_epoch = sys.argv[1]
-    data = load_data.get_dataset()
+    test = int(sys.argv[2])
+    data = load_data.get_dataset(test=test)
     model_dm, model_dbow = train_doc2vec(data, new_model=True)
     vecs_dm = load_data.get_doc_vec(model_dm, data)
     vecs_dbow = load_data.get_doc_vec(model_dbow, data)
