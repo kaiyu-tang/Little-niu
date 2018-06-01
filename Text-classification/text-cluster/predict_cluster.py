@@ -59,7 +59,7 @@ if __name__ == '__main__':
     doc2vec_dbow_model = Doc2Vec.load(os.path.join(path_model, 'doc2vec_dbow'))
     km_dm_model = joblib.load(os.path.join(path_model, 'kmeans_dm.pkl'))
     km_dbow_model = joblib.load(os.path.join(path_model, 'kmeans_dbow.pkl'))
-    corpus = load_data.get_dataset(test=test)
+    corpus = load_data.get_dataset(test=test, cut=False)
     vecs_dm = load_data.get_doc_vec(doc2vec_dm_model, corpus)
     vecs_dbow = load_data.get_doc_vec(doc2vec_dbow_model, corpus)
 

@@ -10,6 +10,7 @@ import sys
 import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
+import TextCNN
 
 
 def eval_model(data_iter, model, args):
@@ -89,3 +90,6 @@ def train(model, train_iter, dev_iter, args):
 
 def predict(model, text, args):
     pass
+
+if __name__ == '__main__':
+    textcnn = TextCNN()

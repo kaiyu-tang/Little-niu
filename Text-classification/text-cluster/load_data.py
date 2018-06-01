@@ -77,7 +77,7 @@ def get_dataset(root='', raw=False, test=True, cut=True):
         if test:
             name = 'match-data-test.json'
         else:
-            name = 'match-data.json'
+            name = 'match-data-pre.json'
         with open(os.path.join(base_dir, name)) as f:
             data = json.load(f)
     data = data_clean(data, cut)

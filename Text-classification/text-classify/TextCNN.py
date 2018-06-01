@@ -3,7 +3,7 @@
 # @Time    : 2018/5/29 下午3:05  
 # @Author  : Kaiyu  
 # @Site    :   
-# @File    : model-text-cnn.py
+# @File    : TextCNN.py
 
 import torch
 import torch.nn as nn
@@ -11,10 +11,10 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-class CNN_Text(nn.Module):
+class TextCNN(nn.Module):
 
     def __init__(self, args):
-        super(CNN_Text, self).__init__()
+        super(TextCNN, self).__init__()
         self.args = args
 
         embed_num = args.embed_num
