@@ -70,7 +70,7 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     return model_dm, model_dbow
 
 
-def train_cluster(train_vecs, model_name=None, start_k=2, end_k=20):
+def train_cluster(train_vecs, model_name=None, start_k=8, end_k=8):
     print('training cluster')
     SSE = []
     SSE_d1 = []
