@@ -70,13 +70,14 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     return model_dm, model_dbow
 
 
+# yes
 def train_cluster(train_vecs, model_name=None, start_k=8, end_k=8):
     print('training cluster')
     SSE = []
     SSE_d1 = []
     SSE_d2 = []
     models = []
-    for i in range(start_k, end_k+1):
+    for i in range(start_k, end_k + 1):
         kmeans_model = KMeans(n_clusters=kmeans_clusters, n_jobs=worker_count, )
         kmeans_model.fit(train_vecs)
         SSE.append(kmeans_model.inertia_)  # 保存每一个k值的SSE值
