@@ -62,7 +62,7 @@ if __name__ == '__main__':
     corpus = load_data.get_dataset(test=test, cut=False)
     vecs_dm = load_data.get_doc_vec(doc2vec_dm_model, corpus)
     vecs_dbow = load_data.get_doc_vec(doc2vec_dbow_model, corpus)
-
+    print('get vecs')
     labels_dm = label_infer(km_dm_model, vecs_dm)
     labels_dbow = label_infer(km_dbow_model, vecs_dbow)
     corpus = load_data.get_dataset(raw=True, test=test)

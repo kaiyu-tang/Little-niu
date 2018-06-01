@@ -44,12 +44,12 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     all_data = train_data
     if not os.path.exists(os.path.join(path_model, 'model_dm')) or new_model:
         model_dm = Doc2Vec(dm=1, vector_size=dim, window=window_size,
-                           work=workers, min_count=min_count)
+                           work=workers, min_count=min_count, epochs=epoch_num)
     else:
         model_dm = Doc2Vec.load(os.path.join(path_model, 'model_dm'))
     if not os.path.exists(os.path.join(path_model, 'model_dbow')) or new_model:
         model_dbow = Doc2Vec(dm=0, vector_size=dim, window=window_size,
-                             work=workers, min_count=min_count)
+                             work=workers, min_count=min_count, epochs=epoch_num)
     else:
         model_dbow = Doc2Vec.load(os.path.join(path_model, 'model_dbow'))
     if not new_model:
@@ -61,8 +61,8 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     # all_data = np.array(all_data)
     # train model each epoch permutate the data
     for epoch in range(epoch_num):
-        model_dbow.train(all_data, total_examples=model_dbow.corpus_count)
-        model_dm.train(all_data, total_examples=model_dm.corpus_count)
+        model_dbow.train(all_data, total_examples=model_dbow.corpus_count, epochs=model_dbow.epochs)
+        model_dm.train(all_data, total_examples=model_dm.corpus_count, epochs=model_dm.epochs)
         random.shuffle(all_data)
     model_dm.save(os.path.join(path_model, 'doc2vec_dm'))
     model_dbow.save(os.path.join(path_model, 'doc2vec_dbow'))
