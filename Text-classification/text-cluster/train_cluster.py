@@ -60,7 +60,7 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     model_dbow.build_vocab(all_data)
     # all_data = np.array(all_data)
     # train model each epoch permutate the data
-    for epoch in epoch_num:
+    for epoch in range(epoch_num):
         model_dbow.train(all_data, total_examples=model_dbow.corpus_count)
         model_dm.train(all_data, total_examples=model_dm.corpus_count)
         random.shuffle(all_data)
