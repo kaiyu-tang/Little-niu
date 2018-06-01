@@ -8,6 +8,7 @@
 import json
 import multiprocessing
 import os
+import random
 import sys
 import pandas as pd
 import load_data
@@ -43,12 +44,12 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     all_data = train_data
     if not os.path.exists(os.path.join(path_model, 'model_dm')) or new_model:
         model_dm = Doc2Vec(dm=1, vector_size=dim, window=window_size,
-                           work=workers, min_count=min_count, epoches=epoch_num)
+                           work=workers, min_count=min_count)
     else:
         model_dm = Doc2Vec.load(os.path.join(path_model, 'model_dm'))
     if not os.path.exists(os.path.join(path_model, 'model_dbow')) or new_model:
         model_dbow = Doc2Vec(dm=0, vector_size=dim, window=window_size,
-                             work=workers, min_count=min_count, epoches=epoch_num)
+                             work=workers, min_count=min_count)
     else:
         model_dbow = Doc2Vec.load(os.path.join(path_model, 'model_dbow'))
     if not new_model:
@@ -59,8 +60,10 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     model_dbow.build_vocab(all_data)
     # all_data = np.array(all_data)
     # train model each epoch permutate the data
-    model_dbow.train(all_data, epochs=model_dbow.epochs, total_examples=model_dbow.corpus_count)
-    model_dm.train(all_data, epochs=model_dm.epochs, total_examples=model_dm.corpus_count)
+    for epoch in epoch_num:
+        model_dbow.train(all_data, total_examples=model_dbow.corpus_count)
+        model_dm.train(all_data, total_examples=model_dm.corpus_count)
+        random.shuffle(all_data)
     model_dm.save(os.path.join(path_model, 'doc2vec_dm'))
     model_dbow.save(os.path.join(path_model, 'doc2vec_dbow'))
     print('finished train model')
@@ -73,20 +76,24 @@ def train_cluster(train_vecs, model_name=None, start_k=2, end_k=20):
     SSE_d1 = []
     SSE_d2 = []
     models = []
-    for i in range(start_k, end_k):
+    for i in range(start_k, end_k+1):
         kmeans_model = KMeans(n_clusters=kmeans_clusters, n_jobs=worker_count, )
         kmeans_model.fit(train_vecs)
         SSE.append(kmeans_model.inertia_)  # 保存每一个k值的SSE值
         print('{} Means SSE loss = {}'.format(i, kmeans_model.inertia_))
         models.append(kmeans_model)
+
     # 通过sse方法计算最佳k值
     SSE_length = len(SSE)
-    for i in range(1, SSE_length):
-        SSE_d1.append((SSE[i - 1] - SSE[i]) / 2)
-    for i in range(1, len(SSE_d1) - 1):
-        SSE_d2.append((SSE_d1[i - 1] - SSE_d1[i]) / 2)
+    if SSE_length > 3:
+        for i in range(1, SSE_length):
+            SSE_d1.append((SSE[i - 1] - SSE[i]) / 2)
+        for i in range(1, len(SSE_d1) - 1):
+            SSE_d2.append((SSE_d1[i - 1] - SSE_d1[i]) / 2)
+        kmeans_model = models[SSE_d2.index(max(SSE_d2)) + 1]
+    else:
+        kmeans_model = models[SSE.index(min(SSE))]
 
-    kmeans_model = models[SSE_d2.index(max(SSE_d2)) + 1]
     labels = kmeans_model.predict(train_vecs)
     cluster_centers = kmeans_model.cluster_centers_
     joblib.dump(kmeans_model, os.path.join(path_model, model_name))
