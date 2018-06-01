@@ -66,7 +66,7 @@ def labelizeData(corpus):
     return labelized
 
 
-def get_dataset(root='', raw=False, test=0):
+def get_dataset(root='', raw=False, test=0, cut=True):
     print('loading data')
     base_dir = os.getcwd()
     # print(base_dir)
@@ -80,7 +80,7 @@ def get_dataset(root='', raw=False, test=0):
             name = 'match-data.json'
         with open(os.path.join(base_dir, name)) as f:
             data = json.load(f)
-    data = data_clean(data)
+    data = data_clean(data, cut)
     print('loaded data')
     # data = np.array(data)
     if raw:
