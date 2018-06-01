@@ -30,6 +30,7 @@ min_count = 4
 sampling_threshold = 1e-5
 negative_size = 5
 train_epoch = 3000
+model_epochs = 20
 dm = 0  # 0 = dbow; 1 = dmpv
 worker_count = multiprocessing.cpu_count()  # number of parallel processes
 kmeans_clusters = 8
@@ -44,12 +45,12 @@ def train_doc2vec(train_data, dim=vector_size, epoch_num=train_epoch, window_siz
     all_data = train_data
     if not os.path.exists(os.path.join(path_model, 'model_dm')) or new_model:
         model_dm = Doc2Vec(dm=1, vector_size=dim, window=window_size,
-                           work=workers, min_count=min_count, epochs=epoch_num)
+                           work=workers, min_count=min_count, epochs=model_epochs)
     else:
         model_dm = Doc2Vec.load(os.path.join(path_model, 'model_dm'))
     if not os.path.exists(os.path.join(path_model, 'model_dbow')) or new_model:
         model_dbow = Doc2Vec(dm=0, vector_size=dim, window=window_size,
-                             work=workers, min_count=min_count, epochs=epoch_num)
+                             work=workers, min_count=min_count, epochs=model_epochs)
     else:
         model_dbow = Doc2Vec.load(os.path.join(path_model, 'model_dbow'))
     if not new_model:
