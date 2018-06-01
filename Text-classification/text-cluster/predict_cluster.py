@@ -53,16 +53,19 @@ def save_labeled_data(corpus, labels, file_name):
 
 
 if __name__ == '__main__':
+    test = False
+
     doc2vec_dm_model = Doc2Vec.load(os.path.join(path_model, 'doc2vec_dm'))
     doc2vec_dbow_model = Doc2Vec.load(os.path.join(path_model, 'doc2vec_dbow'))
     km_dm_model = joblib.load(os.path.join(path_model, 'kmeans_dm.pkl'))
     km_dbow_model = joblib.load(os.path.join(path_model, 'kmeans_dbow.pkl'))
-    corpus = load_data.get_dataset()
+    corpus = load_data.get_dataset(test=test)
     vecs_dm = load_data.get_doc_vec(doc2vec_dm_model, corpus)
     vecs_dbow = load_data.get_doc_vec(doc2vec_dbow_model, corpus)
 
     labels_dm = label_infer(km_dm_model, vecs_dm)
     labels_dbow = label_infer(km_dbow_model, vecs_dbow)
-    corpus = load_data.get_dataset(raw=True)
-    save_labeled_data(corpus, labels_dm, 'test-dm.json')
+    corpus = load_data.get_dataset(raw=True, test=test)
+    save_labeled_data(corpus, labels_dm, 'match-data-dm.json')
+    save_labeled_data(corpus, labels_dm, 'match-data-dbow.json')
 
