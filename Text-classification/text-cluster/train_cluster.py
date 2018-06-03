@@ -35,7 +35,7 @@ dm = 0  # 0 = dbow; 1 = dmpv
 worker_count = multiprocessing.cpu_count()  # number of parallel processes
 kmeans_clusters = 8
 dm_concat = 1
-path_model = 'model'
+path_model = 'model-new'
 if not os.path.exists(os.path.join(os.getcwd(), path_model)):
     os.makedirs(os.path.join(os.getcwd(), path_model))
 
