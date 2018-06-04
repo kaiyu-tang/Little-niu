@@ -26,12 +26,7 @@ path_data = 'data'
 if not os.path.exists(os.path.join(os.getcwd(), path_data)):
     os.makedirs(os.path.join(os.getcwd(), path_data))
 
-def visualize(tsne_model, vecs, labels):
-    X_tsne = preprocessing.normalize(tsne_model.embedding_, norm='l2')
-    num_vecs = len(vecs)
-    for i in range(num_vecs):
-        plt.plot(X_tsne[i][0], X_tsne[i][1], marksize=labels[i])
-    plt.show()
+
 
 
 def label_infer(model, vecs):

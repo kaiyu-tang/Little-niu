@@ -46,7 +46,7 @@ proxy = {'http': '125.46.0.62:53281'}
 
 
 def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen, re_match_start_time,
-                   connect_times=0):
+                   re_match_label, connect_times=0):
     """
     :param url:需要爬的网址
     :param header: 请求头
@@ -83,7 +83,8 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     # Bifen = re_match_Bifen.findall(page)
     timeline = re_match_time.findall(page)
     start_time = re_match_start_time.findall(page)[0]
-    timeline[-1] = '0'
+    labels = re_match_label.findall(page)
+    timeline[-1] = "0'"
     timeline[0] = timeline[1]
     match_basic = match_basic[0]
     res["Url"] = url
@@ -101,8 +102,8 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     res['time'] = time_res
 
     jieshuo = []
-    for txt, time_, bf in zip(text, timeline, bifen):
-        jieshuo.append({"text": txt, "time": time_, "vs": bf})
+    for txt, time_, bf, label in zip(text, timeline, bifen, labels):
+        jieshuo.append({"text": txt, "time": time_[:-1], "vs": bf, 'label': label})
     jieshuo.reverse()
     res["narrate"] = jieshuo
     return res
@@ -117,9 +118,9 @@ if __name__ == "__main__":
     match_end_id = 9999999
     batch_size = 100000
     count = 0
-    base_dir = "okoo-matches/{}.json"
-    if not os.path.exists("okoo-matches"):
-        os.mkdir("okoo-matches")
+    base_dir = "okoo-match/{}.json"
+    if not os.path.exists("okoo-match"):
+        os.mkdir("okoo-match")
 
     re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(.+?)】')
     # re_match_Bifen = re.compile(r'<div class="vs">\n\s+?<span class="vs_.+?">(\d+)</span>-<span class="vs_.+?">(\d+)</span>\n\s+?</div>')
@@ -129,6 +130,8 @@ if __name__ == "__main__":
                                 r'<b class=".*?">(\d)</b></p>')
     re_match_start_time = re.compile(r'<div class="qbx_2">\s+?<p>(\d+)-(\d+)-(\d+?).*?(\d+):(\d+)</p>\s+?<p></p>\s+?'
                                      r'<p><span style="display:inline-block;margin-left:10px"></span></p>\s+?</div>')
+    re_match_label = re.compile(r'<div class="livelistcon">\s+<span class="phrase_type_(\d+)"></span>\s+'
+                                r'<p class="float_l livelistcontext">')
     res_f = open(base_dir.format('result-new'), 'w')
     res_f.write('start id: {} \n end_id: {} \nbatch_size: {} \n'.format(match_start_id, match_end_id, batch_size))
     for loop in range((match_end_id - match_start_id) // batch_size):
@@ -139,7 +142,7 @@ if __name__ == "__main__":
             start_time = time.clock()
             thread = ThreadWithReturnValue(target=get_match_info,
                                            args=(url, headers, re_match_basic, re_match_jieshuo, re_match_timeline,
-                                                 re_match_bifen, re_match_start_time))
+                                                 re_match_bifen, re_match_start_time, re_match_label))
             # cur_res = get_match_info(url, headers,re_match_jieshuo,re_match_timeline,re_match_bifen)
             threads.append(thread)
             thread.start()
