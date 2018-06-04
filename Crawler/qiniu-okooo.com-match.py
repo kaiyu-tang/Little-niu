@@ -116,7 +116,7 @@ if __name__ == "__main__":
     threads = []
     match_start_id = 100000
     match_end_id = 9999999
-    batch_size = 100000
+    batch_size = 10
     count = 0
     base_dir = "okoo-match/{}.json"
     if not os.path.exists("okoo-match"):
@@ -169,3 +169,5 @@ if __name__ == "__main__":
     res_f.flush()
     res_f.close()
     # print(len(all_matches))
+
+
