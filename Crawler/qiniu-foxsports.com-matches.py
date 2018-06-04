@@ -56,7 +56,7 @@ if __name__ == "__main__":
         for player_id in range(player_cur_start_id, min(player_cur_start_id + batch_size, player_end_id)):
             url = base.format(player_id)
             start_time = time.clock()
-            thread = ThreadWithReturnValue(target=get_match_summary,
+            thread = ThreadWithReturnValue(target=get_foxsport_match(),
                                            args=(url, 0))
             threads.append(thread)
             thread.start()
