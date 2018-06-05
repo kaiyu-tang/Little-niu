@@ -178,6 +178,7 @@ class PlayerFaceReco(object):
 if __name__ == '__main__':
     pic_path = '/Users/harry/PycharmProjects/toys/Demo/face_reco/test_pictures/1.jpg'
 
+
     player_face_reco = PlayerFaceReco()
     result = player_face_reco.main(pic_path)  # 调用球星识别接口,返回球星姓名
     print(result)
