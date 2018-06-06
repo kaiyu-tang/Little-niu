@@ -221,4 +221,5 @@ if __name__ == "__main__":
                         threads_length += 1
                         thread.start()
                         end_time = time.clock()
+
                         # print("Runtime: {} {}".format(end_time - start_time, querystring))

@@ -26,6 +26,7 @@ def train_word2vec(data_path, args):
         model.train(sentences=sentences,epochs=args.word2vec_epoch_num)
 
 
+
 def eval_model(data_iter, model, args):
     model.eval()
     corrects, avg_loss = 0, 0
