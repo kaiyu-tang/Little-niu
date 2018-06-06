@@ -108,7 +108,7 @@ def get_foxsport_match(querystring, connect_times=0):
     res['Querystring'] = querystring
     try:
         page = requests.get(base_url, headers=headers, params=querystring, timeout=20)
-    except(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout):
+    except(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
         if connect_times < random.randint(1, 3):
@@ -132,7 +132,7 @@ def get_foxsport_match(querystring, connect_times=0):
         players.append(tmp_dict_)
     if len(players) != 0:
         res['players'] = players
-        #print(res)
+        # print(res)
     return res
 
 
@@ -159,7 +159,7 @@ def get_sort_index(querystring, connect_time=0):
             res[0] = int(re.findall('sort=(\d+?)', pkg_[0])[0])
         else:
             res = get_sort_index(querystring, connect_time=connect_time + 1)
-    except (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout):
+    except (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
         res = get_sort_index(querystring, connect_time=connect_time + 1)
     return res
 
@@ -174,11 +174,12 @@ if __name__ == "__main__":
 
     # batch_size = 100000
 
-    base_dir = "foxsports-matches/{}.json"
-    if not os.path.exists("foxsports-matches"):
-        os.mkdir("foxsports-matches")
+    base_dir = "foxsports-match/{}.json"
+    if not os.path.exists("foxsports-match"):
+        os.mkdir("foxsports-match")
 
     threads = []
+    threads_length = 0
     for season in seasons:
         querystring['season'] = season
         connect_time = 0
@@ -192,26 +193,32 @@ if __name__ == "__main__":
                     continue
                 print("sort_index={} pagenum={}".format(sort_index, page_num))
                 for page in range(1, page_num + 1):
-                    querystring['sort'] = sort_index
-                    querystring["page"] = str(page)
-                    querystring_ = copy.deepcopy(querystring)
-                    # url = base.format(competition_id, season, sort_index, page)
-                    start_time = time.clock()
-                    thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
-                    threads.append(thread)
-                    thread.start()
-                    end_time = time.clock()
-                    # print("Runtime: {} {}".format(end_time - start_time, querystring))
-            for thread in threads:
-                cur_res = thread.join()
-                # print()
-                try:
-                    if len(cur_res) > 1:
-                        # print(cur_res)
-                        querystring_ = cur_res['Querystring']
-                        print(cur_res)
-                        with open(base_dir.format(querystring_['season'] + "-" + querystring_['competition'] + "-" +
-                                                  querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
-                            json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
-                except TypeError as e:
-                    print(e)
+                    if len(threads) > 100:
+                        for thread in threads:
+                            cur_res = thread.join()
+                            # print()
+                            try:
+                                if len(cur_res) > 1:
+                                    # print(cur_res)
+                                    querystring_ = cur_res['Querystring']
+                                    print(cur_res)
+                                    with open(base_dir.format(
+                                            querystring_['season'] + "-" + querystring_['competition'] + "-" +
+                                            querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
+                                        json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                            except TypeError as e:
+                                print(e)
+                        threads = []
+                        threads_length = 0
+                    else:
+                        querystring['sort'] = sort_index
+                        querystring["page"] = str(page)
+                        querystring_ = copy.deepcopy(querystring)
+                        # url = base.format(competition_id, season, sort_index, page)
+                        start_time = time.clock()
+                        thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
+                        threads.append(thread)
+                        threads_length += 1
+                        thread.start()
+                        end_time = time.clock()
+                        # print("Runtime: {} {}".format(end_time - start_time, querystring))
