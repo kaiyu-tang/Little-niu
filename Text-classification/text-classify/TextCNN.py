@@ -9,32 +9,31 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+import Config
 
 
 class TextCNN(nn.Module):
 
-    def __init__(self, args):
+    def __init__(self):
         super(TextCNN, self).__init__()
-        self.args = args
 
-        embed_num = args.embed_num
-        embed_dim = args.embed_dim
-        class_num = args.class_num
-        Ci = 1
-        kernel_num = args.kernel_num
-        kernel_size = args.kernel_size
-        dropout = args.dropout
+        embed_num = Config.sequence_length
+        embed_dim = Config.embed_dim
+        class_num = Config.class_num
+        inchanel = 1
+        kernel_num = Config.kernel_num
+        kernel_size = Config.kernel_size
+        dropout = Config.dropout
 
         self.embed = nn.Embedding(embed_num, embed_dim)
-        self.conv1s = nn.ModuleList([nn.Conv2d(Ci, kernel_num, (K, embed_dim)) for K in kernel_size])
+        self.conv1s = nn.ModuleList([nn.Conv2d(inchanel, kernel_num, (K, embed_dim)) for K in kernel_size])
         self.dropout = nn.Dropout(dropout)
-        self.fc1 = nn.Linear(len(kernel_size)*kernel_num, class_num)
-
+        self.fc1 = nn.Linear(len(kernel_size) * kernel_num, class_num)
 
     def forward(self, x):
         x = self.embed(x)
 
-        if self.args.static:
+        if Config.static:
             x = Variable(x)
 
         x = x.unsqueeze(1)

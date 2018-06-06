@@ -15,6 +15,7 @@ from threading import Thread
 import re
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 from lxml import etree, html
+import copy
 from bs4 import BeautifulSoup
 
 import requests
@@ -106,9 +107,9 @@ def get_foxsport_match(querystring, connect_times=0):
     res = {}
     res['Querystring'] = querystring
     try:
-        page = requests.get(base_url, headers=headers, params=querystring, timeout=3)
+        page = requests.get(base_url, headers=headers, params=querystring, timeout=20)
     except(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout):
-        print('connect_times: {}'.format(connect_times))
+        # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
         if connect_times < random.randint(1, 3):
             return get_foxsport_match(querystring, connect_times + 1)
@@ -129,39 +130,45 @@ def get_foxsport_match(querystring, connect_times=0):
             tmp_ = td_.xpath('text()')[0]
             tmp_dict_[columns[index_]] = tmp_
         players.append(tmp_dict_)
-
-    res['players'] = players
-    print(res)
+    if len(players) != 0:
+        res['players'] = players
+        #print(res)
     return res
 
 
 def get_sort_index(querystring, connect_time=0):
     sort_index_ = -1
+    page_num_ = 1
+    res = [sort_index_, page_num_]
     if connect_time > 4:
-        return sort_index_
+        return res
     try:
         page = requests.get(base_url, params=querystring, headers=headers, timeout=3)
-        pkg_ = etree.HTML(page.content).xpath(
-            '//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th[@title="Penalty Kick Goals"]/a/@href')
-        pk_ = etree.HTML(page.content).xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th['
-                                             '@title="Penalty Kick"]/a/@href')
+        page = etree.HTML(page.content)
+        pkg_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th'
+                          '[@title="Penalty Kick Goals"]/a/@href')
+        pk_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th'
+                         '[@title="Penalty Kick"]/a/@href')
+        page_num_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[3]/a[last()-1]/@href')
+        if len(page_num_) != 0:
+            res[1] = int(re.findall('page=(\d+)', page_num_[0])[0])
+
         if len(pk_) != 0:
-            sort_index_ = int(re.findall('sort=(\d+?)', pk_[0])[0])
+            res[0] = int(re.findall('sort=(\d+?)', pk_[0])[0])
         elif len(pkg_) != 0:
-            sort_index_ = int(re.findall('sort=(\d+?)', pkg_[0])[0])
+            res[0] = int(re.findall('sort=(\d+?)', pkg_[0])[0])
         else:
-            sort_index_ = get_sort_index(querystring, connect_time=connect_time + 1)
+            res = get_sort_index(querystring, connect_time=connect_time + 1)
     except (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout):
-        sort_index_ = get_sort_index(querystring, connect_time=connect_time + 1)
-    return sort_index_
+        res = get_sort_index(querystring, connect_time=connect_time + 1)
+    return res
 
 
 if __name__ == "__main__":
     # base config
-    page_num = 4
     seasons = ['20130', '20131', '20132', '20140', '20141', '20142', '20150', '20151', '20152', '20160', '20161',
                '20162', '20170', '20171', '20172']
-    category = ['DISCIPLINE', 'STANDARD']
+    category = ['DISCIPLINE', 'STANDARD', 'GOALKEEPING', 'CONTROL']
     competition_start_id = 0
     competition_end_id = 1000
 
@@ -180,29 +187,31 @@ if __name__ == "__main__":
             # get sort column index
             for category_ in category:
                 querystring['category'] = category_
-                sort_index = get_sort_index(querystring)
+                (sort_index, page_num) = get_sort_index(querystring)
                 if sort_index < 0:
                     continue
-                print("sort_index={}".format(sort_index))
-                for page in range(1, page_num):
+                print("sort_index={} pagenum={}".format(sort_index, page_num))
+                for page in range(1, page_num + 1):
                     querystring['sort'] = sort_index
                     querystring["page"] = str(page)
+                    querystring_ = copy.deepcopy(querystring)
                     # url = base.format(competition_id, season, sort_index, page)
                     start_time = time.clock()
-                    thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring, 0))
+                    thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
                     threads.append(thread)
                     thread.start()
                     end_time = time.clock()
-                    print("{} \nRuntime: {}\n".format(querystring, end_time - start_time))
+                    # print("Runtime: {} {}".format(end_time - start_time, querystring))
             for thread in threads:
                 cur_res = thread.join()
-                print()
+                # print()
                 try:
-                    if len(cur_res) != 0:
+                    if len(cur_res) > 1:
                         # print(cur_res)
-                        with open(base_dir.format(
-                                querystring['season'] + "-" + querystring['competition'] + "-" + querystring['page']),
-                                'w') as f_w:
+                        querystring_ = cur_res['Querystring']
+                        print(cur_res)
+                        with open(base_dir.format(querystring_['season'] + "-" + querystring_['competition'] + "-" +
+                                                  querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
                             json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
                 except TypeError as e:
                     print(e)

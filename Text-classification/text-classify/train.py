@@ -11,6 +11,9 @@ import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
 import TextCNN
+import Config
+from gensim.models import Doc2Vec
+import random
 
 
 def eval_model(data_iter, model, args):
@@ -53,7 +56,7 @@ def train(model, train_iter, dev_iter, args):
     best_acc = 0
     last_step = 0
     model.train()
-    for epoch in range(args.epochs):
+    for epoch in range(args.textcnn_epochs):
         for batch in train_iter:
             feature, target = batch.text, batch.label
             feature.data.t_()
@@ -81,15 +84,17 @@ def train(model, train_iter, dev_iter, args):
                     best_acc = dev_acc
                     last_step = steps
                     if args.save_best:
-                        save(model, args.save_dir, 'best', steps)
+                        save(model, args.dir_model, 'best', steps)
                 else:
                     if steps - last_step >= args.early_stop:
                         print('early stop by {} steps.'.format(args.early_stop))
             elif steps % args.save_interval == 0:
-                save(model, args.save_dir, 'snapshot', steps)
+                save(model, args.dir_model, 'snapshot', steps)
 
 def predict(model, text, args):
     pass
 
 if __name__ == '__main__':
     textcnn = TextCNN()
+
+    train(textcnn,200,200,Config)

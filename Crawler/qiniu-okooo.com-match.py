@@ -60,7 +60,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
         time.sleep(random.randrange(0, 1.2))
         if connect_times < random.randint(1, 3):
             return get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time, re_match_bifen,
-                                  re_match_start_time, connect_times + 1)
+                                  re_mtch_starttime, connect_times + 1)
         else:
             return res
     # option = webdriver.ChromeOptions()

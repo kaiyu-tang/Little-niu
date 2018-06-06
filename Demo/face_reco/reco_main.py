@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from qiniu import QiniuMacAuth
+from .util.auth import QiniuMacAuth
 import numpy as np
-
+# from qiniu.auth import QiniuMacAuth
 import json
 import requests
 import struct
@@ -13,7 +13,7 @@ class PlayerFaceReco(object):
     def __init__(self):
         self.access_key = "2jtSAmw7Dcbp0zzNH7JCYXkr0iQwMzlSgVSZvU4Y"  # 密钥
         self.secret_key = "Vr5Ys_YRtGjxix4e6LnSOJH5GXDGiKUoCtUPxkqA"
-        self.source_path = './feature_lib/face_reco_v2.json'  # 球星特征库的路径
+        self.source_path = r'./fearure_lib/face_reco_v2(1).json'  # 球星特征库的路径
 
     # def get_pic_path(self):
     #     '''
@@ -154,14 +154,23 @@ class PlayerFaceReco(object):
         predict_player_name = feature_label[get_most_similarity_feature]
         return predict_player_name, highest_similarity
 
-    def main(self, pic_path):
+    def main(self, pic_path, types=0):
         """
         主函数，
-        :param pic_path: 图片路径
+        :param pic_uri: 图片路径
         :return: 预测球星姓名，相似度
         """
         # print('------------')
-        pic_url = pic_path
+        if types == 0:
+            with open(pic_path, 'rb') as f:
+                response = requests.post("http://fileserver.lego.ke-xs.cloudappl.com/v1/upload/stream", data=f.read())
+                response = json.loads(response.text)
+                pic_uri = response['extra']['uri']
+            pic_url = pic_uri
+        elif types == 1:
+            pic_url = pic_path
+        else:
+        player_face_reco = PlayerFaceReco()
         response_text = player_face_reco.face_reco(pic_url)
         response_text_json = json.loads(response_text)
         pts = response_text_json['result']['detections'][0]['boundingBox']['pts']
@@ -176,9 +185,7 @@ class PlayerFaceReco(object):
 
 
 if __name__ == '__main__':
-    pic_path = '/Users/harry/PycharmProjects/toys/Demo/face_reco/test_pictures/1.jpg'
-
-
+    pic_path = "/Users/harry/PycharmProjects/toys/Demo/face_reco/test_pictures/1.jpg"
     player_face_reco = PlayerFaceReco()
-    result = player_face_reco.main(pic_path)  # 调用球星识别接口,返回球星姓名
+    result = player_face_reco.main(pic_path, local=True)  # 调用球星识别接口,返回球星姓名
     print(result)
