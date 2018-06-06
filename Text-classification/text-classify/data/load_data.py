@@ -25,7 +25,7 @@ def readfile(dir_path):
     return res
 
 
-def load_data(data_path):
+def load_sentence_data(data_path):
     with open(data_path) as f_:
         js_data = json.load(f_)['all']
         for item in js_data:
@@ -38,4 +38,4 @@ if __name__ == '__main__':
     js_data = readfile(path)
     with open('okoo-label.json', 'w') as f:
         json.dump({'all': js_data}, f)
-    sentence = load_data(js_data)
+    sentence = load_sentence_data(js_data)

@@ -193,7 +193,7 @@ if __name__ == "__main__":
                     continue
                 print("sort_index={} pagenum={}".format(sort_index, page_num))
                 for page in range(1, page_num + 1):
-                    if len(threads) > 100:
+                    if threads_length > 20:
                         for thread in threads:
                             cur_res = thread.join()
                             # print()

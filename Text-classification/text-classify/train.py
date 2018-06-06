@@ -12,8 +12,18 @@ import torch.autograd as autograd
 import torch.nn.functional as F
 import TextCNN
 import Config
-from gensim.models import Doc2Vec
+from gensim.models import Word2Vec
 import random
+from .data.load_data import load_sentence_data
+
+def train_word2vec(data_path, args):
+    sentences = [text['text'] for text in load_sentence_data(data_path)]
+    model = Word2Vec(sentences=sentences, size=args.word2vec_net_size, window=args.window_size, min_count=args.min_count,
+                     workers=args.works)
+    model.build_vocab(sentences=sentences)
+    for epoch in range(args.word2vec_train_epoch):
+        random.shuffle(sentences)
+        model.train(sentences=sentences,epochs=args.word2vec_epoch_num)
 
 
 def eval_model(data_iter, model, args):

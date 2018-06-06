@@ -30,7 +30,7 @@ class Config:
     # doc2vec
     doc2vec_epoch_num = 20
     dm_concat = 0  # very time consuming
-    vector_size = 128
+    word2vec_net_size = 128
     train_epoch = 200
     window_size = 20
     works = multiprocessing.cpu_count()
