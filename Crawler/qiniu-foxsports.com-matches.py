@@ -107,11 +107,11 @@ def get_foxsport_match(querystring, connect_times=0):
     res = {}
     res['Querystring'] = querystring
     try:
-        page = requests.get(base_url, headers=headers, params=querystring, timeout=20)
+        page = requests.get(base_url, headers=headers, params=querystring, timeout=5)
     except(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
-        if connect_times < random.randint(1, 3):
+        if connect_times < random.randint(1, 5):
             return get_foxsport_match(querystring, connect_times + 1)
         else:
             return res
