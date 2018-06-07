@@ -201,7 +201,7 @@ if __name__ == "__main__":
                                 if len(cur_res) > 1:
                                     # print(cur_res)
                                     querystring_ = cur_res['Querystring']
-                                    print(cur_res)
+                                    print(querystring_)
                                     with open(base_dir.format(
                                             querystring_['season'] + "-" + querystring_['competition'] + "-" +
                                             querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
