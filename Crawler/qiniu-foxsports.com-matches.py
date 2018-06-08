@@ -108,7 +108,7 @@ def get_foxsport_match(querystring, connect_times=0):
     res['Querystring'] = querystring
     try:
         page = requests.get(base_url, headers=headers, params=querystring, timeout=5)
-    except(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
+    except:#(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
         if connect_times < random.randint(1, 5):
@@ -160,7 +160,7 @@ def get_sort_index(querystring, connect_time=0):
             res[0] = int(re.findall('sort=(\d+?)', pkg_[0])[0])
         else:
             res = get_sort_index(querystring, connect_time=connect_time + 1)
-    except (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
+    except:# (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
         res = get_sort_index(querystring, connect_time=connect_time + 1)
     return res
 
