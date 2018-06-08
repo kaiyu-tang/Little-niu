@@ -140,10 +140,11 @@ def get_sort_index(querystring, connect_time=0):
     sort_index_ = -1
     page_num_ = 1
     res = [sort_index_, page_num_]
-    if connect_time > 4:
+    if connect_time > 3:
         return res
     try:
-        page = requests.get(base_url, params=querystring, headers=headers, timeout=3)
+        time.sleep(random.randrange(4))
+        page = requests.get(base_url, params=querystring, headers=headers, timeout=4)
         page = etree.HTML(page.content)
         pkg_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th'
                           '[@title="Penalty Kick Goals"]/a/@href')
@@ -188,38 +189,40 @@ if __name__ == "__main__":
             # get sort column index
             for category_ in category:
                 querystring['category'] = category_
+                print("seasion={} competition:{} category={} ".format(season, competition_id, category_))
                 (sort_index, page_num) = get_sort_index(querystring)
                 if sort_index < 0:
                     continue
-                print("sort_index={} pagenum={}".format(sort_index, page_num))
+                print("seasion={} competition:{} category={} sort_index={} pagenum={}".format(season, competition_id,
+                                                                                              category_, sort_index,
+                                                                                              page_num))
                 for page in range(1, page_num + 1):
-                    if threads_length > 20:
-                        for thread in threads:
-                            cur_res = thread.join()
-                            # print()
-                            try:
-                                if len(cur_res) > 1:
-                                    # print(cur_res)
-                                    querystring_ = cur_res['Querystring']
-                                    print(querystring_)
-                                    with open(base_dir.format(
-                                            querystring_['season'] + "-" + querystring_['competition'] + "-" +
-                                            querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
-                                        json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
-                            except TypeError as e:
-                                print(e)
-                        threads = []
-                        threads_length = 0
-                    else:
-                        querystring['sort'] = sort_index
-                        querystring["page"] = str(page)
-                        querystring_ = copy.deepcopy(querystring)
-                        # url = base.format(competition_id, season, sort_index, page)
-                        start_time = time.clock()
-                        thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
-                        threads.append(thread)
-                        threads_length += 1
-                        thread.start()
-                        end_time = time.clock()
+                    querystring['sort'] = sort_index
+                    querystring["page"] = str(page)
+                    querystring_ = copy.deepcopy(querystring)
+                    # url = base.format(competition_id, season, sort_index, page)
+                    start_time = time.clock()
+                    thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
+                    threads.append(thread)
+                    threads_length += 1
+                    thread.start()
+                    end_time = time.clock()
+                print("start saving")
+                for thread in threads:
+                    cur_res = thread.join()
+                    # print()
+                    try:
+                        if len(cur_res) > 1:
+                            # print(cur_res)
+                            querystring_ = cur_res['Querystring']
+                            print(querystring_)
+                            with open(base_dir.format(
+                                    querystring_['season'] + "-" + querystring_['competition'] + "-" +
+                                    querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
+                                json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+                    except TypeError as e:
+                        print(e)
+                threads = []
+                print('finish saving')
 
-                        # print("Runtime: {} {}".format(end_time - start_time, querystring))
+                # print("Runtime: {} {}".format(end_time - start_time, querystring))

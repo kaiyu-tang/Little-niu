@@ -13,14 +13,29 @@ import json
 import jieba
 from itertools import chain
 from json.decoder import JSONDecodeError
+import numpy as np
+import torch
+from torch.autograd import Variable
+
+# import Config
+
+PAD = '*'
 
 
 def readfile(dir_path):
     res = []
+    stop_chars = ''',?.!;:(){}[]，。？；：（）【】'''
     file_names = os.listdir(dir_path)
     for file_name in file_names:
-        with open(os.path.join(dir_path, file_name)) as f:
+        if file_name == 'result-new.json':
+            continue
+        with open(os.path.join(dir_path, file_name), 'rb') as f:
             data = json.load(f)
+            for item in data['narrate']:
+                for c in stop_chars:
+                    item['text'] = item['text'].replace(c, ' ')
+                item['text'] = ''.join(jieba.lcut(item['text']))
+                print()
             res.extend(data['narrate'])
     return res
 
@@ -28,14 +43,68 @@ def readfile(dir_path):
 def load_sentence_data(data_path):
     with open(data_path) as f_:
         js_data = json.load(f_)['all']
-        for item in js_data:
-            item['text'] = jieba.cut(item['text'])
+        # for item in js_data:
+        # item['text'] = jieba.lcut(item['text'])
+
     return js_data
 
 
+class DataLoader(object):
+    def __init__(self, src_sents, label, max_len, cuda=True, batch_size=64, shuffle=True, evaluation=False):
+        self.cuda = cuda
+        self.sents_size = len(src_sents)
+        self._step = 0
+        self._batch_size = batch_size
+        self._stop_step = self.sents_size // self._batch_size + 1
+        self.evaluation = evaluation
+
+        self._max_len = max_len
+        self._src_sents = np.asarray(src_sents)
+        self._label = np.asarray(label)
+        if shuffle:
+            self._shuffle()
+
+    def _shuffle(self):
+        indices = np.arange(self._src_sents.shape[0])
+        np.random.shuffle(indices)
+        self._src_sents = self._src_sents[indices]
+        self._label = self._label[indices]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        def pad_to_longest(insts, max_len):
+            for index, inst in enumerate(insts):
+                inst_len = len(inst)
+                if inst_len < max_len:
+                    insts[index] = inst + [PAD] * (max_len - inst_len)
+                elif inst_len > max_len:
+                    insts[index] = inst[:max_len]
+            inst_data = np.array(insts)
+            inst_data_tensor = Variable(torch.from_numpy(inst_data), volatile=self.evaluation)
+            return inst_data_tensor
+
+        if self._step == self._stop_step:
+            self._step = 0
+            raise StopIteration
+
+        _start = self._step * self._batch_size
+        _bsz = min(self._batch_size, self.sents_size - _start)
+        self._step += 1
+        data = pad_to_longest(self._src_sents[_start:_start + _bsz], self._max_len)
+        label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
+                         volatile=self.evaluation)
+        if self.cuda:
+            label = label.cuda()
+            data = data.cuda()
+
+        return data, label
+
+
 if __name__ == '__main__':
-    path = ''
+    path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/okoo-match'
     js_data = readfile(path)
     with open('okoo-label.json', 'w') as f:
-        json.dump({'all': js_data}, f)
-    sentence = load_sentence_data(js_data)
+        json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+    # sentence = load_sentence_data('okoo-label.json')

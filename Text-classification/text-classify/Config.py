@@ -10,7 +10,7 @@ import torch
 class Config:
     # basic
     cuda = torch.cuda.is_available()
-    dir_model = ''
+    dir_model = "/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints"
 
     # textcnn
     sequence_length = 256
@@ -28,10 +28,12 @@ class Config:
     early_stop = 0
 
     # doc2vec
-    doc2vec_epoch_num = 20
+    word2vec_epoch_num = 20
     dm_concat = 0  # very time consuming
     word2vec_net_size = 128
-    train_epoch = 200
-    window_size = 20
+    word2vec_train_epoch = 10
+    window_size = 10
     works = multiprocessing.cpu_count()
-    min_count = 2
+    min_count = 4
+    word2vec_sg = 1
+    word2vec_model_name = 'word2vec'

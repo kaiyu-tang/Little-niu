@@ -11,20 +11,28 @@ import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
 import TextCNN
-import Config
+from Config import Config
 from gensim.models import Word2Vec
 import random
-from .data.load_data import load_sentence_data
+from data.load_data import load_sentence_data
+
 
 def train_word2vec(data_path, args):
-    sentences = [text['text'] for text in load_sentence_data(data_path)]
-    model = Word2Vec(sentences=sentences, size=args.word2vec_net_size, window=args.window_size, min_count=args.min_count,
+    data = load_sentence_data(data_path)
+    sentences = [text['text'] for text in data]
+    print("finished load data")
+    #labels = [text['label'] for text in data]
+    model = Word2Vec(sentences=sentences, size=args.word2vec_net_size, window=args.window_size,
+                     min_count=args.min_count,
                      workers=args.works)
-    model.build_vocab(sentences=sentences)
+    #model.build_vocab(sentences=sentences)
+    print("finished build_vocab")
     for epoch in range(args.word2vec_train_epoch):
         random.shuffle(sentences)
-        model.train(sentences=sentences,epochs=args.word2vec_epoch_num)
+        model.train(sentences=sentences, epochs=args.word2vec_epoch_num,total_examples=model.corpus_count)
+        print(epoch)
 
+    model.save(os.path.join(args.dir_model, args.word2vec_model_name))
 
 
 def eval_model(data_iter, model, args):
@@ -62,14 +70,15 @@ def train(model, train_iter, dev_iter, args):
     if args.cuda:
         model.cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
+    word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     steps = 0
     best_acc = 0
     last_step = 0
     model.train()
     for epoch in range(args.textcnn_epochs):
-        for batch in train_iter:
-            feature, target = batch.text, batch.label
+        for corpus, target in train_iter:
+            corpus = corpus[0]
+            feature = [word2vec_model[word] for word in corpus]
             feature.data.t_()
             target.data.sub_()
             if args.cuda:
@@ -85,9 +94,9 @@ def train(model, train_iter, dev_iter, args):
 
             if steps % args.log_interval == 0:
                 corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-                accuracy = 100.0 * corrects / batch.batch_size
+                accuracy = 100.0 * corrects
                 sys.stdout.write('\rBatch[{}] - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
-                    steps, loss.data[0], accuracy, corrects, batch.batch_size))
+                    steps, loss.data[0], accuracy, corrects, 1))
 
             if steps % args.test_interval == 0:
                 dev_acc = eval_model(dev_iter, model, args)
@@ -102,10 +111,14 @@ def train(model, train_iter, dev_iter, args):
             elif steps % args.save_interval == 0:
                 save(model, args.dir_model, 'snapshot', steps)
 
+
 def predict(model, text, args):
     pass
 
-if __name__ == '__main__':
-    textcnn = TextCNN()
 
-    train(textcnn,200,200,Config)
+if __name__ == '__main__':
+    data_path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/data/okoo-label.json'
+#    textcnn = TextCNN()
+    train_word2vec(data_path, Config)
+    print('')
+    #train(textcnn, 200, 200, Config)
