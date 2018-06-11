@@ -20,17 +20,17 @@ from data.load_data import load_sentence_data
 def train_word2vec(data_path, args):
     print("loading data")
     data = load_sentence_data(data_path)
-    sentences = [text['text'] for text in data]
+    sentences = [text['text'].split() for text in data]
     print("finished load data")
-    #labels = [text['label'] for text in data]
+    # labels = [text['label'] for text in data]
     model = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
                      min_count=args.min_count,
-                     workers=args.works,sg=args.word2vec_sg)
-    #model.build_vocab(sentences=sentences)
+                     workers=args.works, sg=args.word2vec_sg)
+    # model.build_vocab(sentences=sentences)
     print("finished build_vocab")
     for epoch in range(args.word2vec_train_epoch):
         random.shuffle(sentences)
-        model.train(sentences=sentences, epochs=args.word2vec_epoch_num,total_examples=model.corpus_count)
+        model.train(sentences=sentences, epochs=args.word2vec_epoch_num, total_examples=model.corpus_count)
         print(epoch)
     model.save(os.path.join(args.dir_model, args.word2vec_model_name))
 
@@ -118,8 +118,8 @@ def predict(model, text, args):
 
 if __name__ == '__main__':
     data_path = './data/okoo-labels.json'
-#    textcnn = TextCNN()
+    #    textcnn = TextCNN()
     train_word2vec(data_path, Config)
     print('')
-    #train_iters =
-    #train(textcnn, 200, 200, Config)
+    # train_iters =
+    # train(textcnn, 200, 200, Config)
