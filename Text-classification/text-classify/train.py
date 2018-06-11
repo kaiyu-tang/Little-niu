@@ -18,6 +18,7 @@ from data.load_data import load_sentence_data
 
 
 def train_word2vec(data_path, args):
+    print("loading data")
     data = load_sentence_data(data_path)
     sentences = [text['text'] for text in data]
     print("finished load data")
@@ -120,4 +121,5 @@ if __name__ == '__main__':
 #    textcnn = TextCNN()
     train_word2vec(data_path, Config)
     print('')
+    #train_iters =
     #train(textcnn, 200, 200, Config)
