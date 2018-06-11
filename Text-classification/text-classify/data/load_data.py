@@ -6,6 +6,7 @@
 # @File    : load_data.py
 
 import os
+import re
 
 import numpy as np
 from gensim.models.doc2vec import LabeledSentence
@@ -17,25 +18,29 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 
-# import Config
+# from Config import Config
 
 PAD = '*'
 
 
 def readfile(dir_path):
     res = []
-    stop_chars = ''',?.!;:(){}[]，。？；：（）【】'''
+    stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由'''
     file_names = os.listdir(dir_path)
+    index = 0
     for file_name in file_names:
         if file_name == 'result-new.json':
             continue
         with open(os.path.join(dir_path, file_name), 'rb') as f:
             data = json.load(f)
             for item in data['narrate']:
+                d_ = re.sub('[a-zA-Z]+', '', item['text'])
                 for c in stop_chars:
-                    item['text'] = item['text'].replace(c, ' ')
-                item['text'] = ''.join(jieba.lcut(item['text']))
-                print()
+                    d_ = d_.replace(c, ' ')
+                d_= ' '.join(jieba.lcut(d_))
+                item['text'] = ' '.join(d_.split())
+                print(index)
+                index += 1
             res.extend(data['narrate'])
     return res
 
@@ -105,6 +110,6 @@ class DataLoader(object):
 if __name__ == '__main__':
     path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/okoo-match'
     js_data = readfile(path)
-    with open('okoo-label.json', 'w') as f:
+    with open('okoo-labels.json', 'w') as f:
         json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
     # sentence = load_sentence_data('okoo-label.json')

@@ -28,12 +28,12 @@ class Config:
     early_stop = 0
 
     # doc2vec
-    word2vec_epoch_num = 20
+    word2vec_epoch_num = 12
     dm_concat = 0  # very time consuming
     word2vec_net_size = 128
-    word2vec_train_epoch = 10
+    word2vec_train_epoch = 100
     window_size = 10
     works = multiprocessing.cpu_count()
-    min_count = 4
+    min_count = 2
     word2vec_sg = 1
-    word2vec_model_name = 'word2vec'
+    word2vec_model_name = 'word2vec-cbow'

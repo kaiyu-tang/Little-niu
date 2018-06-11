@@ -22,7 +22,7 @@ def train_word2vec(data_path, args):
     sentences = [text['text'] for text in data]
     print("finished load data")
     #labels = [text['label'] for text in data]
-    model = Word2Vec(sentences=sentences, size=args.word2vec_net_size, window=args.window_size,
+    model = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
                      min_count=args.min_count,
                      workers=args.works)
     #model.build_vocab(sentences=sentences)
@@ -31,7 +31,6 @@ def train_word2vec(data_path, args):
         random.shuffle(sentences)
         model.train(sentences=sentences, epochs=args.word2vec_epoch_num,total_examples=model.corpus_count)
         print(epoch)
-
     model.save(os.path.join(args.dir_model, args.word2vec_model_name))
 
 
@@ -117,7 +116,7 @@ def predict(model, text, args):
 
 
 if __name__ == '__main__':
-    data_path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/data/okoo-label.json'
+    data_path = './data/okoo-labels.json'
 #    textcnn = TextCNN()
     train_word2vec(data_path, Config)
     print('')
