@@ -10,7 +10,7 @@ import torch
 class Config:
     # basic
     cuda = torch.cuda.is_available()
-    dir_model = "/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints"
+    dir_model = "./checkpoints"
 
     # textcnn
     sequence_length = 256
