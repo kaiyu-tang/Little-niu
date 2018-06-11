@@ -33,7 +33,7 @@ class Config:
     word2vec_net_size = 128
     word2vec_train_epoch = 100
     window_size = 10
-    works = multiprocessing.cpu_count()
+    works = multiprocessing.cpu_count()//3
     min_count = 2
     word2vec_sg = 0
     word2vec_model_name = 'word2vec-cbow'
