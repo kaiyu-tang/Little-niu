@@ -35,5 +35,5 @@ class Config:
     window_size = 10
     works = multiprocessing.cpu_count()//3
     min_count = 2
-    word2vec_sg = 0
-    word2vec_model_name = 'word2vec-cbow'
+    word2vec_sg = 1
+    word2vec_model_name = 'word2vec-skim'
