@@ -36,4 +36,4 @@ class Config:
     works = multiprocessing.cpu_count()
     min_count = 2
     word2vec_sg = 1
-    word2vec_model_name = 'word2vec-cbow'
+    word2vec_model_name = 'word2vec-skim'

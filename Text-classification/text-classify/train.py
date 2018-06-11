@@ -25,7 +25,7 @@ def train_word2vec(data_path, args):
     #labels = [text['label'] for text in data]
     model = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
                      min_count=args.min_count,
-                     workers=args.works)
+                     workers=args.works,sg=args.word2vec_sg)
     #model.build_vocab(sentences=sentences)
     print("finished build_vocab")
     for epoch in range(args.word2vec_train_epoch):
