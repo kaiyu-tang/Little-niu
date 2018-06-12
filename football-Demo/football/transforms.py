@@ -29,6 +29,9 @@ class GroupNormalize(object):
         return tensor
 
 
+
+
+
 class GroupScale(object):
     """ Rescales the input PIL.Image to the given 'size'.
     'size' will be the size of the smaller edge.
