@@ -9,6 +9,7 @@ import os
 import re
 
 import numpy as np
+from gensim.models import Word2Vec
 from gensim.models.doc2vec import LabeledSentence
 import json
 import jieba
@@ -18,7 +19,7 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 
-# from Config import Config
+from Config import Config
 
 PAD = '*'
 
@@ -37,7 +38,7 @@ def readfile(dir_path):
                 d_ = re.sub('[a-zA-Z]+', '', item['text'])
                 for c in stop_chars:
                     d_ = d_.replace(c, ' ')
-                d_= ' '.join(jieba.lcut(d_))
+                d_ = ' '.join(jieba.lcut(d_))
                 item['text'] = ' '.join(d_.split())
                 print(index)
                 index += 1
@@ -55,7 +56,7 @@ def load_sentence_data(data_path):
 
 
 class DataLoader(object):
-    def __init__(self, src_sents, label, max_len, cuda=True, batch_size=64, shuffle=True, evaluation=False):
+    def __init__(self, src_sents, label, max_len, embed_dim, cuda=True, batch_size=64, shuffle=True, evaluation=False):
         self.cuda = cuda
         self.sents_size = len(src_sents)
         self._step = 0
@@ -66,6 +67,7 @@ class DataLoader(object):
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
         self._label = np.asarray(label)
+        self._embed_dim = embed_dim
         if shuffle:
             self._shuffle()
 
@@ -78,6 +80,9 @@ class DataLoader(object):
     def __iter__(self):
         return self
 
+    def __len__(self):
+        return self._batch_size
+
     def __next__(self):
         def pad_to_longest(insts, max_len):
             for index, inst in enumerate(insts):
@@ -86,9 +91,18 @@ class DataLoader(object):
                     insts[index] = inst + [PAD] * (max_len - inst_len)
                 elif inst_len > max_len:
                     insts[index] = inst[:max_len]
-            inst_data = np.array(insts)
-            inst_data_tensor = Variable(torch.from_numpy(inst_data), volatile=self.evaluation)
-            return inst_data_tensor
+            return insts
+
+        def convert_to_vectors(insts, max_len, embed_dim):
+            word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
+            insts_num = len(insts)
+            data = np.zeros((insts_num, max_len, embed_dim))
+            for index_0, inst in enumerate(insts):
+                for index_1, word in enumerate(inst):
+                    if word != PAD and word in word2vec_model:
+                        data[index_0][index_1] = word2vec_model[word]
+            data = Variable(torch.from_numpy(data), volatile=self.evaluation)
+            return data
 
         if self._step == self._stop_step:
             self._step = 0
@@ -98,9 +112,11 @@ class DataLoader(object):
         _bsz = min(self._batch_size, self.sents_size - _start)
         self._step += 1
         data = pad_to_longest(self._src_sents[_start:_start + _bsz], self._max_len)
+        data = convert_to_vectors(data, max_len=self._max_len, embed_dim=self._embed_dim)
         label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
                          volatile=self.evaluation)
         if self.cuda:
+            print(self.cuda)
             label = label.cuda()
             data = data.cuda()
 

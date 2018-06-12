@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-import Config
+from Config import Config
 
 
 class TextCNN(nn.Module):
@@ -18,7 +18,7 @@ class TextCNN(nn.Module):
         super(TextCNN, self).__init__()
 
         embed_num = Config.sequence_length
-        embed_dim = Config.embed_dim
+        embed_dim = Config.word_embed_dim
         class_num = Config.class_num
         inchanel = 1
         kernel_num = Config.kernel_num
@@ -31,8 +31,8 @@ class TextCNN(nn.Module):
         self.fc1 = nn.Linear(len(kernel_size) * kernel_num, class_num)
 
     def forward(self, x):
-        x = self.embed(x)
-
+        print()
+        #x = self.embed(x)
         if Config.static:
             x = Variable(x)
 

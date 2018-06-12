@@ -10,7 +10,7 @@ import sys
 import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
-import TextCNN
+from TextCNN import TextCNN
 from Config import Config
 from gensim.models import Word2Vec
 import random
@@ -38,12 +38,10 @@ def train_word2vec(sentences, args):
 
 def eval_model(data_iter, model, args):
     model.eval()
-    word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     corrects, avg_loss = 0, 0
-    for corpus, target in data_iter:
-        corpus = corpus[0]
-        feature = [word2vec_model[word] for word in corpus]
-        feature.data.t_(), target.data.sub_()
+    step =0
+    for feature, target in data_iter:
+        step += 1
         if args.cuda:
             feature, target = feature.cuda(), target.cuda()
 
@@ -52,9 +50,9 @@ def eval_model(data_iter, model, args):
 
         avg_loss += loss.data[0]
         corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-        size = len(data_iter.dataset)
+        size = len(data_iter)
         avg_loss /= size
-        accuracy = 100.0 * corrects / size
+        accuracy = 100.0 * corrects / (size*step)
         print('\nEvaluation - loss: {:.6f}  acc: {:.4f}%({}/{}) \n'.format(
             avg_loss, accuracy, corrects, size))
     return accuracy
@@ -78,12 +76,12 @@ def train(model, train_iter, dev_iter, args):
     best_acc = 0
     last_step = 0
     model.train()
+    model.double()
     for epoch in range(args.textcnn_epochs):
-        for corpus, target in train_iter:
-            corpus = corpus[0]
-            feature = [word2vec_model[word] for word in corpus]
-            feature.data.t_()
-            target.data.sub_()
+        for feature, target in train_iter:
+            # feature = feature.data()
+            # feature.data.t_()
+            # target.data.sub_()
             if args.cuda:
                 feature, target = feature.cuda(), target.cuda()
 
@@ -97,8 +95,8 @@ def train(model, train_iter, dev_iter, args):
 
             if steps % args.log_interval == 0:
                 corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-                accuracy = 100.0 * corrects
-                sys.stdout.write('\rBatch[{}] - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
+                accuracy = 100.0 * corrects/target.shape[0]
+                print('\rBatch[{}] - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
                     steps, loss.data[0], accuracy, corrects, 1))
 
             if steps % args.test_interval == 0:
@@ -121,18 +119,23 @@ def predict(model, text, args):
 
 if __name__ == '__main__':
     data_path = './data/okoo-labels.json'
-    # textcnn = TextCNN()
+    textcnn = TextCNN()
     data = load_sentence_data(data_path)
     sentences = []
     labels = []
     for text in data:
         sentences.append(text['text'].split())
-        labels.append(int(text['label']))
+        label = int(text['label'])
+        if label > Config.class_num:
+            Config.class_num = label
+        labels.append(label)
 
-    train_word2vec(sentences, Config)
-    # data_len = len(data)
-    # train_index = int(data_len * Config.train_proportion)
-    # print('')
-    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length, )
-    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length, )
-    # train(textcnn, train_iters, dev_iters, Config)
+    # train_word2vec(sentences, Config)
+    data_len = len(data)
+    train_index = int(data_len * Config.train_proportion)
+    print('')
+    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
+                             Config.word_embed_dim, cuda=Config.cuda, )
+    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
+                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
+    train(textcnn, train_iters, dev_iters, Config)
