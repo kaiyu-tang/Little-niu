@@ -14,13 +14,12 @@ import TextCNN
 from Config import Config
 from gensim.models import Word2Vec
 import random
-from data.load_data import load_sentence_data
+from data.load_data import load_sentence_data, DataLoader
 
 
-def train_word2vec(data_path, args):
+def train_word2vec(sentences, args):
     print("loading data")
-    data = load_sentence_data(data_path)
-    sentences = [text['text'].split() for text in data]
+
     print("finished load data")
     # labels = [text['label'] for text in data]
     model = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
@@ -32,14 +31,18 @@ def train_word2vec(data_path, args):
         random.shuffle(sentences)
         model.train(sentences=sentences, epochs=args.word2vec_epoch_num, total_examples=model.corpus_count)
         print(epoch)
-    model.save(os.path.join(args.dir_model, args.word2vec_model_name))
+        if epoch % 20 == 0:
+            model.save(os.path.join(args.dir_model, str(epoch) + args.word2vec_model_name))
+    model.save(os.path.join(args.dir_model, str(epoch) + args.word2vec_model_name))
 
 
 def eval_model(data_iter, model, args):
     model.eval()
+    word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     corrects, avg_loss = 0, 0
-    for batch in data_iter:
-        feature, target = batch.text, batch.label
+    for corpus, target in data_iter:
+        corpus = corpus[0]
+        feature = [word2vec_model[word] for word in corpus]
         feature.data.t_(), target.data.sub_()
         if args.cuda:
             feature, target = feature.cuda(), target.cuda()
@@ -118,8 +121,18 @@ def predict(model, text, args):
 
 if __name__ == '__main__':
     data_path = './data/okoo-labels.json'
-    #    textcnn = TextCNN()
-    train_word2vec(data_path, Config)
+    textcnn = TextCNN()
+    data = load_sentence_data(data_path)
+    sentences = []
+    labels = []
+    for text in data:
+        sentences.append(text['text'].split())
+        labels.append(int(text['label']))
+
+    train_word2vec(sentences, Config)
+    data_len = len(data)
+    train_index = int(data_len * Config.train_proportion)
     print('')
-    # train_iters =
-    # train(textcnn, 200, 200, Config)
+    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length, )
+    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length, )
+    train(textcnn, train_iters, dev_iters, Config)

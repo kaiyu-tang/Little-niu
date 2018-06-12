@@ -26,6 +26,7 @@ class Config:
     test_interval = 20
     save_best = True
     early_stop = 0
+    train_proportion = 0.97
 
     # doc2vec
     word2vec_epoch_num = 12
@@ -35,5 +36,5 @@ class Config:
     window_size = 10
     works = multiprocessing.cpu_count()//3
     min_count = 2
-    word2vec_sg = 1
-    word2vec_model_name = 'word2vec-skim'
+    word2vec_sg = 0
+    word2vec_model_name = 'word2vec-cbow'
