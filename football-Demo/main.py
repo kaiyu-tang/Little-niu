@@ -91,6 +91,7 @@ if __name__ == '__main__':
                     break
         else:
             stream_handle.destroy()
+            print()
 
     outVideo.release()
     cap.release()
