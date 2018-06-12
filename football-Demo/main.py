@@ -91,7 +91,6 @@ if __name__ == '__main__':
                     break
         else:
             stream_handle.destroy()
-            # cv2.waitKey(0)
 
     outVideo.release()
     cap.release()
