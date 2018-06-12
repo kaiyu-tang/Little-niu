@@ -64,11 +64,14 @@ if __name__ == '__main__':
                 if player_cur_name != '':
                     player_name = player_cur_name
                     player_basic = player_inf.get_info(player_name)
-                    if "penalty_kick_goals" in player_basic:
-                        pkg = player_basic["penalty_kick_goals"]
-                    if "penalty_kick" in player_basic:
-                        pk = player_basic["penalty_kick"]
-                    img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), pkg, pk, )
+                    if 0 != len(player_basic):
+                        player_basic = player_basic['performance']
+                        if "penalty_kick_goals" in player_basic:
+                            pkg = player_basic["penalty_kick_goals"]
+                        if "penalty_kick" in player_basic:
+                            pk = player_basic["penalty_kick"]
+                        img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), pkg, pk, )
+
 
                 print(img_text)
                 cv_frame = cv2.cvtColor(np.asarray(frames[0]), cv2.COLOR_RGB2BGR)
@@ -77,7 +80,6 @@ if __name__ == '__main__':
                     plt.text(0, 40, img_text, fontdict={'size': '16', 'color': 'white'})
                     plt.show()
 
-
                 # cv_frame = cv_frame.copy()
                 # draw = ImageDraw.Draw(frames[0])
                 # draw.text((0, 40), 'Nicolás', fill=(255, 255, 255))
@@ -85,13 +87,14 @@ if __name__ == '__main__':
                 # cv_text_frame = cv2.putText(cv_frame.copy(), img_text, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2,
                 #                             (255, 255, 255),
                 #                             2)
-                outVideo.write(cv_frame)
+                c = outVideo.write(cv_frame)
+                # print(c)
                 cv2.imshow('Image', cv_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
         else:
             stream_handle.destroy()
-
+            # cv2.waitKey(0)
 
     outVideo.release()
     cap.release()

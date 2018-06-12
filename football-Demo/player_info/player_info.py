@@ -23,14 +23,17 @@ class player_info(object):
         payload = {}
         payload['player_name'] = name
         response = requests.request("POST", self.url, data=json.dumps(payload), headers=self.headers)
-        response = json.loads(response.text)
-        if len(response) != 0:
-            return response[0]
-        else:
+        try:
+            response = json.loads(response.text)
+            if len(response) != 0:
+                return response[0]
+            else:
+                return {}
+        except:
             return {}
 
 
 if __name__ == "__main__":
     player_ = player_info()
-    re = player_.get_info("Castro, G")
+    re = player_.get_info("Castro, G.")
     print()

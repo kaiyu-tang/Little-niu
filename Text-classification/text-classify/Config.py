@@ -32,7 +32,7 @@ class Config:
     word2vec_epoch_num = 12
     dm_concat = 0  # very time consuming
     word2vec_net_size = 128
-    word2vec_train_epoch = 100
+    word2vec_train_epoch = 200
     window_size = 10
     works = multiprocessing.cpu_count()//3
     min_count = 2

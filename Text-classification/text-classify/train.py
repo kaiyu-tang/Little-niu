@@ -32,8 +32,8 @@ def train_word2vec(sentences, args):
         model.train(sentences=sentences, epochs=args.word2vec_epoch_num, total_examples=model.corpus_count)
         print(epoch)
         if epoch % 20 == 0:
-            model.save(os.path.join(args.dir_model, str(epoch) + args.word2vec_model_name))
-    model.save(os.path.join(args.dir_model, str(epoch) + args.word2vec_model_name))
+            model.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
+    model.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
 
 
 def eval_model(data_iter, model, args):
@@ -121,7 +121,7 @@ def predict(model, text, args):
 
 if __name__ == '__main__':
     data_path = './data/okoo-labels.json'
-    textcnn = TextCNN()
+    # textcnn = TextCNN()
     data = load_sentence_data(data_path)
     sentences = []
     labels = []
@@ -130,9 +130,9 @@ if __name__ == '__main__':
         labels.append(int(text['label']))
 
     train_word2vec(sentences, Config)
-    data_len = len(data)
-    train_index = int(data_len * Config.train_proportion)
-    print('')
-    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length, )
-    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length, )
-    train(textcnn, train_iters, dev_iters, Config)
+    # data_len = len(data)
+    # train_index = int(data_len * Config.train_proportion)
+    # print('')
+    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length, )
+    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length, )
+    # train(textcnn, train_iters, dev_iters, Config)
