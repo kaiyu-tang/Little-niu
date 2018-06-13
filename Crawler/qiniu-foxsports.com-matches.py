@@ -108,7 +108,7 @@ def get_foxsport_match(querystring, connect_times=0):
     res['Querystring'] = querystring
     try:
         page = requests.get(base_url, headers=headers, params=querystring, timeout=5)
-    except:#(ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
+    except:  # (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
         if connect_times < random.randint(1, 5):
@@ -160,7 +160,7 @@ def get_sort_index(querystring, connect_time=0):
             res[0] = int(re.findall('sort=(\d+?)', pkg_[0])[0])
         else:
             res = get_sort_index(querystring, connect_time=connect_time + 1)
-    except:# (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
+    except:  # (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
         res = get_sort_index(querystring, connect_time=connect_time + 1)
     return res
 
@@ -172,6 +172,7 @@ if __name__ == "__main__":
     category = ['DISCIPLINE', 'STANDARD', 'GOALKEEPING', 'CONTROL']
     competition_start_id = 0
     competition_end_id = 1000
+    step = 0
 
     # batch_size = 100000
 
@@ -184,14 +185,18 @@ if __name__ == "__main__":
     for season in seasons:
         querystring['season'] = season
         connect_time = 0
+        step = 0
         for competition_id in range(competition_start_id, competition_end_id):
             querystring['competition'] = str(competition_id)
+            if step > 20:
+                break
             # get sort column index
             for category_ in category:
                 querystring['category'] = category_
                 print("seasion={} competition:{} category={} ".format(season, competition_id, category_))
                 (sort_index, page_num) = get_sort_index(querystring)
                 if sort_index < 0:
+                    step += 1
                     continue
                 print("seasion={} competition:{} category={} sort_index={} pagenum={}".format(season, competition_id,
                                                                                               category_, sort_index,

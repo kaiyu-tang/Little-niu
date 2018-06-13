@@ -101,7 +101,9 @@ class DataLoader(object):
                 for index_1, word in enumerate(inst):
                     if word != PAD and word in word2vec_model:
                         data[index_0][index_1] = word2vec_model[word]
-            data = Variable(torch.from_numpy(data), volatile=self.evaluation)
+            data = Variable(torch.from_numpy(data))
+            if self.evaluation:
+                torch.no_grad(data)
             return data
 
         if self._step == self._stop_step:
@@ -113,8 +115,9 @@ class DataLoader(object):
         self._step += 1
         data = pad_to_longest(self._src_sents[_start:_start + _bsz], self._max_len)
         data = convert_to_vectors(data, max_len=self._max_len, embed_dim=self._embed_dim)
-        label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
-                         volatile=self.evaluation)
+        label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]))
+        if self.evaluation:
+            torch.no_grad(label)
         if self.cuda:
             print(self.cuda)
             label = label.cuda()

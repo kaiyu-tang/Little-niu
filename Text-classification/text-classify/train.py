@@ -52,9 +52,9 @@ def eval_model(data_iter, model, args):
         corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
         size = len(data_iter)
         avg_loss /= size
-        accuracy = 100.0 * corrects / (size*step)
-        print('\nEvaluation - loss: {:.6f}  acc: {:.4f}%({}/{}) \n'.format(
-            avg_loss, accuracy, corrects, size))
+        accuracy = 100.0 * corrects /  size
+        print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
+            avg_loss, accuracy/step, corrects, size))
     return accuracy
 
 
