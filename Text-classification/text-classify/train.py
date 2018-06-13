@@ -4,7 +4,7 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : train.py
-
+import json
 import os
 import sys
 import torch
@@ -15,6 +15,7 @@ from Config import Config
 from gensim.models import Word2Vec
 import random
 from data.load_data import load_sentence_data, DataLoader
+from matplotlib import pyplot as plt
 
 
 def train_word2vec(sentences, args):
@@ -39,7 +40,7 @@ def train_word2vec(sentences, args):
 def eval_model(data_iter, model, args):
     model.eval()
     corrects, avg_loss = 0, 0
-    step =0
+    step = 0
     for feature, target in data_iter:
         step += 1
         if args.cuda:
@@ -52,9 +53,9 @@ def eval_model(data_iter, model, args):
         corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
         size = len(data_iter)
         avg_loss /= size
-        accuracy = 100.0 * corrects /  size
+        accuracy = 100.0 * corrects / size
         print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
-            avg_loss, accuracy/step, corrects, size))
+            avg_loss, accuracy / step, corrects, size))
     return accuracy
 
 
@@ -95,7 +96,7 @@ def train(model, train_iter, dev_iter, args):
 
             if steps % args.log_interval == 0:
                 corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-                accuracy = 100.0 * corrects/target.shape[0]
+                accuracy = 100.0 * corrects / target.shape[0]
                 print('\rBatch[{}] - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
                     steps, loss.data[0], accuracy, corrects, 1))
 
@@ -118,24 +119,37 @@ def predict(model, text, args):
 
 
 if __name__ == '__main__':
-    data_path = './data/okoo-labels.json'
+    data_path = './data/okoo-label.json'
     textcnn = TextCNN()
     data = load_sentence_data(data_path)
     sentences = []
     labels = []
+    stati = [[] for i in range(140)]
     for text in data:
-        sentences.append(text['text'].split())
+        sentence = text['text']
+        sentences.append(sentence.split())
         label = int(text['label'])
+        stati[label].append(sentence)
         if label > Config.class_num:
             Config.class_num = label
         labels.append(label)
-
+    static_ = []
+    for label, sentence in enumerate(stati):
+        tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}
+        static_.append(tmp_)
+    static_ = sorted(static_,key=lambda x: x["Num"])
+    #stati.reverse()
+    plt.plot([text["Num"] for text in static_])
+    plt.show()
+    with open('static.json', 'w') as f:
+        json.dump({'all': static_}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+        f.flush()
     # train_word2vec(sentences, Config)
     data_len = len(data)
-    train_index = int(data_len * Config.train_proportion)
-    print('')
-    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-                             Config.word_embed_dim, cuda=Config.cuda, )
-    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
-    train(textcnn, train_iters, dev_iters, Config)
+    # train_index = int(data_len * Config.train_proportion)
+    # print('')
+    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
+    #                          Config.word_embed_dim, cuda=Config.cuda, )
+    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
+    #                        Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
+    # train(textcnn, train_iters, dev_iters, Config)

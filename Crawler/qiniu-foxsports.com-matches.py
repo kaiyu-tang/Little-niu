@@ -103,16 +103,16 @@ class ThreadWithReturnValue(Thread):
         return self._return
 
 
-def get_foxsport_match(querystring, connect_times=0):
+def get_foxsport_match(querystring, proxies, connect_times=0, ):
     res = {}
     res['Querystring'] = querystring
     try:
-        page = requests.get(base_url, headers=headers, params=querystring, timeout=5)
+        page = requests.get(base_url, headers=headers, params=querystring, timeout=5, proxies=proxies[random.randint(0, len(proxies))])
     except:  # (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
         if connect_times < random.randint(1, 5):
-            return get_foxsport_match(querystring, connect_times + 1)
+            return get_foxsport_match(querystring, connect_times=connect_times + 1, proxies=proxies)
         else:
             return res
     html = etree.HTML(page.content)
@@ -137,7 +137,7 @@ def get_foxsport_match(querystring, connect_times=0):
     return res
 
 
-def get_sort_index(querystring, connect_time=0):
+def get_sort_index(querystring, proxies, connect_time=0, ):
     sort_index_ = -1
     page_num_ = 1
     res = [sort_index_, page_num_]
@@ -145,7 +145,8 @@ def get_sort_index(querystring, connect_time=0):
         return res
     try:
         time.sleep(random.randrange(4))
-        page = requests.get(base_url, params=querystring, headers=headers, timeout=4)
+
+        page = requests.get(base_url, params=querystring, headers=headers, timeout=4, proxies=proxies[random.randint(0, len(proxies))])
         page = etree.HTML(page.content)
         pkg_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th'
                           '[@title="Penalty Kick Goals"]/a/@href')
@@ -160,20 +161,38 @@ def get_sort_index(querystring, connect_time=0):
         elif len(pkg_) != 0:
             res[0] = int(re.findall('sort=(\d+?)', pkg_[0])[0])
         else:
-            res = get_sort_index(querystring, connect_time=connect_time + 1)
+            res = get_sort_index(querystring, connect_time=connect_time + 1, proxies=proxies)
     except:  # (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, ConnectionError, TypeError):
-        res = get_sort_index(querystring, connect_time=connect_time + 1)
+        res = get_sort_index(querystring, connect_time=connect_time + 1, proxies=proxies)
+    return res
+
+
+def get_ip(url):
+    # response = requests.get(url).text.split()
+    response = {"174.120.70.232:80", "210.242.179.118:80", "120.52.32.46:80", "60.206.222.157:3128", "118.123.113.4:80",
+                "218.85.133.62:80", "222.168.41.246:8090", "203.135.80.25：8080", "116.62.11.138:3128",
+                "121.40.131.135:3128",  "116.241.162.35:3128"}
+    # print(response)
+    res = []
+    for item in response:
+        tmp = {}
+        print(item)
+        tmp['http'] = "http://" + item
+        res.append(tmp)
+    # print()
     return res
 
 
 if __name__ == "__main__":
     # base config
-    seasons = [ '20172'] # '20130', '20131', '20132', '20140', '20141', '20142', '20150', '20151', '20152', '20160', '20161', '20162', '20170', '20171',
+    seasons = ['20140', '20141', '20142', '20150', '20151', '20152', '20160', '20161', '20162', '20170', '20171',
+               '20172']  # ,
     category = ['DISCIPLINE', 'STANDARD', 'GOALKEEPING', 'CONTROL']
     competition_start_id = 0
     competition_end_id = 1000
     step = 0
-
+    ip_url = "http://webapi.http.zhimacangku.com/getip?num=20&type=1&pro=0&city=0&yys=0&port=1&pack=22787&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
+    proxies = get_ip(ip_url)
     # batch_size = 100000
 
     base_dir = "foxsports-match/{}.json"
@@ -187,34 +206,37 @@ if __name__ == "__main__":
         connect_time = 0
         step = 0
         for competition_id in range(competition_start_id, competition_end_id):
+            time.sleep(random.randint(2, 10))
             querystring['competition'] = str(competition_id)
-            if step > 20:
+            if step > 400:
                 break
             # get sort column index
             for category_ in category:
                 querystring['category'] = category_
                 print("seasion={} competition:{} category={} ".format(season, competition_id, category_))
-                (sort_index, page_num) = get_sort_index(querystring)
+                (sort_index, page_num) = get_sort_index(querystring, proxies)
                 if sort_index < 0:
                     step += 1
                     continue
                 print("seasion={} competition:{} category={} sort_index={} pagenum={}".format(season, competition_id,
                                                                                               category_, sort_index,
                                                                                               page_num))
-                step=0
+                step = 0
                 for page in range(1, page_num + 1):
                     querystring['sort'] = sort_index
                     querystring["page"] = str(page)
                     querystring_ = copy.deepcopy(querystring)
                     # url = base.format(competition_id, season, sort_index, page)
                     start_time = time.clock()
-                    thread = ThreadWithReturnValue(target=get_foxsport_match, args=(querystring_, 0))
+                    thread = ThreadWithReturnValue(target=get_foxsport_match,
+                                                   args=(querystring_, proxies))
                     threads.append(thread)
                     threads_length += 1
                     thread.start()
                     end_time = time.clock()
                 print("start saving")
                 for thread in threads:
+                    time.sleep(random.randint(2, 6))
                     cur_res = thread.join()
                     # print()
                     try:
