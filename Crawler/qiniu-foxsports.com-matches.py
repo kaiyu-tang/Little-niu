@@ -201,6 +201,7 @@ if __name__ == "__main__":
                 print("seasion={} competition:{} category={} sort_index={} pagenum={}".format(season, competition_id,
                                                                                               category_, sort_index,
                                                                                               page_num))
+                step=0
                 for page in range(1, page_num + 1):
                     querystring['sort'] = sort_index
                     querystring["page"] = str(page)
