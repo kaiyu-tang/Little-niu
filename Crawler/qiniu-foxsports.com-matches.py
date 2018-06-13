@@ -168,7 +168,7 @@ def get_sort_index(querystring, connect_time=0):
 
 if __name__ == "__main__":
     # base config
-    seasons = [ '20172']
+    seasons = [ '20172'] # '20130', '20131', '20132', '20140', '20141', '20142', '20150', '20151', '20152', '20160', '20161', '20162', '20170', '20171',
     category = ['DISCIPLINE', 'STANDARD', 'GOALKEEPING', 'CONTROL']
     competition_start_id = 0
     competition_end_id = 1000

@@ -14,8 +14,8 @@ class Config:
     dir_model = "./checkpoints"
 
     # textcnn
-    sequence_length = 128
-    word_embed_dim = 8
+    sequence_length = 30
+    word_embed_dim = 128
     class_num = 140
     kernel_num = 128
     kernel_size = (1, 2, 3, 5, 7, 8, 10)
