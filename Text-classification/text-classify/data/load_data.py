@@ -124,8 +124,30 @@ class DataLoader(object):
 
 
 if __name__ == '__main__':
-    path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/okoo-match'
-    js_data = readfile(path)
-    with open('okoo-labels.json', 'w') as f:
-        json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+    # path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/okoo-match'
+    # js_data = readfile(path)
+    # with open('', 'w') as f:
+    #     json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+    labels_dic = {}
+    with open("label_doc.text") as f:
+        for index,line in enumerate(f):
+            for key in re.findall('(\d+)',line):
+                labels_dic[''.join(key)] = index
+    cur_true_label = index+1
+    with open('okoo-labels.json') as f:
+        data = json.load(f)["all"]
+        for item in data:
+            label = item['label']
+            if label in labels_dic:
+                item['merged_label'] = labels_dic[label]
+            else:
+                print(item)
+                print(cur_true_label)
+                item['merged_label'] = cur_true_label
+                cur_true_label += 1
+    with open('okoo-merged-labels.json','w') as f:
+        json.dump({'all': data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+
+
+
     # sentence = load_sentence_data('okoo-label.json')

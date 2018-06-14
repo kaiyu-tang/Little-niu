@@ -10,13 +10,13 @@ import torch
 class Config:
     # basic
     cuda = torch.cuda.is_available()
-    cuda = False
+    #cuda = False
     dir_model = "./checkpoints"
 
     # textcnn
     sequence_length = 30
     word_embed_dim = 128
-    class_num = 140
+    class_num = 29
     kernel_num = 128
     kernel_size = (1, 2, 3, 5, 7, 8, 10)
     dropout = 0.5

@@ -119,37 +119,37 @@ def predict(model, text, args):
 
 
 if __name__ == '__main__':
-    data_path = './data/okoo-label.json'
+    data_path = './data/okoo-merged-labels.json'
     textcnn = TextCNN()
     data = load_sentence_data(data_path)
     sentences = []
     labels = []
-    stati = [[] for i in range(140)]
+    #stati = [[] for i in range(140)]
     for text in data:
         sentence = text['text']
         sentences.append(sentence.split())
-        label = int(text['label'])
-        stati[label].append(sentence)
+        label = int(text['merged_label'])
+        #stati[label].append(sentence)
         if label > Config.class_num:
             Config.class_num = label
         labels.append(label)
-    static_ = []
-    for label, sentence in enumerate(stati):
-        tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}
-        static_.append(tmp_)
-    static_ = sorted(static_,key=lambda x: x["Num"])
-    #stati.reverse()
-    plt.plot([text["Num"] for text in static_])
-    plt.show()
-    with open('static.json', 'w') as f:
-        json.dump({'all': static_}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
-        f.flush()
-    # train_word2vec(sentences, Config)
+    # static_ = []
+    # for label, sentence in enumerate(stati):
+    #     tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}
+    #     static_.append(tmp_)
+    # static_ = sorted(static_,key=lambda x: x["Num"])
+    # #stati.reverse()
+    # plt.plot([text["Num"] for text in static_])
+    # plt.show()
+    # with open('static.json', 'w') as f:
+    #     json.dump({'all': static_}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+    #     f.flush()
+    #train_word2vec(sentences, Config)
     data_len = len(data)
-    # train_index = int(data_len * Config.train_proportion)
-    # print('')
-    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-    #                          Config.word_embed_dim, cuda=Config.cuda, )
-    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-    #                        Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
-    # train(textcnn, train_iters, dev_iters, Config)
+    train_index = int(data_len * Config.train_proportion)
+    print(Config.cuda)
+    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
+                             Config.word_embed_dim, cuda=Config.cuda, )
+    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
+                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
+    train(textcnn, train_iters, dev_iters, Config)
