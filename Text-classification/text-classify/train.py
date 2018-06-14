@@ -149,7 +149,7 @@ if __name__ == '__main__':
     train_index = int(data_len * Config.train_proportion)
     print(Config.cuda)
     train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-                             Config.word_embed_dim, cuda=Config.cuda, )
+                             Config.word_embed_dim, cuda=Config.cuda, batch_size=1024)
     dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True)
+                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024)
     train(textcnn, train_iters, dev_iters, Config)
