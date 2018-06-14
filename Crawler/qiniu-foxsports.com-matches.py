@@ -208,7 +208,7 @@ if __name__ == "__main__":
         for competition_id in range(competition_start_id, competition_end_id):
             time.sleep(random.randint(2, 10))
             querystring['competition'] = str(competition_id)
-            if step > 400:
+            if step > 1000:
                 break
             # get sort column index
             for category_ in category:
