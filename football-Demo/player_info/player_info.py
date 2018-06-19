@@ -19,24 +19,27 @@ class player_info(object):
         }
         pass
 
-    def get_info(self, name):
-        # payload = {}
-        # payload['player_name'] = name
-        # response = requests.request("POST", self.url, data=json.dumps(payload), headers=self.headers)
-        # try:
-        #     response = json.loads(response.text)
-        #     if len(response) != 0:
-        #         return response[0]
-        #     else:
-        #         return {}
-        # except:
-        #     return {}
-        with open("/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/player_info/foxsport.json") as f:
-            data = json.load(f)
-            if name in data:
-                return data[name]
-            else:
-                return ""
+    def get_info(self, name,local=False):
+        if local:
+            payload = {}
+            payload['player_name'] = name
+            response = requests.request("POST", self.url, data=json.dumps(payload), headers=self.headers)
+            try:
+                response = json.loads(response.text)
+                if len(response) != 0:
+                    return response[0]
+                else:
+                    return {}
+            except:
+                return {}
+
+        else:
+            with open("/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/player_info/foxsport.json") as f:
+                data = json.load(f)
+                if name in data:
+                    return data[name]
+                else:
+                    return {}
 
 
 if __name__ == "__main__":
