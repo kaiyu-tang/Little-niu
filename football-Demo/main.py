@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     # fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    outVideo = cv2.VideoWriter("tmp.mp4", fourcc, fps, (size[0], size[1]))
+    outVideo = cv2.VideoWriter("./tmp.mp4", fourcc, fps, (size[0], size[1]))
     print('size:{} fps:{} open:{}'.format(size, fps, outVideo.isOpened()))
     # print(outVideo.isOpened())
     cv2.namedWindow("Image")
@@ -104,4 +104,4 @@ if __name__ == '__main__':
     cap.release()
     cv2.destroyAllWindows()
     os.system('ffmpeg -i tmp.mp4 {}'.format(output_video_name))
-    os.remove(os.path.join(os.getcwd(), "tmp.mp4"))
+    os.remove("./tmp.mp4")
