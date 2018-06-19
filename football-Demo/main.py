@@ -4,6 +4,8 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : main.py
+import os
+
 from PIL import ImageDraw, ImageFont
 from face_reco.reco_main import PlayerFaceReco
 from football.tsn_config import Config
@@ -44,7 +46,7 @@ if __name__ == '__main__':
 
     # fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    outVideo = cv2.VideoWriter(output_video_name, fourcc, fps, (size[0], size[1]))
+    outVideo = cv2.VideoWriter("tmp.mp4", fourcc, fps, (size[0], size[1]))
     print('size:{} fps:{} open:{}'.format(size, fps, outVideo.isOpened()))
     # print(outVideo.isOpened())
     cv2.namedWindow("Image")
@@ -64,9 +66,9 @@ if __name__ == '__main__':
                 if player_cur_name != '':
                     player_name = player_cur_name
                     player_basic = player_inf.get_info(player_name)
-                    if len(player_basic)>1:
+                    if len(player_basic) > 1:
                         player_basic = player_basic['performance']
-                        #player_basic = player_basic['performance']
+                        # player_basic = player_basic['performance']
                         if "penalty_kick_goals" in player_basic:
                             pkg = player_basic["penalty_kick_goals"]
                         if "penalty_kick" in player_basic:
@@ -78,9 +80,9 @@ if __name__ == '__main__':
                 if dianqiu_label:
                     draw = ImageDraw.Draw(frames[0])
                     font = ImageFont.truetype("XHDF.ttf", 35)
-                    draw.text((10, 8), img_text, fill=(255, 255, 255),font=font)
+                    draw.text((10, 8), img_text, fill=(255, 255, 255), font=font)
 
-                    #cv2.putText(cv_frame, img_text, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
+                    # cv2.putText(cv_frame, img_text, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
                 cv_frame = cv2.cvtColor(np.asarray(frames[0]), cv2.COLOR_RGB2BGR)
                 # cv_frame = cv_frame.copy()
                 # draw = ImageDraw.Draw(frames[0])
@@ -101,3 +103,5 @@ if __name__ == '__main__':
     outVideo.release()
     cap.release()
     cv2.destroyAllWindows()
+    os.system('ffmpeg -i tmp.mp4 {}'.format(output_video_name))
+    os.remove(os.path.join(os.getcwd(), "tmp.mp4"))
