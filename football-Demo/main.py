@@ -10,6 +10,7 @@ from football.tsn_config import Config
 from football.tsn_inference_football import football_inference, stream
 from io import BytesIO
 import json
+import freetype
 import cv2
 import numpy as np
 from player_info.player_info import player_info
@@ -17,9 +18,9 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     stream_path = "./positive-28709-40414-40498.mp4"
-    stream_path = "./football/test_data/football_PK_test.mp4"  # '/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/football/test_data/football_PK_test.mp4'
+    stream_path = "./Video/football_PK_test.mp4"  # '/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/football/test_data/football_PK_test.mp4'
     player_info_path = './player_info/foxsport.json'
-    output_video_name = "./test1.mp4"
+    output_video_name = "./test-PK.mp4"
     football_infer_handler = football_inference(Config.weights, Config.arch, Config.modality,
                                                 Config.num_class, Config.gpu, Config.scale_size,
                                                 Config.input_size, Config.input_mean, Config.input_std,
@@ -48,6 +49,7 @@ if __name__ == '__main__':
     print('size:{} fps:{} open:{}'.format(size, fps, outVideo.isOpened()))
     # print(outVideo.isOpened())
     cv2.namedWindow("Image")
+    plt.subplot(111)
     while stream_handle.is_init:
         stream_is_ok, frames = stream_handle.get_frame()
         if stream_is_ok:
@@ -65,21 +67,22 @@ if __name__ == '__main__':
                     player_name = player_cur_name
                     player_basic = player_inf.get_info(player_name)
                     if 0 != len(player_basic):
-                        player_basic = player_basic['performance']
+                        # player_basic = player_basic['performance']
                         if "penalty_kick_goals" in player_basic:
                             pkg = player_basic["penalty_kick_goals"]
                         if "penalty_kick" in player_basic:
                             pk = player_basic["penalty_kick"]
                         img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), pkg, pk, )
 
-
                 print(img_text)
-                cv_frame = cv2.cvtColor(np.asarray(frames[0]), cv2.COLOR_RGB2BGR)
-                if dianqiu_label:
-                    plt.imshow(cv_frame)
-                    plt.text(0, 40, img_text, fontdict={'size': '16', 'color': 'white'})
-                    plt.show()
 
+                if dianqiu_label:
+                    draw = ImageDraw.Draw(frames[0])
+                    font = ImageFont.truetype("XHDF.ttf", 35)
+                    draw.text((10, 8), img_text, fill=(255, 255, 255), font=font)
+
+                    # cv2.putText(cv_frame, img_text, (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
+                cv_frame = cv2.cvtColor(np.asarray(frames[0]), cv2.COLOR_RGB2BGR)
                 # cv_frame = cv_frame.copy()
                 # draw = ImageDraw.Draw(frames[0])
                 # draw.text((0, 40), 'Nicolás', fill=(255, 255, 255))

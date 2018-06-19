@@ -6,10 +6,14 @@
 # @File    : qiniu-foxsports.com-matches.py
 
 import json
+import multiprocessing
 import os
 import random
 import socket
+import threading
 import time
+from multiprocessing import Pool, Manager
+
 import requests
 from threading import Thread
 import re
@@ -87,27 +91,28 @@ headers_sort_index = {
 
 # response = requests.request("GET", url, headers=headers, params=querystring)
 
-
-class ThreadWithReturnValue(Thread):
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, *, daemon=None):
-        Thread.__init__(self, group, target, name, args, kwargs, daemon=daemon)
-
-        self._return = None
-
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-
-    def join(self):
-        Thread.join(self)
-        return self._return
+#
+# class ThreadWithReturnValue(Thread):
+#     def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, *, daemon=None):
+#         Thread.__init__(self, group, target, name, args, kwargs, daemon=daemon)
+#
+#         self._return = None
+#
+#     def run(self):
+#         if self._target is not None:
+#             self._return = self._target(*self._args, **self._kwargs)
+#
+#     def join(self):
+#         Thread.join(self)
+#         return self._return
 
 
 def get_foxsport_match(querystring, proxies, connect_times=0, ):
     res = {}
     res['Querystring'] = querystring
     try:
-        page = requests.get(base_url, headers=headers, params=querystring, timeout=5, proxies=proxies[random.randint(0, len(proxies))])
+        page = requests.get(base_url, headers=headers, params=querystring, timeout=5,
+                            proxies=proxies[random.randint(0, len(proxies))])
     except:  # (ConnectionError, ConnectTimeout, socket.timeout, ReadTimeout, TypeError):
         # print('connect_times: {}'.format(connect_times))
         time.sleep(random.randrange(0, 1))
@@ -146,7 +151,8 @@ def get_sort_index(querystring, proxies, connect_time=0, ):
     try:
         time.sleep(random.randrange(4))
 
-        page = requests.get(base_url, params=querystring, headers=headers, timeout=4, proxies=proxies[random.randint(0, len(proxies))])
+        page = requests.get(base_url, params=querystring, headers=headers, timeout=4,
+                            proxies=proxies[random.randint(0, len(proxies))])
         page = etree.HTML(page.content)
         pkg_ = page.xpath('//*[@id="wisfoxbox"]/section[2]/div[1]/table/thead/tr/th'
                           '[@title="Penalty Kick Goals"]/a/@href')
@@ -171,7 +177,7 @@ def get_ip(url):
     # response = requests.get(url).text.split()
     response = {"174.120.70.232:80", "210.242.179.118:80", "120.52.32.46:80", "60.206.222.157:3128", "118.123.113.4:80",
                 "218.85.133.62:80", "222.168.41.246:8090", "203.135.80.25：8080", "116.62.11.138:3128",
-                "121.40.131.135:3128",  "116.241.162.35:3128"}
+                "121.40.131.135:3128", "116.241.162.35:3128"}
     # print(response)
     res = []
     for item in response:
@@ -183,32 +189,29 @@ def get_ip(url):
     return res
 
 
-if __name__ == "__main__":
-    # base config
-    seasons = ['20140', '20141', '20142', '20150', '20151', '20152', '20160', '20161', '20162', '20170', '20171',
-               '20172']  # ,
+# basic config
+pool = Pool(processes=multiprocessing.cpu_count())
+manager = Manager()
+result = manager.Queue()
+
+
+def pool_add():
+    global pool
+    global result
+    querystrings =[]
+    seasons = ['20140'] # ,
     category = ['DISCIPLINE', 'STANDARD', 'GOALKEEPING', 'CONTROL']
     competition_start_id = 0
     competition_end_id = 1000
-    step = 0
     ip_url = "http://webapi.http.zhimacangku.com/getip?num=20&type=1&pro=0&city=0&yys=0&port=1&pack=22787&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions="
     proxies = get_ip(ip_url)
-    # batch_size = 100000
-
-    base_dir = "foxsports-match/{}.json"
-    if not os.path.exists("foxsports-match"):
-        os.mkdir("foxsports-match")
-
-    threads = []
-    threads_length = 0
     for season in seasons:
         querystring['season'] = season
-        connect_time = 0
         step = 0
         for competition_id in range(competition_start_id, competition_end_id):
             time.sleep(random.randint(2, 10))
             querystring['competition'] = str(competition_id)
-            if step > 1000:
+            if step > 20:
                 break
             # get sort column index
             for category_ in category:
@@ -225,32 +228,38 @@ if __name__ == "__main__":
                 for page in range(1, page_num + 1):
                     querystring['sort'] = sort_index
                     querystring["page"] = str(page)
-                    querystring_ = copy.deepcopy(querystring)
-                    # url = base.format(competition_id, season, sort_index, page)
-                    start_time = time.clock()
-                    thread = ThreadWithReturnValue(target=get_foxsport_match,
-                                                   args=(querystring_, proxies))
-                    threads.append(thread)
-                    threads_length += 1
-                    thread.start()
-                    end_time = time.clock()
-                print("start saving")
-                for thread in threads:
-                    time.sleep(random.randint(2, 6))
-                    cur_res = thread.join()
-                    # print()
-                    try:
-                        if len(cur_res) > 1:
-                            # print(cur_res)
-                            querystring_ = cur_res['Querystring']
-                            print(querystring_)
-                            with open(base_dir.format(
-                                    querystring_['season'] + "-" + querystring_['competition'] + "-" +
-                                    querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
-                                json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
-                    except TypeError as e:
-                        print(e)
-                threads = []
-                print('finish saving')
+                    querystrings.append(copy.deepcopy(querystring))
+                    #tmp_ = pool.apply_async(get_foxsport_match, (copy.deepcopy(querystring), proxies,))
+                    #print()
+    print(querystrings)
 
-                # print("Runtime: {} {}".format(end_time - start_time, querystring))
+
+def pool_get():
+    base_dir = "foxsports-match/{}.json"
+    if not os.path.exists("foxsports-match"):
+        os.mkdir("foxsports-match")
+    global result
+    while True:
+        cur_res = result.get().get()
+        try:
+            if len(cur_res) > 1:
+                # print(cur_res)
+                querystring_ = cur_res['Querystring']
+                print(querystring_)
+                with open(base_dir.format(
+                        querystring_['season'] + "-" + querystring_['competition'] + "-" +
+                        querystring_['category'] + "-" + querystring_['page']), 'w') as f_w:
+                    json.dump(cur_res, f_w, ensure_ascii=False, indent=4, separators=(',', ': '))
+        except TypeError as e:
+            print(e)
+
+
+if __name__ == "__main__":
+    t1 = threading.Thread(target=pool_add)
+    t2 = threading.Thread(target=pool_get)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+    pool.close()
+    pool.join()

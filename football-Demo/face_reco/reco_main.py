@@ -13,7 +13,7 @@ class PlayerFaceReco(object):
     def __init__(self):
         self.access_key = "2jtSAmw7Dcbp0zzNH7JCYXkr0iQwMzlSgVSZvU4Y"  # 密钥
         self.secret_key = "Vr5Ys_YRtGjxix4e6LnSOJH5GXDGiKUoCtUPxkqA"
-        self.source_path = r'face_reco/fearure_lib/face_feature_V3.json'  # 球星特征库的路径
+        self.source_path = r'face_reco/fearure_lib/new_feature.json'  # 球星特征库的路径
 
     # def get_pic_path(self):
     #     '''
@@ -141,6 +141,8 @@ class PlayerFaceReco(object):
                 feature_library.append(player_feature)
 
                 player_feature_label = player_feature_library['label']  # 获取特征库中每一个标签
+                # if "Mesut" in player_feature_label:
+                #     print()
                 feature_label.append(player_feature_label)
 
         # print feature_library
@@ -152,6 +154,9 @@ class PlayerFaceReco(object):
                                                                                          pic_feature_vector)
 
         predict_player_name = feature_label[get_most_similarity_feature]
+        # if "Mesut" in predict_player_name:
+        #
+        #     print()
         return predict_player_name, highest_similarity
 
     def reco(self, pic_path, local=0):
@@ -161,7 +166,7 @@ class PlayerFaceReco(object):
         :return: 预测球星姓名，相似度
         """
         # print('------------')
-        if local==0:
+        if local == 0:
             with open(pic_path, 'rb') as f:
                 response = requests.post("http://fileserver.lego.ke-xs.cloudappl.com/v1/upload/stream", data=f.read())
                 response = json.loads(response.text)
@@ -174,31 +179,34 @@ class PlayerFaceReco(object):
             response = json.loads(response.text)
             pic_uri = response['extra']['uri']
             pic_url = pic_uri
-        #print(pic_url)
+        # print(pic_url)
         player_face_reco = PlayerFaceReco()
         response_text = player_face_reco.face_reco(pic_url)
         response_text_json = json.loads(response_text)
         try:
             pts = response_text_json['result']['detections'][0]['boundingBox']['pts']
         except:
-            #print(response_text_json)
+            # print(response_text_json)
             return ''
-        #print(pts)
+        # print(pts)
         # 处理图片的特征信息，标签就是球星的全名，然后加上立标index
         try:
             face_info_feature = player_face_reco.facex_feature(pic_url, pts)
             predict_player_name, highest_similarity = player_face_reco.get_most_similarity_label(face_info_feature,
-                                                                                                self.source_path)
+                                                                                                 self.source_path)
+            if "Mesut" in predict_player_name:
+                print(predict_player_name)
         except ValueError as e:
             print(e)
             return ''
         # print(pic_url, predict_player_name, highest_similarity)
-
+        if highest_similarity < 0.35:
+            return ''
         return predict_player_name
 
 
 if __name__ == '__main__':
-    pic_path = "/Users/harry/PycharmProjects/toys/football-Demo/face_reco/test_pictures/1.jpg"
+    pic_path = "/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/face_reco/test_pictures/1.jpg"
     player_face_reco = PlayerFaceReco()
     result = player_face_reco.reco(pic_path, local=0)  # 调用球星识别接口,返回球星姓名
     print(result)
