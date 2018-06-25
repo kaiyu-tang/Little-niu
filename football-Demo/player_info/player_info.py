@@ -44,5 +44,6 @@ class player_info(object):
 
 if __name__ == "__main__":
     player_ = player_info()
+
     re = player_.get_info("Ozil, Mesut")
     print()

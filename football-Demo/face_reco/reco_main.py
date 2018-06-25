@@ -194,8 +194,6 @@ class PlayerFaceReco(object):
             face_info_feature = player_face_reco.facex_feature(pic_url, pts)
             predict_player_name, highest_similarity = player_face_reco.get_most_similarity_label(face_info_feature,
                                                                                                  self.source_path)
-            if "Mesut" in predict_player_name:
-                print(predict_player_name)
         except ValueError as e:
             print(e)
             return ''

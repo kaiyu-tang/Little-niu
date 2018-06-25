@@ -21,12 +21,17 @@ from torch.autograd import Variable
 
 from Config import Config
 
-PAD = '*'
+PAD = Config.PAD
 
-
+def clean(text,stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由—~'''):
+    text = re.sub('[a-zA-Z]+', '', text)
+    for c in stop_chars:
+        text = text.replace(c,' ')
+    text = ' '.join(jieba.lcut(text))
+    return ' '.join(text.split())
 def readfile(dir_path):
     res = []
-    stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由'''
+
     file_names = os.listdir(dir_path)
     index = 0
     for file_name in file_names:
@@ -35,11 +40,7 @@ def readfile(dir_path):
         with open(os.path.join(dir_path, file_name), 'rb') as f:
             data = json.load(f)
             for item in data['narrate']:
-                d_ = re.sub('[a-zA-Z]+', '', item['text'])
-                for c in stop_chars:
-                    d_ = d_.replace(c, ' ')
-                d_ = ' '.join(jieba.lcut(d_))
-                item['text'] = ' '.join(d_.split())
+                item['text'] = clean(item['text'])
                 print(index)
                 index += 1
             res.extend(data['narrate'])
@@ -56,13 +57,14 @@ def load_sentence_data(data_path):
 
 
 class DataLoader(object):
-    def __init__(self, src_sents, label, max_len, embed_dim, cuda=True, batch_size=64, shuffle=True, evaluation=False):
+    def __init__(self, src_sents, label, max_len, embed_dim, cuda=True, batch_size=64, shuffle=True, evaluation=False,clean=False):
         self.cuda = cuda
         self.sents_size = len(src_sents)
         self._step = 0
         self._batch_size = batch_size
         self._stop_step = self.sents_size // self._batch_size + 1
         self.evaluation = evaluation
+        self._clean = clean
 
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
@@ -86,6 +88,8 @@ class DataLoader(object):
     def __next__(self):
         def pad_to_longest(insts, max_len):
             for index, inst in enumerate(insts):
+                if self._clean:
+                    inst = clean(''.join(inst)).split()
                 inst_len = len(inst)
                 if inst_len < max_len:
                     insts[index] = inst + [PAD] * (max_len - inst_len)
@@ -130,7 +134,7 @@ if __name__ == '__main__':
     #     json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
     labels_dic = {}
     with open("label_doc.text") as f:
-        for index,line in enumerate(f):
+        for index, line in enumerate(f):
             for key in re.findall('(\d+)',line):
                 labels_dic[''.join(key)] = index
     cur_true_label = index+1

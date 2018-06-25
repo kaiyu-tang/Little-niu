@@ -8,8 +8,8 @@ import os
 
 from PIL import ImageDraw, ImageFont
 from face_reco.reco_main import PlayerFaceReco
-from football.tsn_config import Config
-from football.tsn_inference_football import football_inference, stream
+from ..football.tsn_config import Config
+from ..football.tsn_inference_football import football_inference, stream
 from io import BytesIO
 import cv2
 import numpy as np

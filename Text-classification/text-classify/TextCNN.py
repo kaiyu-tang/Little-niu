@@ -31,7 +31,7 @@ class TextCNN(nn.Module):
         self.fc1 = nn.Linear(len(kernel_size) * kernel_num, class_num)
 
     def forward(self, x):
-        print()
+        #print()
         #x = self.embed(x)
         if Config.static:
             x = Variable(x)

@@ -13,14 +13,16 @@ class Config:
     #cuda = False
     dir_model = "./checkpoints"
 
+    PAD = "*"
+
     # textcnn
-    sequence_length = 30
+    sequence_length = 12
     word_embed_dim = 128
     class_num = 29
     kernel_num = 128
     kernel_size = (1, 2, 3, 5, 7, 8, 10)
     dropout = 0.5
-    static = True
+    static = False
     lr = 0.001
     textcnn_epochs = 200
     log_interval = 50

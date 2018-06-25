@@ -8,7 +8,7 @@ class Config:
 	buffer_size = 5 # use 5 frames avg confidence
 
 	arch = 'resnet50'
-	weights = '/home/atlab/Workspace/kaiyu/Demo/toys/football-Demo/football/football-resnet50-0528.pth'
+	weights = './football/football-resnet50-0528.pth'
 	gpu = 0
 	modality = 'RGB'
 	input_size = 224

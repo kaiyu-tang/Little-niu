@@ -37,10 +37,11 @@ def train_word2vec(sentences, args):
     model.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
 
 
-def eval_model(data_iter, model, args):
+def eval_model(model, data_iter,args):
     model.eval()
     corrects, avg_loss = 0, 0
     step = 0
+    model.double()
     for feature, target in data_iter:
         step += 1
         if args.cuda:
@@ -63,8 +64,9 @@ def save(model, save_dir, save_prefix, steps):
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     save_prefix = os.path.join(save_dir, save_prefix)
-    save_path = '{}_steps_{}.pt'.format(save_prefix, steps)
-    torch.save(model.state_dict(), save_path)
+    save_path = '{}_steps_{}'.format(save_prefix, steps)
+    torch.save(model.state_dict(), save_path+".pt")
+    torch.save(model, save_path+".pkl")
     print('Save Sucessful, path: {}'.format(save_path))
 
 
@@ -118,12 +120,17 @@ def predict(model, text, args):
     pass
 
 
+
 if __name__ == '__main__':
-    data_path = './data/okoo-merged-labels.json'
+
+
+
     textcnn = TextCNN()
+    data_path = './data/okoo-merged-labels.json'
     data = load_sentence_data(data_path)
     sentences = []
     labels = []
+
     #stati = [[] for i in range(140)]
     for text in data:
         sentence = text['text']
@@ -150,6 +157,8 @@ if __name__ == '__main__':
     print(Config.cuda)
     train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
                              Config.word_embed_dim, cuda=Config.cuda, batch_size=1024)
+    for i,j in train_iters:
+        print()
     dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
                            Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024)
     train(textcnn, train_iters, dev_iters, Config)
