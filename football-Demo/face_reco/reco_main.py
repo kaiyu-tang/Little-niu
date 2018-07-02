@@ -168,14 +168,14 @@ class PlayerFaceReco(object):
         # print('------------')
         if local == 0:
             with open(pic_path, 'rb') as f:
-                response = requests.post("http://fileserver.lego.ke-xs.cloudappl.com/v1/upload/stream", data=f.read())
+                response = requests.post("http://fileserver-large.lego.ke-xs.cloudappl.com/v1/upload/stream", data=f.read())
                 response = json.loads(response.text)
                 pic_uri = response['extra']['uri']
             pic_url = pic_uri
         elif local == 1:
             pic_url = pic_path
         elif local == 2:
-            response = requests.post("http://fileserver.lego.ke-xs.cloudappl.com/v1/upload/stream", data=pic_path)
+            response = requests.post("http://fileserver-large.lego.ke-xs.cloudappl.com/v1/upload/stream", data=pic_path)
             response = json.loads(response.text)
             pic_uri = response['extra']['uri']
             pic_url = pic_uri

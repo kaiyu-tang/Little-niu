@@ -5,16 +5,18 @@
 # @Site    :   
 # @File    : main.py
 import os
-
+import sys
+sys.path.append('../football')
 from PIL import ImageDraw, ImageFont
 from face_reco.reco_main import PlayerFaceReco
-from ..football.tsn_config import Config
-from ..football.tsn_inference_football import football_inference, stream
+from tsn_config import Config
+from tsn_inference_football import football_inference, stream
 from io import BytesIO
 import cv2
 import numpy as np
+import requests
 from player_info.player_info import player_info
-import sys
+
 
 if __name__ == '__main__':
     args = sys.argv
@@ -33,8 +35,6 @@ if __name__ == '__main__':
     stream_handle = stream(Config.test_segments, stream_path)
     test_status = 0  # test_status: 0 do inference, others skip
     player_name = ""
-    pkg = ""
-    pk = ""
     dianqiu_label = False
     # font = ImageFont.truetype（24)
     # print(stream_path)
@@ -50,6 +50,7 @@ if __name__ == '__main__':
     print('size:{} fps:{} open:{}'.format(size, fps, outVideo.isOpened()))
     # print(outVideo.isOpened())
     cv2.namedWindow("Image")
+    pk, pkg = 0, 0
     while stream_handle.is_init:
         stream_is_ok, frames = stream_handle.get_frame()
         if stream_is_ok:
@@ -62,18 +63,20 @@ if __name__ == '__main__':
                 dianqiu_prob = probs[Config.dianqiu_class_index]
                 dianqiu_label = dianqiu_prob > Config.dianqiu_class_thresh
 
-                img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), pkg, pk, )
                 if player_cur_name != '':
                     player_name = player_cur_name
-                    player_basic = player_inf.get_info(player_name)
-                    if len(player_basic) > 1:
-                        player_basic = player_basic['performance']
-                        # player_basic = player_basic['performance']
-                        if "penalty_kick_goals" in player_basic:
-                            pkg = player_basic["penalty_kick_goals"]
-                        if "penalty_kick" in player_basic:
-                            pk = player_basic["penalty_kick"]
-                        img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), pkg, pk, )
+                    pk, pkg = 0,0
+                    players = player_inf.get_info(player_name)
+                    player_pic = cv2.imdecode(requests.get(players[0]['player']['avatar']))
+                    if len(players) > 1:
+                        pk, pkg = 0, 0
+                        for player in players:
+                            performance_ = player['performance']
+                            if "penalty_kick_goals" in performance_:
+                                pkg = int(performance_["penalty_kick_goals"])
+                            if "penalty_kick" in performance_:
+                                pk += int(performance_["penalty_kick"])
+                img_text = 'Name: {} PKG:{} PK:{}'.format(player_name.replace(" ", ", "), str(pkg), str(pk), )
 
                 print(img_text)
 

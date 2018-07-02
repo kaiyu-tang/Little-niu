@@ -12,32 +12,45 @@ import torch.autograd as autograd
 import torch.nn.functional as F
 from TextCNN import TextCNN
 from Config import Config
-from gensim.models import Word2Vec
+from gensim.models import Word2Vec, FastText
+from gensim.models.wrappers import Wordrank
 import random
 from data.load_data import load_sentence_data, DataLoader
 from matplotlib import pyplot as plt
 
 
-def train_word2vec(sentences, args):
+def train_word_vectors(sentences,text_path, args):
     print("loading data")
-
-    print("finished load data")
     # labels = [text['label'] for text in data]
-    model = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
-                     min_count=args.min_count,
-                     workers=args.works, sg=args.word2vec_sg)
-    # model.build_vocab(sentences=sentences)
+    model_word2vec = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
+                              min_count=args.min_count, workers=args.works, sg=args.word2vec_sg,
+                              negative=args.word2vec_negative, iter=args.word2vec_epoch_num)
+
+    model_fasttext = FastText(sentences=sentence, sg=args.fast_sg, size=args.word_embed_dim, window=args.fast_window,
+                              min_count=args.fast_min_count, workers=args.fast_workers, iter=args.fast_iter)
+
+    model_wordrank = Wordrank.train(wr_path=args.dir_model,corpus_file=text_path,size=args.word_embed_dim,window=args.wordrank_window,
+                                    symmetric=args.wordrank_symmetric,min_count=args.wordrank_min_count,iter=args.wordrank_iter,
+                                    np=args.wordrank_worker)
+    
+    # model_word2vec.build_vocab(sentences=sentences)
+    # model_fasttext.build_vocab(sentences=sentences)
     print("finished build_vocab")
-    for epoch in range(args.word2vec_train_epoch):
+    for epoch in range(args.word_vec_train_epoch):
         random.shuffle(sentences)
-        model.train(sentences=sentences, epochs=args.word2vec_epoch_num, total_examples=model.corpus_count)
+        model_word2vec.train(sentences=sentences, epochs=model_word2vec.iter, total_examples=model_word2vec.corpus_count)
+        model_fasttext.train(sentences=sentences, epochs=model_fasttext.iter, total_examples=model_fasttext.corpus_count)
+        model_wordrank
         print(epoch)
         if epoch % 20 == 0:
-            model.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
-    model.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
+            model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
+            model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fasttext_model_name))
+    model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
+    model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fasttext_model_name))
+    model_wordrank.save(os.path.join(args.dir_model, str(epoch) + "-" + args.wordrank_model_name))
 
 
-def eval_model(model, data_iter,args):
+def eval_model(model, data_iter, args):
     model.eval()
     corrects, avg_loss = 0, 0
     step = 0
@@ -65,8 +78,8 @@ def save(model, save_dir, save_prefix, steps):
         os.makedirs(save_dir)
     save_prefix = os.path.join(save_dir, save_prefix)
     save_path = '{}_steps_{}'.format(save_prefix, steps)
-    torch.save(model.state_dict(), save_path+".pt")
-    torch.save(model, save_path+".pkl")
+    torch.save(model.state_dict(), save_path + ".pt")
+    torch.save(model, save_path + ".pkl")
     print('Save Sucessful, path: {}'.format(save_path))
 
 
@@ -120,10 +133,7 @@ def predict(model, text, args):
     pass
 
 
-
 if __name__ == '__main__':
-
-
 
     textcnn = TextCNN()
     data_path = './data/okoo-merged-labels.json'
@@ -131,15 +141,13 @@ if __name__ == '__main__':
     sentences = []
     labels = []
 
-    #stati = [[] for i in range(140)]
+    # stati = [[] for i in range(140)]
     for text in data:
         sentence = text['text']
         sentences.append(sentence.split())
-        label = int(text['merged_label'])
-        #stati[label].append(sentence)
-        if label > Config.class_num:
-            Config.class_num = label
-        labels.append(label)
+
+    text_path = ''
+    train_word_vectors(sentences,text_path ,Config)
     # static_ = []
     # for label, sentence in enumerate(stati):
     #     tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}
@@ -151,14 +159,14 @@ if __name__ == '__main__':
     # with open('static.json', 'w') as f:
     #     json.dump({'all': static_}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
     #     f.flush()
-    #train_word2vec(sentences, Config)
-    data_len = len(data)
-    train_index = int(data_len * Config.train_proportion)
-    print(Config.cuda)
-    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-                             Config.word_embed_dim, cuda=Config.cuda, batch_size=1024)
-    for i,j in train_iters:
-        print()
-    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024)
-    train(textcnn, train_iters, dev_iters, Config)
+
+    # data_len = len(data)
+    # train_index = int(data_len * Config.train_proportion)
+    # print(Config.cuda)
+    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
+    #                          Config.word_embed_dim, cuda=Config.cuda, batch_size=1024)
+    # for i,j in train_iters:
+    #     print()
+    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
+    #                        Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024)
+    # train(textcnn, train_iters, dev_iters, Config)

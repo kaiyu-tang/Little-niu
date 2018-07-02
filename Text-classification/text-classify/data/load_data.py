@@ -20,31 +20,17 @@ import torch
 from torch.autograd import Variable
 
 from Config import Config
-
+import thulac
 PAD = Config.PAD
 
 def clean(text,stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由—~'''):
+    thu0 = thulac(user_dict=Config.thulac_dict_path,T2S=True,filt=True)
     text = re.sub('[a-zA-Z]+', '', text)
     for c in stop_chars:
-        text = text.replace(c,' ')
-    text = ' '.join(jieba.lcut(text))
-    return ' '.join(text.split())
-def readfile(dir_path):
-    res = []
+        text = text.replace(c, ' ')
+    text = thu0.fast_cut(text)
+    return text
 
-    file_names = os.listdir(dir_path)
-    index = 0
-    for file_name in file_names:
-        if file_name == 'result-new.json':
-            continue
-        with open(os.path.join(dir_path, file_name), 'rb') as f:
-            data = json.load(f)
-            for item in data['narrate']:
-                item['text'] = clean(item['text'])
-                print(index)
-                index += 1
-            res.extend(data['narrate'])
-    return res
 
 
 def load_sentence_data(data_path):
@@ -132,26 +118,8 @@ if __name__ == '__main__':
     # js_data = readfile(path)
     # with open('', 'w') as f:
     #     json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
-    labels_dic = {}
-    with open("label_doc.text") as f:
-        for index, line in enumerate(f):
-            for key in re.findall('(\d+)',line):
-                labels_dic[''.join(key)] = index
-    cur_true_label = index+1
-    with open('okoo-labels.json') as f:
-        data = json.load(f)["all"]
-        for item in data:
-            label = item['label']
-            if label in labels_dic:
-                item['merged_label'] = labels_dic[label]
-            else:
-                print(item)
-                print(cur_true_label)
-                item['merged_label'] = cur_true_label
-                cur_true_label += 1
-    with open('okoo-merged-labels.json','w') as f:
-        json.dump({'all': data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
+    pass
 
 
     # sentence = load_sentence_data('okoo-label.json')

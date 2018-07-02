@@ -16,8 +16,8 @@ class Config:
     PAD = "*"
 
     # textcnn
-    sequence_length = 12
-    word_embed_dim = 128
+    sequence_length = 16
+    word_embed_dim = 256
     class_num = 29
     kernel_num = 128
     kernel_size = (1, 2, 3, 5, 7, 8, 10)
@@ -28,7 +28,7 @@ class Config:
     log_interval = 50
     test_interval = 50
     save_interval = 3000
-    save_best = True
+    save_best = 100
     early_stop = 0
     train_proportion = 0.98
 
@@ -42,3 +42,9 @@ class Config:
     min_count = 2
     word2vec_sg = 0
     word2vec_model_name = '199-word2vec-cbow'
+    word2vec_negative = 0
+
+    # fast_text
+
+    # thulac
+    thulac_dict_path = ''

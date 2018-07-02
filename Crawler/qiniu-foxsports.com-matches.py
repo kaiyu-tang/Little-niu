@@ -197,6 +197,16 @@ def get_competition_id(url, proxies):
         competition_ids = [re.findall('competition=(\d+)', item.xpath('@href')[0])[0] for item in competitions]
         long_names = [item.xpath('span[1]/text()')[0] for item in competitions]
         short_names = [item.xpath('span[2]/text()')[0] for item in competitions]
+        # re_ = []
+        # for i,j,k in zip(competition_ids[1:],long_names[1:], short_names[1:]):
+        #     tmp_ = {}
+        #     tmp_['name'] = j
+        #     tmp_['short_name'] = k
+        #     tmp_['competition_id']=i
+        #     re_.append(tmp_)
+        #
+        # with open('competition_ids.json', 'w') as f:
+        #     json.dump({'all':re_},f,ensure_ascii=False, indent=4, separators=(',', ': '))
         return [long_names[1:], short_names[1:], competition_ids[1:]]
     except Exception as e:
         print("competition_id errors")
