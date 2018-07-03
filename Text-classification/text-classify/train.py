@@ -14,40 +14,47 @@ from TextCNN import TextCNN
 from Config import Config
 from gensim.models import Word2Vec, FastText
 from gensim.models.wrappers import Wordrank
+from gensim.models.word2vec import LineSentence
 import random
 from data.load_data import load_sentence_data, DataLoader
 from matplotlib import pyplot as plt
 
 
-def train_word_vectors(sentences,text_path, args):
-    print("loading data")
+def train_word_vectors(text_path, args):
+    sentences = LineSentence(text_path)
+    print("loading word2vec")
     # labels = [text['label'] for text in data]
-    model_word2vec = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.window_size,
-                              min_count=args.min_count, workers=args.works, sg=args.word2vec_sg,
-                              negative=args.word2vec_negative, iter=args.word2vec_epoch_num)
+    model_word2vec = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.word2vec_window,
+                              min_count=args.word2vec_min_count, workers=args.word2vec_worker, sg=args.word2vec_sg,
+                              negative=args.word2vec_negative, iter=args.word2vec_iter)
+    print('loading fast text')
+    model_fasttext = FastText(sentences=sentences, sg=args.fast_sg, size=args.word_embed_dim, window=args.fast_window,
+                              min_count=args.fast_min_count, workers=args.fast_worker, iter=args.fast_iter)
+    # print('loading word rank')
+    # model_wordrank = Wordrank.train(wr_path=args.dir_model, size=args.word_embed_dim, corpus_file=text_path,
+    #                                 window=args.wordrank_window, out_name=args.wordrank_out_name,
+    #                                 symmetric=args.wordrank_symmetric, min_count=args.wordrank_min_count,
+    #                                 iter=args.wordrank_iter,
+    #                                 np=args.wordrank_worker)
 
-    model_fasttext = FastText(sentences=sentence, sg=args.fast_sg, size=args.word_embed_dim, window=args.fast_window,
-                              min_count=args.fast_min_count, workers=args.fast_workers, iter=args.fast_iter)
-
-    model_wordrank = Wordrank.train(wr_path=args.dir_model,corpus_file=text_path,size=args.word_embed_dim,window=args.wordrank_window,
-                                    symmetric=args.wordrank_symmetric,min_count=args.wordrank_min_count,iter=args.wordrank_iter,
-                                    np=args.wordrank_worker)
-    
     # model_word2vec.build_vocab(sentences=sentences)
     # model_fasttext.build_vocab(sentences=sentences)
-    print("finished build_vocab")
+
+    print("start training")
     for epoch in range(args.word_vec_train_epoch):
-        random.shuffle(sentences)
-        model_word2vec.train(sentences=sentences, epochs=model_word2vec.iter, total_examples=model_word2vec.corpus_count)
-        model_fasttext.train(sentences=sentences, epochs=model_fasttext.iter, total_examples=model_fasttext.corpus_count)
-        model_wordrank
+        # random.shuffle(sentences)
+        model_word2vec.train(sentences=sentences, epochs=model_word2vec.iter,
+                             total_examples=model_word2vec.corpus_count)
+        # model_fasttext.train(sentences=sentences, epochs=model_fasttext.iter,
+        #                      total_examples=model_fasttext.corpus_count)
         print(epoch)
         if epoch % 20 == 0:
             model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
-            model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fasttext_model_name))
+            # model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fast_model_name))
     model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
-    model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fasttext_model_name))
-    model_wordrank.save(os.path.join(args.dir_model, str(epoch) + "-" + args.wordrank_model_name))
+    model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fast_model_name))
+    # model_wordrank.save(os.path.join(args.dir_model, str(epoch) + "-" + args.wordrank_model_name))
+    print('finished training')
 
 
 def eval_model(model, data_iter, args):
@@ -135,19 +142,19 @@ def predict(model, text, args):
 
 if __name__ == '__main__':
 
-    textcnn = TextCNN()
-    data_path = './data/okoo-merged-labels.json'
-    data = load_sentence_data(data_path)
-    sentences = []
-    labels = []
+    # textcnn = TextCNN()
+    # data_path = './data/okoo-merged-labels.json'
+    # data = load_sentence_data(data_path)
+    # sentences = []
+    # labels = []
+    #
+    # # stati = [[] for i in range(140)]
+    # for text in data:
+    #     sentence = text['text']
+    #     sentences.append(sentence.split())
 
-    # stati = [[] for i in range(140)]
-    for text in data:
-        sentence = text['text']
-        sentences.append(sentence.split())
-
-    text_path = ''
-    train_word_vectors(sentences,text_path ,Config)
+    text_path = 'data'+os.sep+'all-corpus-seg-pure.txt'
+    train_word_vectors(text_path, Config)
     # static_ = []
     # for label, sentence in enumerate(stati):
     #     tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}

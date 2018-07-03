@@ -32,19 +32,33 @@ class Config:
     early_stop = 0
     train_proportion = 0.98
 
-    # doc2vec
-    word2vec_epoch_num = 12
-    dm_concat = 0  # very time consuming
-    word2vec_net_size = 128
+    word_vec_train_epoch = 200
+
+    # word2vec
+    word2vec_dm_concat = 0  # very time consuming
+    word2vec_net_size = 512
     word2vec_train_epoch = 200
-    window_size = 10
-    works = multiprocessing.cpu_count()//3
-    min_count = 2
+    word2vec_window = 10
+    word2vec_worker = multiprocessing.cpu_count()
+    word2vec_min_count = 2
     word2vec_sg = 0
-    word2vec_model_name = '199-word2vec-cbow'
+    word2vec_model_name = 'word2vec-cbow.pt'
     word2vec_negative = 0
+    word2vec_iter = 80
 
     # fast_text
-
+    fast_sg = 0
+    fast_window = 10
+    fast_min_count = 2
+    fast_worker = multiprocessing.cpu_count()
+    fast_iter = 20
+    fast_model_name = 'fasttext.pt'
+    # wordrank
+    wordrank_window = 15
+    wordrank_symmetric = 1
+    wordrank_min_count = 2
+    wordrank_iter = 100
+    wordrank_worker = multiprocessing.cpu_count()
+    wordrank_out_name = 'wordrank.pt'
     # thulac
     thulac_dict_path = ''
