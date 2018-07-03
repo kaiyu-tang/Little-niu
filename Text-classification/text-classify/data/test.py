@@ -17,6 +17,7 @@ if __name__ == '__main__':
         test_data = data[-1000:-1]
         model = NBC(train_data)
         for test_item in test_data:
+            #
             label_ = model.classify(test_item[0])
             print('True: {} predict: {}'.format(str(test_item[1]), label_))
         print(model.accuracy(test_data))
