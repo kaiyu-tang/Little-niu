@@ -39,7 +39,7 @@ class Config:
     word2vec_net_size = 512
     word2vec_train_epoch = 20
     word2vec_window = 10
-    word2vec_worker = multiprocessing.cpu_count()
+    word2vec_worker = multiprocessing.cpu_count()//3
     word2vec_min_count = 2
     word2vec_sg = 0
     word2vec_model_name = 'word2vec-cbow.pt'
@@ -50,7 +50,7 @@ class Config:
     fast_sg = 0
     fast_window = 10
     fast_min_count = 2
-    fast_worker = multiprocessing.cpu_count()
+    fast_worker = multiprocessing.cpu_count()//3
     fast_iter = 20
     fast_model_name = 'fasttext.pt'
     # wordrank
