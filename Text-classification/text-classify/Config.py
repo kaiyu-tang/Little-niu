@@ -10,7 +10,6 @@ import torch
 class Config:
     # basic
     cuda = torch.cuda.is_available()
-    #cuda = False
     dir_model = "./checkpoints"
 
     PAD = "*"
