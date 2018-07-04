@@ -37,7 +37,7 @@ class Config:
     # word2vec
     word2vec_dm_concat = 0  # very time consuming
     word2vec_net_size = 512
-    word2vec_train_epoch = 200
+    word2vec_train_epoch = 20
     word2vec_window = 10
     word2vec_worker = multiprocessing.cpu_count()
     word2vec_min_count = 2
