@@ -26,10 +26,10 @@ def train_word_vectors(text_path, args):
     # labels = [text['label'] for text in data]
     model_word2vec = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.word2vec_window,
                               min_count=args.word2vec_min_count, workers=args.word2vec_worker, sg=args.word2vec_sg,
-                              negative=args.word2vec_negative, iter=args.word2vec_iter)
+                              negative=args.word2vec_negative, iter=args.word2vec_iter, max_vocab_size=100000000)
     print('loading fast text')
     model_fasttext = FastText(sentences=sentences, sg=args.fast_sg, size=args.word_embed_dim, window=args.fast_window,
-                              min_count=args.fast_min_count, workers=args.fast_worker, iter=args.fast_iter)
+                              min_count=args.fast_min_count, workers=args.fast_worker, iter=args.fast_iter, max_vocab_size=100000000)
     # print('loading word rank')
     # model_wordrank = Wordrank.train(wr_path=args.dir_model, size=args.word_embed_dim, corpus_file=text_path,
     #                                 window=args.wordrank_window, out_name=args.wordrank_out_name,
