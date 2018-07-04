@@ -44,7 +44,7 @@ class Config:
     word2vec_sg = 0
     word2vec_model_name = 'word2vec-cbow.pt'
     word2vec_negative = 0
-    word2vec_iter = 80
+    word2vec_iter = 20
 
     # fast_text
     fast_sg = 0
