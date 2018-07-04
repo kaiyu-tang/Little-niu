@@ -42,7 +42,7 @@ class Config:
     word2vec_worker = multiprocessing.cpu_count()
     word2vec_min_count = 2
     word2vec_sg = 0
-    word2vec_model_name = 'word2vec-cbow.pt'
+    word2vec_model_name = 'word2vec-cbow'
     word2vec_negative = 0
     word2vec_iter = 80
 

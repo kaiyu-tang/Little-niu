@@ -358,30 +358,32 @@ def predict(model,data_iter,args):
         #     avg_loss, accuracy / step, corrects, size))
     return predicteds
 if __name__ == "__main__":
-    texts, labels = get_text("")
+    # texts, labels = get_text("")
     textcnn = TextCNN()
     textcnn.load_state_dict(torch.load(
         "/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints/best_steps_110350.pt",
         map_location='cpu'))
-    test_iters = DataLoader(texts, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
-                            batch_size=128, clean=True)
-    print("finish")
+    # test_iters = DataLoader(texts, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
+    #                         batch_size=128, clean=True)
+    # print("finish")
 
-    # data_path = './data/okoo-merged-labels.json'
-    # data = load_sentence_data(data_path)
-    # sentences = []
-    # labels = []
-    # # stati = [[] for i in range(140)]
-    # for text in data:
-    #     sentence = text['text']
-    #     sentences.append(sentence.split())
-    #     label = int(text['merged_label'])
-    #     # stati[label].append(sentence)
-    #     if label > Config.class_num:
-    #         Config.class_num = label
-    #     labels.append(label)
-    # te_iters = DataLoader(sentences, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
-    #                       batch_size=128, clean=True)
-    predicts = predict(textcnn, test_iters, Config)
-    for text, predict_ in zip(texts, predicts):
-        print("{}: {}".format(text[0], str(predict_)[-2]))
+    data_path = './data/test000-merged-label.json'
+    data = load_sentence_data(data_path)
+    sentences = []
+    labels = []
+    # stati = [[] for i in range(140)]
+    for text in data:
+        sentence = text['text']
+        sentences.append(sentence.split())
+        label = int(text['merged_label'])
+        # stati[label].append(sentence)
+        if label > Config.class_num:
+            Config.class_num = label
+        labels.append(label)
+    te_iters = DataLoader(sentences, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
+                          batch_size=128, clean=False)
+    predicts = predict(textcnn, te_iters, Config)
+    for text, predict_ in zip(data, predicts):
+        print("{}: {}".format(text['merged_label'], str(predict_)[-2]))
+
+

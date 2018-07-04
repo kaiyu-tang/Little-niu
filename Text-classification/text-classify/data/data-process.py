@@ -11,15 +11,15 @@ from gensim.corpora import WikiCorpus
 import thulac
 
 
-def okoo_merge_label():
+def okoo_merge_label(file_name):
     labels_dic = {}
-    with open("label_doc.text") as f:
+    with open("label_doc.text",encoding='utf-8') as f:
         for index, line in enumerate(f):
             for key in re.findall('(\d+)', line):
                 labels_dic[''.join(key)] = index
     cur_true_label = index + 1
-    with open('okoo-labels.json') as f:
-        data = json.load(f)["all"]
+    with open(file_name,encoding='utf-8') as f:
+        data = json.load(f)["narrate"]
         for item in data:
             label = item['label']
             if label in labels_dic:
@@ -29,7 +29,7 @@ def okoo_merge_label():
                 print(cur_true_label)
                 item['merged_label'] = cur_true_label
                 cur_true_label += 1
-    with open('okoo-merged-labels.json', 'w') as f:
+    with open('test000-merged-label.json', 'w',encoding='utf-8') as f:
         json.dump({'all': data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
 
@@ -56,5 +56,7 @@ def readfile(dir_path, out_file_name):
 
 
 if __name__ == '__main__':
-    thu1 = thulac.thulac(user_dict='English_Cn_Name_Corpus(48W).txt', deli='_', filt=False)
-    thu1.fast_cut_f('all-corpus.txt', 'all-corpus-seg-pure.txt')
+    # thu1 = thulac.thulac(user_dict='English_Cn_Name_Corpus(48W).txt', deli='_', filt=False)
+    # thu1.fast_cut_f('all-corpus.txt', 'all-corpus-seg-pure.txt')
+    file_name = 'test000.json'
+    okoo_merge_label(file_name)

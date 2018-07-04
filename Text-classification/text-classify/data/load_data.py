@@ -34,7 +34,7 @@ def clean(text,stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在
 
 
 def load_sentence_data(data_path):
-    with open(data_path) as f_:
+    with open(data_path,encoding='utf-8') as f_:
         js_data = json.load(f_)['all']
         # for item in js_data:
         # item['text'] = jieba.lcut(item['text'])
