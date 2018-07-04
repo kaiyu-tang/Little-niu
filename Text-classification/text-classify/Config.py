@@ -32,7 +32,7 @@ class Config:
     early_stop = 0
     train_proportion = 0.98
 
-    word_vec_train_epoch = 200
+    word_vec_train_epoch = 0
 
     # word2vec
     word2vec_dm_concat = 0  # very time consuming
