@@ -13,7 +13,7 @@ import random
 from data.load_data import load_sentence_data, DataLoader
 from train import eval_model
 from lxml import etree
-
+import torch.nn.functional as F
 
 def get_text(url):
     try:
@@ -333,20 +333,22 @@ def get_text(url):
         print(e)
 def predict(model,data_iter,args):
     predicteds = []
+    targets = []
     model.eval()
     corrects, avg_loss = 0, 0
     step = 0
     model.double()
     for feature, target in data_iter:
         step += 1
-        print(feature)
+        # print(feature)
         if args.cuda:
             feature, target = feature.cuda(), target.cuda()
 
         logit = model(feature)
-        _, predicted = torch.max(logit.data, 1)
+        predicted = torch.max(logit.data, 1)[1].view(target.size()).data
         #print(predicted)
         predicteds.extend(predicted)
+        targets.extend(target.data)
         # loss = F.cross_entropy(logit, target, size_average=False)
         #
         # avg_loss += loss.data[0]
@@ -356,7 +358,32 @@ def predict(model,data_iter,args):
         # accuracy = 100.0 * corrects / size
         # print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
         #     avg_loss, accuracy / step, corrects, size))
-    return predicteds
+    return predicteds, targets
+
+def eval_model(model, data_iter, args):
+    model.eval()
+    corrects, avg_loss = 0, 0
+    step = 0
+    model.double()
+    for feature, target in data_iter:
+        step += 1
+        if args.cuda:
+            feature, target = feature.cuda(), target.cuda()
+
+        logit = model(feature)
+        loss = F.cross_entropy(logit, target, size_average=False)
+
+        avg_loss += loss.data[0]
+        predicts = torch.max(logit, 1)[1].view(target.size()).data
+        corrects += (predicts == target.data).sum()
+        size = len(data_iter)
+        avg_loss /= size
+        accuracy = 100.0 * corrects / size
+        print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
+            avg_loss, accuracy / step, corrects, size))
+    return accuracy
+
+
 if __name__ == "__main__":
     # texts, labels = get_text("")
     textcnn = TextCNN()
@@ -381,9 +408,10 @@ if __name__ == "__main__":
             Config.class_num = label
         labels.append(label)
     te_iters = DataLoader(sentences, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
-                          batch_size=128, clean=False)
-    predicts = predict(textcnn, te_iters, Config)
-    for text, predict_ in zip(data, predicts):
-        print("{}: {}".format(text['merged_label'], str(predict_)[-2]))
+                          batch_size=128, clean=True)
+    predicts, targets = predict(textcnn, te_iters, Config)
+    eval_model(textcnn,te_iters,Config)
+    for text, predict_ in zip(targets, predicts):
+        print("{}: {}".format(text, str(predict_)[-2]))
 
 

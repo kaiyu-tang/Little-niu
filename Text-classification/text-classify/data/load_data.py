@@ -21,20 +21,20 @@ from torch.autograd import Variable
 
 from Config import Config
 import thulac
+import jieba
 PAD = Config.PAD
 
-def clean(text,stop_chars = ''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由—~'''):
-    thu0 = thulac(user_dict=Config.thulac_dict_path,T2S=True,filt=True)
+
+def clean(text, thu0, stop_chars=''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由—~'''):
     text = re.sub('[a-zA-Z]+', '', text)
     for c in stop_chars:
         text = text.replace(c, ' ')
     text = thu0.fast_cut(text)
-    return text
-
+    return [t[0] for t in text]
 
 
 def load_sentence_data(data_path):
-    with open(data_path,encoding='utf-8') as f_:
+    with open(data_path, encoding='utf-8') as f_:
         js_data = json.load(f_)['all']
         # for item in js_data:
         # item['text'] = jieba.lcut(item['text'])
@@ -43,7 +43,8 @@ def load_sentence_data(data_path):
 
 
 class DataLoader(object):
-    def __init__(self, src_sents, label, max_len, embed_dim, cuda=True, batch_size=64, shuffle=True, evaluation=False,clean=False):
+    def __init__(self, src_sents, label, max_len, embed_dim, cuda=True, batch_size=64, shuffle=True, evaluation=False,
+                 clean=False):
         self.cuda = cuda
         self.sents_size = len(src_sents)
         self._step = 0
@@ -51,7 +52,8 @@ class DataLoader(object):
         self._stop_step = self.sents_size // self._batch_size + 1
         self.evaluation = evaluation
         self._clean = clean
-
+        if self._clean:
+            self.thu0 = thulac.thulac()
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
         self._label = np.asarray(label)
@@ -75,7 +77,7 @@ class DataLoader(object):
         def pad_to_longest(insts, max_len):
             for index, inst in enumerate(insts):
                 if self._clean:
-                    inst = clean(''.join(inst)).split()
+                    inst = clean(''.join(inst), self.thu0)
                 inst_len = len(inst)
                 if inst_len < max_len:
                     insts[index] = inst + [PAD] * (max_len - inst_len)
@@ -120,6 +122,5 @@ if __name__ == '__main__':
     #     json.dump({'all': js_data}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
     pass
-
 
     # sentence = load_sentence_data('okoo-label.json')
