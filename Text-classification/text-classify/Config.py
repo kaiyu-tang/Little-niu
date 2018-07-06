@@ -40,18 +40,18 @@ class Config:
     word2vec_window = 5
     word2vec_worker = multiprocessing.cpu_count()//3
     word2vec_min_count = 2
-    word2vec_sg = 0
-    word2vec_model_name = 'word2vec-cbow-5.pt'
+    word2vec_sg = 1
+    word2vec_model_name = 'word2vec-skim-5.pt'
     word2vec_negative = 0
     word2vec_iter = 20
 
     # fast_text
-    fast_sg = 0
+    fast_sg = 1
     fast_window = 5
     fast_min_count = 2
     fast_worker = multiprocessing.cpu_count()//3
     fast_iter = 20
-    fast_model_name = 'fasttext-cbow-5.pt'
+    fast_model_name = 'fasttext-skim-5.pt'
     # wordrank
     wordrank_window = 15
     wordrank_symmetric = 1
