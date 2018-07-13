@@ -16,17 +16,17 @@ class Config:
 
     # textcnn
     sequence_length = 16
-    word_embed_dim = 256
+    word_embed_dim = 300
     class_num = 29
     kernel_num = 128
     kernel_size = (1, 2, 3, 5, 7, 8, 10)
     dropout = 0.5
     static = False
     lr = 0.001
-    textcnn_epochs = 200
+    textcnn_epochs = 1000
     log_interval = 50
     test_interval = 50
-    save_interval = 3000
+    save_interval = 100
     save_best = 100
     early_stop = 0
     train_proportion = 0.98
@@ -35,23 +35,23 @@ class Config:
 
     # word2vec
     word2vec_dm_concat = 0  # very time consuming
-    word2vec_net_size = 512
-    word2vec_train_epoch = 20
-    word2vec_window = 5
+    word2vec_net_size = 128
+    word2vec_train_epoch = 40
+    word2vec_window = 2
     word2vec_worker = multiprocessing.cpu_count()//3
-    word2vec_min_count = 2
+    word2vec_min_count = 1
     word2vec_sg = 1
-    word2vec_model_name = 'word2vec-skim-5.pt'
+    word2vec_model_name = 'word2vec-skim-clean-2.pt'
     word2vec_negative = 0
-    word2vec_iter = 20
+    word2vec_iter = 50
 
     # fast_text
     fast_sg = 1
-    fast_window = 5
-    fast_min_count = 2
+    fast_window = 2
+    fast_min_count = 1
     fast_worker = multiprocessing.cpu_count()//3
-    fast_iter = 20
-    fast_model_name = 'fasttext-skim-5.pt'
+    fast_iter = 50
+    fast_model_name = 'fasttext-skim-clean-2.pt'
     # wordrank
     wordrank_window = 15
     wordrank_symmetric = 1

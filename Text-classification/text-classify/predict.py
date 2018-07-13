@@ -9,11 +9,14 @@ import torch
 from TextCNN import TextCNN
 from Config import Config
 from gensim.models import Word2Vec
+import json
 import random
 from data.load_data import load_sentence_data, DataLoader
 from train import eval_model
 from lxml import etree
 import torch.nn.functional as F
+from sklearn.metrics import classification_report
+
 
 def get_text(url):
     try:
@@ -331,7 +334,9 @@ def get_text(url):
     except Exception as e:
         print("error!!! while getting text")
         print(e)
-def predict(model,data_iter,args):
+
+
+def predict(model, data_iter, args):
     predicteds = []
     targets = []
     model.eval()
@@ -346,19 +351,20 @@ def predict(model,data_iter,args):
 
         logit = model(feature)
         predicted = torch.max(logit.data, 1)[1].view(target.size()).data
-        #print(predicted)
+        # print(predicted)
         predicteds.extend(predicted)
         targets.extend(target.data)
-        # loss = F.cross_entropy(logit, target, size_average=False)
-        #
-        # avg_loss += loss.data[0]
-        # corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-        # size = len(data_iter)
-        # avg_loss /= size
-        # accuracy = 100.0 * corrects / size
-        # print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
-        #     avg_loss, accuracy / step, corrects, size))
+        loss = F.cross_entropy(logit, target, size_average=False)
+
+        avg_loss += loss.data[0]
+        corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
+        size = len(data_iter)
+        avg_loss /= size
+        accuracy = 100.0 * corrects / size
+        print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
+            avg_loss, accuracy / step, corrects, size))
     return predicteds, targets
+
 
 def eval_model(model, data_iter, args):
     model.eval()
@@ -388,30 +394,30 @@ if __name__ == "__main__":
     # texts, labels = get_text("")
     textcnn = TextCNN()
     textcnn.load_state_dict(torch.load(
-        "/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints/best_steps_110350.pt",
+        "/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints/best_steps_350.pt",
         map_location='cpu'))
+    word2vec_path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/wiki.zh/wiki.zh.bin'
     # test_iters = DataLoader(texts, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
     #                         batch_size=128, clean=True)
     # print("finish")
 
-    data_path = './data/test000-merged-label.json'
-    data = load_sentence_data(data_path)
+    data_path = './data/test001.json'
     sentences = []
     labels = []
-    # stati = [[] for i in range(140)]
-    for text in data:
-        sentence = text['text']
-        sentences.append(sentence.split())
-        label = int(text['merged_label'])
-        # stati[label].append(sentence)
-        if label > Config.class_num:
-            Config.class_num = label
-        labels.append(label)
+    with open(data_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        for chang in data:
+            for text_ in chang:
+                sentences.append(text_[1].split())
+                labels.append(28)
     te_iters = DataLoader(sentences, labels, Config.sequence_length, Config.word_embed_dim, cuda=Config.cuda,
-                          batch_size=128, clean=True)
+                          batch_size=1024, clean=True, word2vec_path=word2vec_path)
+
+    # eval_model(textcnn, te_iters, Config)
     predicts, targets = predict(textcnn, te_iters, Config)
-    eval_model(textcnn,te_iters,Config)
-    for text, predict_ in zip(targets, predicts):
-        print("{}: {}".format(text, str(predict_)[-2]))
-
-
+    corects = 0
+    res = [[] for i in range(30)]
+    for text, predict_ in zip(sentences, predicts):
+        res[int(predict_)].append(text)
+        print("{}: {}".format(text, int(predict_)))
+    print(res)

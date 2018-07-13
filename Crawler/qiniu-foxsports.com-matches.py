@@ -16,7 +16,6 @@ import re
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 from lxml import etree, html
 import copy
-from bs4 import BeautifulSoup
 
 import requests
 

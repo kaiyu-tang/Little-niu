@@ -15,9 +15,11 @@ from Config import Config
 from gensim.models import Word2Vec, FastText
 from gensim.models.wrappers import Wordrank
 from gensim.models.word2vec import LineSentence
-import random
-from data.load_data import load_sentence_data, DataLoader
-from matplotlib import pyplot as plt
+from sklearn import feature_extraction
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer
+from data.load_data import DataLoader
+import thulac
 
 
 def train_word_vectors(text_path, args):
@@ -26,10 +28,10 @@ def train_word_vectors(text_path, args):
     # labels = [text['label'] for text in data]
     model_word2vec = Word2Vec(sentences=sentences, size=args.word_embed_dim, window=args.word2vec_window,
                               min_count=args.word2vec_min_count, workers=args.word2vec_worker, sg=args.word2vec_sg,
-                              negative=args.word2vec_negative, iter=args.word2vec_iter,)
+                              negative=args.word2vec_negative, iter=args.word2vec_iter, )
     print('loading fast text')
     model_fasttext = FastText(sentences=sentences, sg=args.fast_sg, size=args.word_embed_dim, window=args.fast_window,
-                              min_count=args.fast_min_count, workers=args.fast_worker, iter=args.fast_iter,)
+                              min_count=args.fast_min_count, workers=args.fast_worker, iter=args.fast_iter, )
     # print('loading word rank')
     # model_wordrank = Wordrank.train(wr_path=args.dir_model, size=args.word_embed_dim, corpus_file=text_path,
     #                                 window=args.wordrank_window, out_name=args.wordrank_out_name,
@@ -51,33 +53,34 @@ def train_word_vectors(text_path, args):
         if epoch % 20 == 0:
             model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
             # model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fast_model_name))
-    model_word2vec.save(os.path.join(args.dir_model, str(epoch) + "-" + args.word2vec_model_name))
-    model_fasttext.save(os.path.join(args.dir_model, str(epoch) + "-" + args.fast_model_name))
+    model_word2vec.save(os.path.join(args.dir_model, args.word2vec_model_name))
+    model_fasttext.save(os.path.join(args.dir_model, args.fast_model_name))
     # model_wordrank.save(os.path.join(args.dir_model, str(epoch) + "-" + args.wordrank_model_name))
     print('finished training')
 
 
 def eval_model(model, data_iter, args):
     model.eval()
-    corrects, avg_loss = 0, 0
+    all_corrects, all_loss, all_size = 0, 0, 0
     step = 0
     model.double()
     for feature, target in data_iter:
         step += 1
         if args.cuda:
             feature, target = feature.cuda(), target.cuda()
-
+        cur_size = len(feature)
+        all_size += cur_size
         logit = model(feature)
         loss = F.cross_entropy(logit, target, size_average=False)
 
-        avg_loss += loss.data[0]
-        corrects += (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-        size = len(data_iter)
-        avg_loss /= size
-        accuracy = 100.0 * corrects / size
-        print('Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{})'.format(
-            avg_loss, accuracy / step, corrects, size))
-    return accuracy
+        cur_loss = loss.data[0]
+        all_loss += cur_loss
+        cur_corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
+        all_corrects += cur_corrects
+        print('Evaluation - current loss: {:.6f} average loss: {:.6f} current acc: {:.4f}% average acc: {:.4f}%'.format(
+            float(cur_loss) / int(cur_size), float(all_loss) / int(all_size), 100 * float(cur_corrects) / int(cur_size),
+            100 * float(all_corrects) / int(all_size)))
+    return all_corrects
 
 
 def save(model, save_dir, save_prefix, steps):
@@ -90,16 +93,18 @@ def save(model, save_dir, save_prefix, steps):
     print('Save Sucessful, path: {}'.format(save_path))
 
 
-def train(model, train_iter, dev_iter, args):
+def train(model, train_iter, dev_iter, args, word2vec_path=''):
     if args.cuda:
         model.cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
+    # optimizer = torch.optim.SGD(model.parameters,lr=args.lr)
+    # word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     steps = 0
     best_acc = 0
     last_step = 0
     model.train()
     model.double()
+    print('start training')
     for epoch in range(args.textcnn_epochs):
         for feature, target in train_iter:
             # feature = feature.data()
@@ -123,7 +128,7 @@ def train(model, train_iter, dev_iter, args):
                     steps, loss.data[0], accuracy, corrects, 1))
 
             if steps % args.test_interval == 0:
-                dev_acc = eval_model(dev_iter, model, args)
+                dev_acc = eval_model(model, dev_iter, args)
                 if dev_acc > best_acc:
                     best_acc = dev_acc
                     last_step = steps
@@ -133,47 +138,41 @@ def train(model, train_iter, dev_iter, args):
                     if steps - last_step >= args.early_stop:
                         print('early stop by {} steps.'.format(args.early_stop))
             elif steps % args.save_interval == 0:
-                save(model, args.dir_model, 'snapshot', steps)
-
-
-def predict(model, text, args):
-    pass
+                # save(model, args.dir_model, 'snapshot', steps)
+                pass
 
 
 if __name__ == '__main__':
+    # data pre-process
+    data_path = './data/okoo-merged-labels.json'
+    data = json.load(open(data_path, encoding='utf-8'))['all']
+    sentences = []
+    labels = []
+    for item in data:
+        sentences.append(item['text'])
+        labels.append(item['merged_label'])
+    data_len = len(data)
+    train_index = int(data_len * Config.train_proportion)
+    # train word2vec
+    text_path = 'data' + os.sep + 'okoo-merged-clean-cut-data.txt'
+    # train_word_vectors(text_path, Config)
 
-    # textcnn = TextCNN()
-    # data_path = './data/okoo-merged-labels.json'
-    # data = load_sentence_data(data_path)
-    # sentences = []
-    # labels = []
-    #
-    # # stati = [[] for i in range(140)]
-    # for text in data:
-    #     sentence = text['text']
-    #     sentences.append(sentence.split())
-
-    text_path = 'data'+os.sep+'all-corpus-seg-pure.txt'
-    train_word_vectors(text_path, Config)
-    # static_ = []
-    # for label, sentence in enumerate(stati):
-    #     tmp_ = {"Num": len(sentence), "Label": label, "Text": sentence}
-    #     static_.append(tmp_)
-    # static_ = sorted(static_,key=lambda x: x["Num"])
-    # #stati.reverse()
-    # plt.plot([text["Num"] for text in static_])
-    # plt.show()
-    # with open('static.json', 'w') as f:
-    #     json.dump({'all': static_}, f, ensure_ascii=False, indent=4, separators=(',', ': '))
-    #     f.flush()
-
-    # data_len = len(data)
-    # train_index = int(data_len * Config.train_proportion)
-    # print(Config.cuda)
-    # train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-    #                          Config.word_embed_dim, cuda=Config.cuda, batch_size=1024)
-    # for i,j in train_iters:
-    #     print()
-    # dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-    #                        Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024)
-    # train(textcnn, train_iters, dev_iters, Config)
+    # train text-Cnn
+    print('loading model')
+    big_word2vec_path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/wiki.zh/wiki.zh.bin'
+    small_word2vec_path = '/Users/harry/PycharmProjects/toys/Text-classification/text-classify/checkpoints/fasttext-skim-clean-2.pt'
+    big_word2vec_model = FastText.load_fasttext_format(big_word2vec_path)
+    small_word2vec_model = Word2Vec.load(small_word2vec_path)
+    textcnn = TextCNN()
+    print('finished loading model')
+    sentences_train = [text.split() for text in sentences]
+    print('Cuda: {}'.format(Config.cuda))
+    train_iters = DataLoader(sentences_train[:train_index], labels[:train_index], Config.sequence_length,
+                             Config.word_embed_dim, cuda=Config.cuda, batch_size=1024, PAD=Config.PAD,
+                             big_word2vec_model=big_word2vec_model, small_word2vec_model=small_word2vec_model)
+    dev_iters = DataLoader(sentences_train[train_index:], labels[train_index:], Config.sequence_length,
+                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024,
+                           PAD=Config.PAD,
+                           big_word2vec_model=big_word2vec_model, small_word2vec_model=small_word2vec_model)
+    # start train
+    train(textcnn, train_iters, dev_iters, Config)

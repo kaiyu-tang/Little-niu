@@ -11,8 +11,9 @@ import json
 import os
 import re
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
-
+import pickle
 from threading import Thread
+from lxml import etree
 
 
 class ThreadWithReturnValue(Thread):
@@ -51,7 +52,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     :param header: 请求头
     :return: 列表[(比赛基本信息)，[(文本，时间，当前比分)]]
     """
-
+    # get page content
     res = {}
     try:
         page = requests.get(url, headers=header, timeout=2).content.decode('gb2312', 'ignore')
@@ -62,20 +63,10 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
                                   re_match_start_time, connect_times + 1)
         else:
             return res
-    # option = webdriver.ChromeOptions()
-    # option.add_argument('headless')
-    # response = requests.get(url, headers=headers, proxies=proxy)
-    # browser = webdriver.Chrome(chrome_options=option)
-    # browser.add_cookie(cookie)
-    # browser.get(url)
-    # page = browser.page_source
-    # match_basic = re.findall(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+?)/(\d+?)】', page)
-    # text = re.findall(r'<p class="float_l livelistcontext">(.+?)</p>', page, re.S | re.M)
-    # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
-    # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
-    #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
+    # use re find meaningful messages
     text = re_match_jieshuo.findall(page)
     bifen = re_match_bifen.findall(page)
+    # if no text of bifen return {}
     if len(text) == 0 or len(bifen) == 0:
         return res
     match_basic = re_match_basic.findall(page)
@@ -83,9 +74,11 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     timeline = re_match_time.findall(page)
     start_time = re_match_start_time.findall(page)[0]
     labels = re_match_label.findall(page)
+    # modify the error start and ending
     timeline[-1] = "0'"
     timeline[0] = timeline[1]
     match_basic = match_basic[0]
+    # save message to res
     res["Url"] = url
     res["host"] = match_basic[0]
     res["visiting"] = match_basic[1]
@@ -99,7 +92,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
     time_res['hour'] = start_time[3]
     time_res['minute'] = start_time[4]
     res['time'] = time_res
-
+    # save the jieshuo text to a list than save the list to res
     jieshuo = []
     for txt, time_, bf, label in zip(text, timeline, bifen, labels):
         jieshuo.append({"text": txt, "time": time_[:-1], "vs": bf, 'label': label})
@@ -109,6 +102,7 @@ def get_match_info(url, header, re_match_basic, re_match_jieshuo, re_match_time,
 
 
 def okoo_crawler():
+    # basic config
     base = 'http://www.okooo.com/soccer/match/{}/'
     all_matches = {}
     threads = []
@@ -116,10 +110,11 @@ def okoo_crawler():
     match_end_id = 9999999
     batch_size = 10
     count = 0
+    # the path to save
     base_dir = "okoo-match/{}.json"
     if not os.path.exists("okoo-match"):
         os.mkdir("okoo-match")
-
+    # the re pattern
     re_match_basic = re.compile(r'<title>【(.+?)vs(.+?)\|(.+?)\s(.+?)】')
     # re_match_Bifen = re.compile(r'<div class="vs">\n\s+?<span class="vs_.+?">(\d+)</span>-<span class="vs_.+?">(\d+)</span>\n\s+?</div>')
     re_match_jieshuo = re.compile(r'<p class="float_l livelistcontext">(.+?)</p>')
@@ -130,14 +125,19 @@ def okoo_crawler():
                                      r'<p><span style="display:inline-block;margin-left:10px"></span></p>\s+?</div>')
     re_match_label = re.compile(r'<div class="livelistcon">\s+<span class="phrase_type_(\d+)"></span>\s+'
                                 r'<p class="float_l livelistcontext">')
+    # open log file
     res_f = open(base_dir.format('result-new'), 'w')
     res_f.write('start id: {} \n end_id: {} \nbatch_size: {} \n'.format(match_start_id, match_end_id, batch_size))
+    # starting crawler
     for loop in range((match_end_id - match_start_id) // batch_size):
+        # sleep for avoiding being spend
         time.sleep(random.randrange(0, 10))
         match_cur_start_id = match_start_id + loop * batch_size
         for match_id in range(match_cur_start_id, min(match_cur_start_id + batch_size, match_end_id)):
+            # cat url
             url = base.format(match_id)
             start_time = time.clock()
+            # start a thread of crawler
             thread = ThreadWithReturnValue(target=get_match_info,
                                            args=(url, headers, re_match_basic, re_match_jieshuo, re_match_timeline,
                                                  re_match_bifen, re_match_start_time, re_match_label))
@@ -148,10 +148,11 @@ def okoo_crawler():
 
             print("id: {} runtime: {}".format(match_id, end_time - start_time))
         for index, thread in enumerate(threads):
+            # get result of crawler
             cur_res = thread.join()
             try:
                 if len(cur_res) != 0:
-                    # print(cur_res)
+                    # dump the result to file
                     with open(base_dir.format(cur_res["Url"].split("/")[-2]), 'w') as f_w:
                         print(cur_res["Url"])
                         res_f.write('Url: ' + cur_res['Url'] + "\n")
@@ -191,18 +192,7 @@ def get_info_single(url, connect_times=3):
                                   re_match_start_time, connect_times + 1)
         else:
             return res
-    # option = webdriver.ChromeOptions()
-    # option.add_argument('headless')
-    # response = requests.get(url, headers=headers, proxies=proxy)
-    # browser = webdriver.Chrome(chrome_options=option)
-    # browser.add_cookie(cookie)
-    # browser.get(url)
-    # page = browser.page_source
-    # match_basic = re.findall(r'<title>【(.+?)vs(.+?)\|(.+?)\s(\d+?)/(\d+?)】', page)
-    # text = re.findall(r'<p class="float_l livelistcontext">(.+?)</p>', page, re.S | re.M)
-    # timeline = re.findall(r'<b class="float_l livelistcontime">(\d+).</b>', page, re.S | re.M)
-    # bifen = re.findall(r'<p class="float_l livelistconbifen"><b class=".+?">(\d)</b><b>-</b>'
-    #                  r'<b class=".+?">(\d)</b></p>', page, re.S | re.M)
+
     text = re_match_jieshuo.findall(page)
     bifen = re_match_bifen.findall(page)
     if len(text) == 0 or len(bifen) == 0:
@@ -237,9 +227,26 @@ def get_info_single(url, connect_times=3):
     return res
 
 
+def get_urls(url):
+    res = {}
+    try:
+        page_ = requests.get(url, headers=headers, timeout=2).content.decode('gb2312', 'ignore')
+    except Exception as e:
+        print(e)
+    urls = re.findall('<a href="(.*)" target="_blank">\s+<strong class="font_red">\d+-\d+</strong>\s+</a>', page_)
+    return urls
+
+
 if __name__ == "__main__":
-    url = 'http://www.okooo.com/soccer/match/1000238/'
-    info = get_info_single(url)
+    base_url = 'http://www.okooo.com/soccer/league/16/schedule/13542/1-39{}/?show=all'
+    urls = []
+    for i in range(54, 62):
+        cur_url_ = base_url.format(i)
+        urls.extend(get_urls(cur_url_))
+    with open('urls.txt', 'wb') as f:
+        pickle.dump(urls, f)
+    res = []
+    for url in urls:
+        res.append(get_info_single("http://www.okooo.com{}".format(url)))
     with open('test000.json', 'w', encoding='utf-8') as f:
-        json.dump(info, f, ensure_ascii=False, indent=4, separators=(',', ': '))
-    print()
+        json.dump(res, f, ensure_ascii=False, indent=4, separators=(',', ': '))
