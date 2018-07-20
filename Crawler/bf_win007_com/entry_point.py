@@ -1,9 +1,10 @@
 #!/usr/bin/env python  
 # -*- coding: utf-8 -*-  
-# @Time    : 2018/6/20 上午11:40  
+# @Time    : 2018/7/16 下午4:26  
 # @Author  : Kaiyu  
 # @Site    :   
-# @File    : entrypoint.py.py
+# @File    : entry_point.py
 
 from scrapy.cmdline import execute
-execute(['scrapy', 'crawl', 'foxsports'])
+
+execute(['scrapy', 'crawl', 'bf_win007'])
