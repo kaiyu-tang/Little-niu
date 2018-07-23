@@ -806,7 +806,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="112" y="84" width="1440" height="877" extended-state="0" />
+    <frame x="112" y="84" width="1440" height="877" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.32876712" />
@@ -825,15 +825,30 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5277778" side_tool="true" weight="0.3648817" />
       <window_info anchor="bottom" id="Concurrent Activities Diagram" order="13" sideWeight="0.49861112" weight="0.32876712" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5277778" side_tool="true" weight="0.3648817" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17222223" />
+      <window_info anchor="right" id="SciView" order="4" sideWeight="0.9339623" weight="0.3359375" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.32876712" />
+      <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49928468" weight="0.32876712" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4722222" weight="0.3648817" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" x="0" y="0" width="310" height="677" id="Documentation" order="6" sideWeight="0.06603774" side_tool="true" weight="0.375" />
+      <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Messages" order="11" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="14" sideWeight="0.52013886" side_tool="true" weight="0.43088418" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49722221" weight="0.3275218" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="right" id="Coverage" order="5" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49928468" weight="0.26650062" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">

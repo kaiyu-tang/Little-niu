@@ -20,7 +20,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 
 import numpy as np
-import thulac
+
 
 
 def train_word_vectors(text_path, args):
@@ -59,6 +59,7 @@ def train_word_vectors(text_path, args):
     # model_wordrank.save(os.path.join(args.dir_model, str(epoch) + "-" + args.wordrank_model_name))
     print('finished training')
 
+
 def eval_model(model, data_iter, args):
     model.eval()
     all_corrects, all_loss, all_size = 0, 0, 0
@@ -71,22 +72,28 @@ def eval_model(model, data_iter, args):
         y_true.extend(map(int, target))
         logit = model(feature)
         y_pred.extend(map(int, torch.max(logit, 1)[1].view(target.size()).data))
+        if len(y_pred) != len(y_true):
+            print("{} {}".format(len(y_pred), len(y_true)))
     #####
     # then get the ground truth and the predict label named y_true and y_pred
+    if len(y_pred) < len(y_true):
+        print("changed")
+        y_true = y_true[:len(y_pred)]
+
     classify_report = metrics.classification_report(y_true, y_pred)
-    confusion_matrix = metrics.confusion_matrix(y_true, y_pred)
+    # confusion_matrix = metrics.confusion_matrix(y_true, y_pred)
     overall_accuracy = metrics.accuracy_score(y_true, y_pred)
     acc_for_each_class = metrics.precision_score(y_true, y_pred, average=None)
     average_accuracy = np.mean(acc_for_each_class)
     score = metrics.accuracy_score(y_true, y_pred)
     print('classify_report : \n', classify_report)
-    print('confusion_matrix : \n', confusion_matrix)
+    # print('confusion_matrix : \n', confusion_matrix)
     print('acc_for_each_class : \n', acc_for_each_class)
     print('average_accuracy: {0:f}'.format(average_accuracy))
     print('overall_accuracy: {0:f}'.format(overall_accuracy))
     print('score: {0:f}'.format(score))
 
-    return all_corrects
+    return average_accuracy
 
 
 def save(model, save_dir, save_prefix, steps):
@@ -116,8 +123,7 @@ def train(model, train_iter, dev_iter, args, word2vec_path=''):
             # feature = feature.data()
             # feature.data.t_()
             # target.data.sub_()
-            if args.cuda:
-                feature, target = feature.cuda(), target.cuda()
+
 
             optimizer.zero_grad()
             logit = model(feature)
@@ -130,7 +136,6 @@ def train(model, train_iter, dev_iter, args, word2vec_path=''):
             if steps % args.log_interval == 0:
                 corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
                 accuracy = 100.0 * corrects / target.shape[0]
-
 
             if steps % args.test_interval == 0:
                 dev_acc = eval_model(model, dev_iter, args)
@@ -146,7 +151,6 @@ def train(model, train_iter, dev_iter, args, word2vec_path=''):
                 # save(model, args.dir_model, 'snapshot', steps)
                 pass
 
-###你好啊
 
 if __name__ == '__main__':
     # data pre-process
@@ -170,9 +174,10 @@ if __name__ == '__main__':
     print('Cuda: {}'.format(Config.cuda))
     print("loading data")
     from data.load_data import DataLoader
+
     train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
                              cuda=Config.cuda, batch_size=1024, PAD=Config.PAD, embed_dim=Config.embed_dim,
-                            )
+                             )
     dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
                            cuda=Config.cuda, evaluation=True, batch_size=1024,
                            PAD=Config.PAD, embed_dim=Config.embed_dim,

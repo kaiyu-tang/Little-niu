@@ -14,9 +14,9 @@ if __name__ == '__main__':
         time_ = item[0]
         text_ = item[1]
         if '+' not in time_:
-            content[index] = [text_, int(time_)]
+            content[index] = [text_,int(time_)]
         else:
             time_ = time_.split('+')
-            content[index] = [text_, sum(map(int, time_))]
+            content[index] = [text_,sum(map(int, time_))]
     with open('cut-text.json', 'w', encoding='utf-8') as f:
         json.dump(content, f, indent=2, ensure_ascii=False, separators=(',', ': '))

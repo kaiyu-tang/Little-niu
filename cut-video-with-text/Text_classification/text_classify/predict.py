@@ -13,7 +13,7 @@ from Config import Config
 from gensim.models import Word2Vec, FastText
 import json
 import random
-from data.load_data import DataLoader
+
 from train import eval_model
 from lxml import etree
 import torch.nn.functional as F
@@ -24,25 +24,25 @@ base_path = os.path.dirname(TextCNN.__file__)
 # default model loading
 textcnn = TextCNN.TextCNN()
 if torch.cuda.is_available():
-    textcnn.load_state_dict(torch.load(os.path.join(base_path, 'checkpoints/best_steps_350.pt')))
+    textcnn.load_state_dict(torch.load(os.path.join(base_path, 'checkpoints/best_steps_650.pt')))
+    textcnn.cuda()
 else:
-    textcnn.load_state_dict(torch.load(os.path.join(base_path, 'checkpoints/best_steps_350.pt'), map_location='cpu'))
+    textcnn.load_state_dict(torch.load(os.path.join(base_path, 'checkpoints/best_steps_650.pt'), map_location='cpu'))
 textcnn.eval()
-textcnn.double()
+# textcnn.double()
 
-big_word2vec_path = os.path.join(base_path, 'checkpoints/wiki.zh/wiki.zh.bin')
-small_word2vec_path = os.path.join(base_path, 'checkpoints/fasttext-skim-clean-2.pt')
-big_word2vec_model = FastText.load_fasttext_format(big_word2vec_path)
-small_word2vec_model = Word2Vec.load(small_word2vec_path)
+# big_word2vec_path = os.path.join(base_path, 'data/word_embed/wiki.zh/wiki.zh.bin')
+# small_word2vec_path = os.path.join(base_path, 'data/word_embed/fasttext-skim-clean-2.pt')
+# big_word2vec_model = FastText.load_fasttext_format(big_word2vec_path)
+# small_word2vec_model = Word2Vec.load(small_word2vec_path)
 
 
 class Predictor(object):
-    def __init__(self, model=textcnn, big_word2vec_model=big_word2vec_model,
-                 small_word2vec_model=small_word2vec_model, cuda=False):
+    def __init__(self, model=textcnn, cuda=False):
         self.model = model
-        self.big_word2vec_model = big_word2vec_model
-        self.small_word2vec_model = small_word2vec_model
-        self.cuda = cuda
+        # self.big_word2vec_model = big_word2vec_model
+        # self.small_word2vec_model = small_word2vec_model
+        self._cuda = cuda
 
     def predict(self, data_iter):
         predicteds = []
@@ -53,8 +53,8 @@ class Predictor(object):
         for feature, target in data_iter:
             step += 1
             # print(feature)
-            if self.cuda:
-                feature, target = feature.cuda(), target.cuda()
+            # if self._cuda:
+            #     feature, target = feature.cuda(), target.cuda()
 
             logit = self.model(feature)
             predicted = torch.max(logit.data, 1)[1].view(target.size()).data
@@ -89,10 +89,10 @@ if __name__ == "__main__":
             for text_ in chang:
                 sentences.append(text_[1].split())
                 labels.append(28)
+    from data.load_data import DataLoader
     te_iters = DataLoader(sentences, labels, Config.sequence_length,
                           Config.word_embed_dim, cuda=Config.cuda, evaluation=True, batch_size=1024,
-                          PAD=Config.PAD, clean=True,
-                          big_word2vec_model=big_word2vec_model, small_word2vec_model=small_word2vec_model)
+                          PAD=Config.PAD, clean=True,)
 
     # eval_model(textcnn, te_iters, Config)
     predict = Predictor(te_iters)

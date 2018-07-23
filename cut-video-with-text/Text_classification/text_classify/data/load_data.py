@@ -7,7 +7,7 @@
 
 import re
 import sys
-
+import os
 import numpy as np
 import torch
 from gensim.models import FastText, Word2Vec
@@ -18,8 +18,8 @@ import thulac
 
 class DataLoader(object):
     _thu0 = thulac.thulac()
-    big_word2vec_path = './checkpoints/wiki.zh/wiki.zh.bin'
-    small_word2vec_path = './checkpoints/fasttext-skim-clean-2.pt'
+    big_word2vec_path = os.path.join(os.path.dirname(__file__), 'word_embed/wiki.zh/wiki.zh.bin')
+    small_word2vec_path = os.path.join(os.path.dirname(__file__), "word_embed/fasttext-skim-clean-2.pt")
     big_word2vec_model = FastText.load_fasttext_format(big_word2vec_path)
     small_word2vec_model = Word2Vec.load(small_word2vec_path)
     _big_word2vec_model = big_word2vec_model
@@ -61,7 +61,6 @@ class DataLoader(object):
         if shuffle:
             self._shuffle()
 
-        ###
     def _shuffle(self):
         indices = np.arange(self._src_sents.shape[0])
         np.random.shuffle(indices)
@@ -138,7 +137,7 @@ class Data_Process(object):
             re.append(inst_)
         return np.asarray(re)
 
-    def _convert_to_vectors(self, insts, length, embed_dim, model):
+    def _convert_to_vectors(self, insts, length, embed_dim, model=''):
         insts_num = len(insts)
         data = np.zeros((insts_num, length, embed_dim))
         for index_0, inst in enumerate(insts):
@@ -147,11 +146,12 @@ class Data_Process(object):
                     try:
                         if index_1 > length - 1:
                             break
-                        #cha_ = [0 for _ in range(self._part_of_speech_index_length)]
-                        #cha_[int(word[1])] = 1
+                        # cha_ = [0 for _ in range(self._part_of_speech_index_length)]
+                        # cha_[int(word[1])] = 1
                         data[index_0][index_1] = np.append(model[word[0]], int(word[1]))
                     except Exception as e:
                         print(e)
+        data = data.astype(np.float32)
         data = Variable(torch.from_numpy(data), volatile=self._evaluation)
         return data
 
