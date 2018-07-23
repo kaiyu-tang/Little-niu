@@ -1,0 +1,2 @@
+model_checkpoint_path: "model.ckpt-102013"
+all_model_checkpoint_paths: "/workspace/imagenet-data/EAST/football_score_model/model.ckpt-102013"

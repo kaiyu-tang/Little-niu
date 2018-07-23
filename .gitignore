@@ -105,6 +105,7 @@ venv.bak/
 #data
 *.json
 *.txt
+*.csv
 *.pyc
 *.bin
 *.pth
@@ -114,4 +115,10 @@ venv.bak/
 *.mp4
 *.DS_Store
 *.tar.gz
+*.npy
+doc2vec*
+*/model/*
+*/models/*
+/checkpoints/*
+model.*
 #only py
