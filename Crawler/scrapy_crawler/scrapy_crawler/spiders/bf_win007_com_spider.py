@@ -7,7 +7,7 @@
 import re
 
 import scrapy
-from bf_win007_com.items import BfWin007ComItem
+from scrapy_crawler.items import BfWin007ComItem
 from scrapy.http import Request
 
 
@@ -30,17 +30,17 @@ class Bfwin007Spider(scrapy.Spider):
         # match_time = response.xpath('//*[@id="matchItems"]/div[2]/span/text()')
         # home_team = response.xpath('//*[@id="home"]/a/span/text()')
         # host_team = response.xpath('//*[@id="guest"]/a/span/text()')
-        live_texts = response.xpath('//*[@id="Table6"]/tr/td/text()')
-        print(type(live_texts))
-        live_times = response.xpath('//*[@id="Table6"]/tr/td/font/text()')
+
+        #live_times = response.xpath('//*[@id="Table6"]/tr/td/font/text()')
         # print(response.text)
         # item['match_time'] = match_time.extract()
         # item['home_team'] = home_team.extract()
         # item['host_team'] = host_team.extract()
-        live_texts = ' '.join(live_texts.extract())
-        item['live_texts'] = re.findall(':\s+(.*)', live_texts)
-        item['live_abs_times'] = re.findall('(\d+):(\d+):(\d+)', live_texts)
-        item['live_rel_times'] = re.findall(']\s+(.*):', live_texts)
-        item['live_score'] = re.findall('(\d+)-(\d+)', live_texts)
+        live_texts = response.xpath('//*[@id="Table6"]/tr/td/text()').extract()
+        live_texts = [live_text_.replace('\n','').replace('\r','').replace('\\','') for live_text_ in live_texts if len(live_text_)>4]
+        item['live_texts'] = live_texts
+        # item['live_abs_times'] = re.findall('(\d+):(\d+):(\d+)', live_texts)
+        # item['live_rel_times'] = re.findall(']\s+(.*):', live_texts)
+        # item['live_score'] = re.findall('(\d+)-(\d+)',live_texts)
 
         yield item

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for bf_win007_com project
+# Scrapy settings for scrapy_crawler project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,15 +9,14 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'bf_win007_com'
+BOT_NAME = 'scrapy_crawler'
 
-SPIDER_MODULES = ['bf_win007_com.spiders']
-NEWSPIDER_MODULE = 'bf_win007_com.spiders'
+SPIDER_MODULES = ['scrapy_crawler.spiders']
+NEWSPIDER_MODULE = 'scrapy_crawler.spiders'
 
-FEED_EXPORT_ENCODING = 'utf-8'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'bf_win007_com (+http://www.yourdomain.com)'
+#USER_AGENT = 'scrapy_crawler (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -48,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'bf_win007_com.middlewares.BfWin007ComSpiderMiddleware': 543,
+#    'scrapy_crawler.middlewares.ScrapyCrawlerSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'bf_win007_com.middlewares.BfWin007ComDownloaderMiddleware': 543,
+#    'scrapy_crawler.middlewares.ScrapyCrawlerDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -66,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'bf_win007_com.pipelines.BfWin007ComPipeline': 300,
+    'scrapy_crawler.pipelines.ScrapyCrawlerPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -1,10 +1,9 @@
 #!/usr/bin/env python  
 # -*- coding: utf-8 -*-  
-# @Time    : 2018/7/16 下午4:26  
+# @Time    : 2018/7/25 上午11:44  
 # @Author  : Kaiyu  
 # @Site    :   
-# @File    : entry_point.py
-
+# @File    : entry.py
 from scrapy.cmdline import execute
 
-execute(['scrapy', 'crawl', 'bf_win007'])
+execute(['scrapy', 'crawl', '7m', '-s', 'LOG_FILE=7m.log'])
