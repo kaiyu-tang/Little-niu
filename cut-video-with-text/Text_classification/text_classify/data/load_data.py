@@ -17,13 +17,13 @@ import thulac
 
 
 class DataLoader(object):
-    _thu0 = thulac.thulac()
-    big_word2vec_path = os.path.join(os.path.dirname(__file__), 'word_embed/wiki.zh/wiki.zh.bin')
-    small_word2vec_path = os.path.join(os.path.dirname(__file__), "word_embed/fasttext-skim-clean-2.pt")
-    big_word2vec_model = FastText.load_fasttext_format(big_word2vec_path)
-    small_word2vec_model = Word2Vec.load(small_word2vec_path)
-    _big_word2vec_model = big_word2vec_model
-    _small_word2vec_model = small_word2vec_model
+    print("start loading word related model")
+    thu0 = thulac.thulac()
+    _big_word2vec_path = os.path.join(os.path.dirname(__file__), 'word_embed/wiki.zh/wiki.zh.bin')
+    _small_word2vec_path = os.path.join(os.path.dirname(__file__), "word_embed/fasttext-skim-clean-2.pt")
+    big_word2vec_model = FastText.load_fasttext_format(_big_word2vec_path)
+    small_word2vec_model = Word2Vec.load(_small_word2vec_path)
+    print("loaded word related model")
 
     def __init__(self, src_sents, label, max_len=16, embed_dim=301, cuda=False, batch_size=64, shuffle=True,
                  evaluation=False,
@@ -37,7 +37,7 @@ class DataLoader(object):
         self._clean = clean
         self._thu0 = ''
         if self._clean:
-            self._thu0 = DataLoader._thu0
+            self._thu0 = DataLoader.thu0
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
         self._label = np.asarray(label, dtype=np.int64)
@@ -46,20 +46,22 @@ class DataLoader(object):
 
         # loading word2vec model
         if big_word2vec_model != None:
-            self._big_word2vec_model = big_word2vec_model
+            self.big_word2vec_model = big_word2vec_model
         else:
-            self._big_word2vec_model = DataLoader._big_word2vec_model
+            self.big_word2vec_model = DataLoader.big_word2vec_model
         if small_word2vec_model != None:
-            self._small_word2vec_model = small_word2vec_model
+            self.small_word2vec_model = small_word2vec_model
         else:
-            self._small_word2vec_model = DataLoader._small_word2vec_model
+            self.small_word2vec_model = DataLoader.small_word2vec_model
 
-        self._process = Data_Process(big_word2vec_model=self._big_word2vec_model,
-                                     small_word2vec_model=self._small_word2vec_model,
-                                     cut_model=self._thu0, max_length=self._max_len, PAD=self._PAD,
-                                     evaluation=self._evaluation, clean=self._clean)
+        self._process = DataProcess(big_word2vec_model=self.big_word2vec_model,
+                                    small_word2vec_model=self.small_word2vec_model,
+                                    cut_model=self._thu0, max_length=self._max_len, PAD=self._PAD,
+                                    evaluation=self._evaluation, clean=self._clean)
         if shuffle:
             self._shuffle()
+
+
 
     def _shuffle(self):
         indices = np.arange(self._src_sents.shape[0])
@@ -93,9 +95,10 @@ class DataLoader(object):
         return data, label
 
 
-class Data_Process(object):
-    def __init__(self, big_word2vec_model, small_word2vec_model, max_length, cut_model, PAD='*', clean=True,
-                 evaluation=False):
+class DataProcess(object):
+    def __init__(self, big_word2vec_model=DataLoader.big_word2vec_model,
+                 small_word2vec_model=DataLoader.small_word2vec_model,
+                 max_length=16, cut_model=DataLoader.thu0, PAD='*', clean=True, evaluation=False):
         self._big_word2vec_model = big_word2vec_model
         self._small_word2vec_model = small_word2vec_model
         self._cut_model = cut_model
@@ -111,7 +114,7 @@ class Data_Process(object):
         self._part_of_speech_index_length = len(self._part_of_speech_index)
         pass
 
-    def clean(self, text, thu0, stop_chars=''',?.!！;:(){}[]，。？；：（）【】 已在的中了．由—~'''):
+    def clean(self, text, thu0, stop_chars=''',?.!！;:(){}[]，。？；：（）【】 ．—~'''):
         text = re.sub('[a-zA-Z]+', '', text)
         for c in stop_chars:
             text = text.replace(c, ' ')

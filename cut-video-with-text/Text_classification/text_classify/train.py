@@ -22,7 +22,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 
 
-
 def train_word_vectors(text_path, args):
     sentences = LineSentence(text_path)
     print("loading word2vec")
@@ -106,14 +105,13 @@ def save(model, save_dir, save_prefix, steps):
     print('Save Sucessful, path: {}'.format(save_path))
 
 
-def train(model, train_iter, dev_iter, args, word2vec_path=''):
+def train(model, train_iter, dev_iter, args, word2vec_path='',best_acc = 0):
     if args.cuda:
         model.cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     # optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
     # word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     steps = 0
-    best_acc = 0
     last_step = 0
     model.train()
     model.double()
@@ -123,7 +121,6 @@ def train(model, train_iter, dev_iter, args, word2vec_path=''):
             # feature = feature.data()
             # feature.data.t_()
             # target.data.sub_()
-
 
             optimizer.zero_grad()
             logit = model(feature)
@@ -143,28 +140,28 @@ def train(model, train_iter, dev_iter, args, word2vec_path=''):
                     best_acc = dev_acc
                     last_step = steps
                     if args.save_best:
-                        save(model, args.dir_model, 'best', steps)
+                        save(model, args.dir_model, 'best_acc{}'.format(best_acc), steps)
                 else:
                     if steps - last_step >= args.early_stop:
                         print('early stop by {} steps.'.format(args.early_stop))
             elif steps % args.save_interval == 0:
                 # save(model, args.dir_model, 'snapshot', steps)
                 pass
+    return best_acc
 
 
 if __name__ == '__main__':
     # data pre-process
-    data_path = './data/okoo-merged-labels.json'
-    data = json.load(open(data_path, encoding='utf-8'))['all']
+    data_path = './data/okoo-merged-3-label.json'
+    data = json.load(open(data_path, encoding='utf-8'))
     sentences = []
     labels = []
     for item in data:
         sentences.append(item['text'].split())
         labels.append(item['merged_label'])
     data_len = len(data)
-    train_index = int(data_len * Config.train_proportion)
     # train word2vec
-    text_path = 'data' + os.sep + 'okoo-merged-clean-cut-data.txt'
+    # text_path = 'data' + os.sep + 'okoo-merged-clean-cut-data.txt'
     # train_word_vectors(text_path, Config)
 
     # train text-Cnn
@@ -174,14 +171,20 @@ if __name__ == '__main__':
     print('Cuda: {}'.format(Config.cuda))
     print("loading data")
     from data.load_data import DataLoader
+    from sklearn.model_selection import KFold
 
-    train_iters = DataLoader(sentences[:train_index], labels[:train_index], Config.sequence_length,
-                             cuda=Config.cuda, batch_size=1024, PAD=Config.PAD, embed_dim=Config.embed_dim,
-                             )
-    dev_iters = DataLoader(sentences[train_index:], labels[train_index:], Config.sequence_length,
-                           cuda=Config.cuda, evaluation=True, batch_size=1024,
-                           PAD=Config.PAD, embed_dim=Config.embed_dim,
-                           )
-    print("loading data successful")
-    # start train
-    train(textcnn, train_iters, dev_iters, Config)
+    kf = KFold(n_splits=20)
+    iters = 0
+    best_acc = 0
+    for train_index, test_index in kf.split(sentences):
+        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
+                                 cuda=Config.cuda, batch_size=1024, PAD=Config.PAD, embed_dim=Config.embed_dim,
+                                 )
+        dev_iters = DataLoader(sentences[test_index:], labels[test_index:], Config.sequence_length,
+                               cuda=Config.cuda, evaluation=True, batch_size=1024,
+                               PAD=Config.PAD, embed_dim=Config.embed_dim,
+                               )
+        iters += 1
+        print("Iter: {} Loading data successful".format(iters))
+        # start train
+        best_acc = train(textcnn, train_iters, dev_iters, Config, best_acc=best_acc)

@@ -4,24 +4,36 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : data-process.py
+"""
+this file is used to process data
+"""
 import json
 import os
 import re
 import sys
-
+from pymongo import MongoClient
 import thulac
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 def okoo_merge_label(file_name):
+    """
+    merge the labels of the data of okoo.com to 7
+    :param file_name:
+    :return:
+    """
     labels_dic = {}
-    with open("label_doc.text", encoding='utf-8') as f:
-        for index, line in enumerate(f):
+    label = 0
+    with open("label_doc_3", encoding='utf-8') as f:
+        for line in f:
+            if len(line) < 2:
+                continue
             for key in re.findall('(\d+)', line):
-                labels_dic[''.join(key)] = index
-    cur_true_label = index + 1
-    with open(file_name, encoding='utf-8') as f:
+                labels_dic[''.join(key)] = label
+            label += 1
+    cur_true_label = label + 1
+    with open(file_name, encoding='utf-8') as f1:
         texts = []
-        data = json.load(f)['all']
+        data = json.load(f1)['all']
         for text_ in data:
             label = text_['label']
             if label in labels_dic:
@@ -32,7 +44,7 @@ def okoo_merge_label(file_name):
             # text_['text'] = ' '.join([c[0] for c in thu0.fast_cut(text_['text'])])
             texts.append(text_)
 
-    with open('okoo-merged-label.json', 'w', encoding='utf-8') as f:
+    with open('okoo-merged-3-label.json', 'w', encoding='utf-8') as f:
         json.dump(texts, f, ensure_ascii=False, indent=4, separators=(',', ': '))
 
 
@@ -119,7 +131,73 @@ def clean_with_tf_idf(in_file_name, tf_idf_name):
               separators=(',', ': '))
 
 
+def process_zhibo360(zhibo360):
+    """
+    pre-process zhibo360 data in mongodb, update the live_text
+    :param zhibo360: the cosur of collection
+    :return: None
+    """
+    for item_ in zhibo360.find():
+        title_ = item_['title']
+        texts_ = item_['text'].split("。")
+        time_ = item_['time']
+        new_texts_ = []
+        if len(texts_) > 5:
+            for text_ in texts_:
+                if "分钟" in text_:
+                    if "一分钟" in text_:
+                        text_ = text_.replace("一分钟", "1分钟")
+                    if "两分钟" in text_ or "二分钟" in text_:
+                        text_ = text_.replace("两分钟", "2分钟").replace("二分钟", "2分钟")
+                    if "三分钟" in text_:
+                        text_ = text_.replace("三分钟", "3分钟")
+                    if "五分钟" in text_:
+                        text_ = text_.replace("五分钟", "5分钟")
+                    try:
+                        live_time = re.findall("(\d+).*分钟", text_)[0]
+                    except IndexError as e:
+                        continue
+                    new_texts_.append({"text": text_, "time": int(live_time)})
+            new_texts_.sort(key=lambda x: x["time"])
+        zhibo360.update_one({"_id": item_['_id']}, {"$set": {"live_text": new_texts_}})
+        print(item_)
+
+
+def process_bfwin007(bfwin007):
+    """
+    pre-process bfwin007 data in mongodb, update the live_text
+    :param bfwin007: the collection cursor of bfwin007 data
+    :return: None
+    """
+    for item_ in bfwin007.find():
+        live_texts_ = item_["live_texts"]
+        new_live_texts = []
+        for live_text_ in live_texts_:
+            try:
+                time_ = sum(map(int, re.findall("(\d+)'", live_text_)))
+            except TypeError as e:
+                print(e)
+            if time_ == 0:
+                continue
+            try:
+                text_ = live_text_.split(":")[-1]
+            except IndexError as e:
+                print(e)
+                continue
+            new_live_texts.append({"live_text": text_, "time": time_})
+            print({"live_text": text_, "time": time_})
+        new_live_texts.sort(key=lambda x: x["time"])
+        print()
+        bfwin007.update_one({"_id": item_["_id"]}, {"$set": {"live_texts": new_live_texts}})
+
+
 if __name__ == '__main__':
+    client = MongoClient()
+    db = client["live_texts"]
+    bfwin007 = db["bfwin007"]
+    process_bfwin007(bfwin007)
+    #  okoo_merge_label("/Users/harry/PycharmProjects/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-label.json")
+    sys.exit(0)
     # data pre-process
     data_path = 'okoo-merged-clean-cut-data.json'
     data = json.load(open(data_path, encoding='utf-8'))['all']

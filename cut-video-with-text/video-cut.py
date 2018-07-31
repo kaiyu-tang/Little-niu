@@ -41,7 +41,7 @@ class Tcv(object):
         self._live_texts = sentences
         labels = [8 for _ in range(len(sentences))]
         data_iter = DataLoader(sentences, labels, clean=clean, cuda=True)
-        self._live_predicts, logits = self._text_predictor.predict(data_iter)
+        self._live_predicts, logits = self._text_predictor.predicts(data_iter)
         self._live_predicts = list(map(int, self._live_predicts))
         self._merge_label()
 

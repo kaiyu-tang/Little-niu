@@ -30,7 +30,7 @@ if not os.path.exists(os.path.join(os.getcwd(), path_data)):
 
 
 def label_infer(model, vecs):
-    return model.predict(vecs)
+    return model.predicts(vecs)
 
 
 def save_labeled_data(corpus, labels, file_name):
