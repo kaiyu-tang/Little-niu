@@ -63,7 +63,6 @@ def eval_model(model, data_iter, args):
     model.eval()
     all_corrects, all_loss, all_size = 0, 0, 0
     step = 0
-    model.double()
     y_true = []
     y_pred = []
     from sklearn import metrics
@@ -105,7 +104,7 @@ def save(model, save_dir, save_prefix, steps):
     print('Save Sucessful, path: {}'.format(save_path))
 
 
-def train(model, train_iter, dev_iter, args, word2vec_path='',best_acc = 0):
+def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
     if args.cuda:
         model.cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
@@ -114,7 +113,6 @@ def train(model, train_iter, dev_iter, args, word2vec_path='',best_acc = 0):
     steps = 0
     last_step = 0
     model.train()
-    model.double()
     print('start training')
     for epoch in range(args.textcnn_epochs):
         for feature, target in train_iter:
@@ -150,7 +148,7 @@ def train(model, train_iter, dev_iter, args, word2vec_path='',best_acc = 0):
     return best_acc
 
 
-if __name__ == '__main__':
+def prepare_sen_lab():
     # data pre-process
     data_path = './data/okoo-merged-3-label.json'
     data = json.load(open(data_path, encoding='utf-8'))
@@ -159,7 +157,28 @@ if __name__ == '__main__':
     for item in data:
         sentences.append(item['text'].split())
         labels.append(item['merged_label'])
-    data_len = len(data)
+    data_path = './data/zhibo7m.json'
+    data = json.load(open(data_path, encoding="utf-8"))
+    al = len(data)
+    count = 0
+    for item_ in data:
+        sentences.append(item_["msg"].split())
+        try:
+            labels.append(item_["t_label"])
+        except KeyError as e:
+            count += 1
+            labels.append(0)
+            print(item_["msg"])
+
+    print("all: {} error: {}".format(al, count))
+    return np.asarray(sentences), np.asarray(labels)
+
+
+if __name__ == '__main__':
+
+    sentences, labels = prepare_sen_lab()
+    data_len = len(sentences)
+    print(data_len)
     # train word2vec
     # text_path = 'data' + os.sep + 'okoo-merged-clean-cut-data.txt'
     # train_word_vectors(text_path, Config)
@@ -173,6 +192,7 @@ if __name__ == '__main__':
     from data.load_data import DataLoader
     from sklearn.model_selection import KFold
 
+    print("loaded data")
     kf = KFold(n_splits=20)
     iters = 0
     best_acc = 0
@@ -180,7 +200,7 @@ if __name__ == '__main__':
         train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
                                  cuda=Config.cuda, batch_size=1024, PAD=Config.PAD, embed_dim=Config.embed_dim,
                                  )
-        dev_iters = DataLoader(sentences[test_index:], labels[test_index:], Config.sequence_length,
+        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
                                cuda=Config.cuda, evaluation=True, batch_size=1024,
                                PAD=Config.PAD, embed_dim=Config.embed_dim,
                                )

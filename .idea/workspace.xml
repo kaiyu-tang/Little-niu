@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9154d788-d8f0-4689-a602-81c1ea384a02" name="Default" comment="word2vec">
+    <list default="true" id="9154d788-d8f0-4689-a602-81c1ea384a02" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py" beforeDir="false" afterPath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3" beforeDir="false" afterPath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -148,8 +146,8 @@
       <file leaf-file-name="label_doc_3" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="18" lean-forward="true" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
+            <state relative-caret-position="210">
+              <caret line="14" column="45" lean-forward="true" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
             </state>
           </provider>
         </entry>
@@ -175,10 +173,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find />
-      <find />
-      <find />
-      <find />
+      <find>De Bruyne, Kevi</find>
+      <find>De Bruyne, Kevin</find>
+      <find>Boselli, Mauro</find>
+      <find>proxies[random.randint(len(proxies) - 1)]</find>
       <find>len(proxies)</find>
       <find>hugo</find>
       <find>href</find>
@@ -196,15 +194,15 @@
       <find>398568</find>
       <find>90</find>
       <find>8</find>
-      <find />
-      <find />
+      <find>&quot;merged_label&quot;: 8</find>
+      <find>&quot;merged_label&quot;: 6</find>
       <find>&quot;merged_label&quot;:</find>
       <find>95</find>
-      <find />
-      <find />
-      <find />
-      <find />
-      <find />
+      <find>&quot;merged_label&quot;:</find>
+      <find>&quot;label&quot;: &quot;148&quot;</find>
+      <find>&quot;label&quot;: &quot;28&quot;</find>
+      <find>&quot;label&quot;: &quot;25&quot;</find>
+      <find>&quot;merged_label&quot;: 10</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -514,13 +512,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525765910200</updated>
-    </task>
-    <task id="LOCAL-00078" summary="add">
-      <created>1528790575923</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1528790575923</updated>
     </task>
     <task id="LOCAL-00079" summary="add">
       <created>1528790721425</created>
@@ -858,7 +849,14 @@
       <option name="project" value="LOCAL" />
       <updated>1532076467031</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <task id="LOCAL-00127" summary="process data">
+      <created>1533118563323</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1533118563324</updated>
+    </task>
+    <option name="localTasksCounter" value="128" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -871,13 +869,12 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="877" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="1" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.32876712" />
       <window_info anchor="bottom" id="Event Log" order="14" sideWeight="0.52013886" side_tool="true" weight="0.43088418" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.46805555" visible="true" weight="0.3648817" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.46805555" weight="0.3648817" />
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49928468" weight="0.32876712" />
       <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49928468" weight="0.26650062" />
       <window_info anchor="bottom" id="Terminal" order="10" />
@@ -886,7 +883,7 @@
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="4" sideWeight="0.9339623" weight="0.3359375" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.53194445" side_tool="true" visible="true" weight="0.3648817" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.53194445" side_tool="true" weight="0.3648817" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Coverage" order="5" side_tool="true" />
@@ -934,7 +931,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="change cluster path load" />
     <MESSAGE value="train doc2vec" />
     <MESSAGE value="save model" />
     <MESSAGE value="rebuild the file" />
@@ -959,7 +955,8 @@
     <MESSAGE value="modfy batch_size" />
     <MESSAGE value="FootDemo" />
     <MESSAGE value="word2vec" />
-    <option name="LAST_COMMIT_MESSAGE" value="word2vec" />
+    <MESSAGE value="process data" />
+    <option name="LAST_COMMIT_MESSAGE" value="process data" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1288,17 +1285,17 @@
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string />
+        <expression-string>reduce(lambda x, y: x+y, items)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>reduce(lambda x, y: x, items)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>reduce(lambda x, y: x.extend(y), items)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1313,12 +1310,12 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>re.findall('''&quot;(.+?)&quot;''', line)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>re.findall('''&quot;(.+)?&quot;''', line)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1333,7 +1330,7 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>reduce(lambda x, y: x + [[y[0], y[2]]], cut_method(line), [])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1347,17 +1344,17 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string />
+        <expression-string>[len(c) for c in insts]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>for c in insts:</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>model_fasttext.train(sentences=sentences, epochs=model_word2vec.iter, total_examples=model_word2vec.corpus_count)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1610,17 +1607,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="45" lean-forward="true" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/name.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="18" lean-forward="true" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
         </state>
       </provider>
     </entry>

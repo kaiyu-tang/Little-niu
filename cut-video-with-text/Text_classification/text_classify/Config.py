@@ -18,17 +18,17 @@ class Config:
     # textcnn
     sequence_length = 16
     embed_dim = 301
-    class_num = 7
+    class_num = 20
     kernel_num = 100
     kernel_size = (3, 4, 5)
     dropout = 0.5
     static = False
     lr = 0.001
-    textcnn_epochs = 2000
+    textcnn_epochs = 4000
     log_interval = 50
     test_interval = 50
-    save_interval = 100
-    save_best = 100
+    save_interval = 50
+    save_best = 50
     early_stop = 0
     train_proportion = 0.98
 

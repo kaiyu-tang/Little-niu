@@ -20,7 +20,7 @@ from train import eval_model
 from lxml import etree
 import torch.nn.functional as F
 from sklearn.metrics import classification_report
-from data.load_data import DataLoader
+# from data.load_data import DataLoader
 from data.load_data import DataProcess
 
 base_path = os.path.dirname(TextCNN.__file__)
@@ -161,11 +161,12 @@ def label_7m(predictor, zhibo7m):
             live_texts_ = item_["content"]["textFeed"]
         except Exception as e:
             zhibo7m.delete_one({"_id": item_['_id']})
+            print("delete error id: {}".format(item_["_id"]))
             print(e)
         for l_index_, l_item_ in enumerate(live_texts_):
             l_item_["p_label"] = predictor.predict(l_item_["msg"])[0]
             live_texts_[l_index_] = l_item_
-            print(l_item_)
+            # print(l_item_)
         zhibo7m.update_one({"_id": item_['_id']}, {"$set": {"textFeed": live_texts_}})
 
 
