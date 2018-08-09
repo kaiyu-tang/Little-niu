@@ -6,6 +6,9 @@
 # @File    : Config.py
 import multiprocessing
 import torch
+import os
+import sys
+sys.path.append(os.path.dirname(__file__))
 
 
 class Config:
@@ -16,11 +19,11 @@ class Config:
     PAD = "*"
 
     # textcnn
-    sequence_length = 16
+    sequence_length = 18
     embed_dim = 301
     class_num = 20
-    kernel_num = 100
-    kernel_size = (3, 4, 5)
+    kernel_num = 200
+    kernel_size = (1, 3, 4, 5)
     dropout = 0.5
     static = False
     lr = 0.001

@@ -38,6 +38,9 @@ class DataLoader(object):
         self._thu0 = ''
         if self._clean:
             self._thu0 = DataLoader.thu0
+        else:
+            del DataLoader.thu0
+            DataLoader.thu0 = ''
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
         self._label = np.asarray(label, dtype=np.int64)
@@ -45,11 +48,11 @@ class DataLoader(object):
         self._PAD = PAD
 
         # loading word2vec model
-        if big_word2vec_model != None:
+        if big_word2vec_model is not None:
             self.big_word2vec_model = big_word2vec_model
         else:
             self.big_word2vec_model = DataLoader.big_word2vec_model
-        if small_word2vec_model != None:
+        if small_word2vec_model is not None:
             self.small_word2vec_model = small_word2vec_model
         else:
             self.small_word2vec_model = DataLoader.small_word2vec_model
@@ -60,8 +63,6 @@ class DataLoader(object):
                                     evaluation=self._evaluation, clean=self._clean)
         if shuffle:
             self._shuffle()
-
-
 
     def _shuffle(self):
         indices = np.arange(self._src_sents.shape[0])
@@ -84,7 +85,7 @@ class DataLoader(object):
         _bsz = min(self._batch_size, self.sents_size - _start)
         self._step += 1
         data = self._process.pad_to_longest(self._src_sents[_start:_start + _bsz])
-        data = self._process.convert_to_vectors_concate(data, big_sequence_length=12, embed_dim=self._embed_dim)
+        data = self._process.convert_to_vectors_concate(data, big_sequence_length=14, embed_dim=self._embed_dim)
         label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
                          volatile=self._evaluation)
         if self._cuda:
@@ -114,14 +115,16 @@ class DataProcess(object):
         self._part_of_speech_index_length = len(self._part_of_speech_index)
         pass
 
-    def clean(self, text, thu0, stop_chars=''',?.!！;:(){}[]，。？；：（）【】 ．—~'''):
-        text = re.sub('[a-zA-Z]+', '', text)
+    def clean(self, text, thu0, stop_chars=''',?.!！;:"(){}[]，。？-；'：（）【】 ．—~'''):
+        text = re.sub('[a-zA-Z\d]+', '', text)
         for c in stop_chars:
             text = text.replace(c, ' ')
-        text = thu0.fast_cut(text)
+
         try:
+            text = thu0.fast_cut(text)
             text = [(item[0], self._part_of_speech_index.index(item[1])) for item in text if item[1] != '']
         except Exception as e:
+            print("thulac error {}".format(text))
             print(e)
         return text
 

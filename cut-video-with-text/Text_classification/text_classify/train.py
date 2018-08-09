@@ -5,8 +5,10 @@
 # @Site    :   
 # @File    : train.py
 import json
+
 import os
 import sys
+sys.path.append(os.path.dirname(__file__))
 import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
@@ -198,10 +200,10 @@ if __name__ == '__main__':
     best_acc = 0
     for train_index, test_index in kf.split(sentences):
         train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
-                                 cuda=Config.cuda, batch_size=1024, PAD=Config.PAD, embed_dim=Config.embed_dim,
+                                 cuda=Config.cuda, batch_size=2048, PAD=Config.PAD, embed_dim=Config.embed_dim,
                                  )
         dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
-                               cuda=Config.cuda, evaluation=True, batch_size=1024,
+                               cuda=Config.cuda, evaluation=True, batch_size=2048,
                                PAD=Config.PAD, embed_dim=Config.embed_dim,
                                )
         iters += 1

@@ -11,8 +11,6 @@ import json
 import os
 import re
 import sys
-from functools import reduce
-
 from pymongo import MongoClient
 import thulac
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -25,14 +23,14 @@ def okoo_merge_label(file_name):
     :return:
     """
     labels_dic = {}
+    label = 0
     with open("label_doc_3", encoding='utf-8') as f:
         for line in f:
             if len(line) < 2:
                 continue
-            label = int(line.split(" ")[0])
-            line = line[2:]
             for key in re.findall('(\d+)', line):
                 labels_dic[''.join(key)] = label
+            label += 1
     cur_true_label = label + 1
     with open(file_name, encoding='utf-8') as f1:
         texts = []
@@ -181,74 +179,44 @@ def process_bfwin007(bfwin007):
         bfwin007.update_one({"_id": item_["_id"]}, {"$set": {"live_texts": new_live_texts}})
 
 
-def merge_7m_label(zhibo7m):
-    labels_dict = {}
-    label_file = "name.txt"
-    with open(label_file, encoding="utf-8") as f_label:
-        for line in f_label:
-            if len(line) < 3:
-                continue
-            label = int(line.split()[0])
-            for t_label_ in re.findall('''"(.+?)"''', line):
-                labels_dict[t_label_] = label
-    for item_ in zhibo7m.find():
-        try:
-            events_ = item_["content"]["event"]
-            textFeeds_ = item_["textFeed"]
-        except KeyError as e:
-            zhibo7m.delete_one({"_id": item_["_id"]})
-            print(e)
-            print(item_["_id"])
-            continue
-        index_e_, index_t_ = 0, 0
-        length_e_, length_t_ = len(events_), len(textFeeds_)
-        while index_e_ < length_e_ and index_t_ < length_t_:
-            time_e_, time_t_ = events_[index_e_]["time"], textFeeds_[index_t_]["time"]
-            time_cha_ = time_e_ - time_t_
-            name_e_ = events_[index_e_]["name"]
-            label_e_ = labels_dict[name_e_]
-            if abs(time_cha_) < 5:
-                textFeeds_[index_t_]["name"] = name_e_
-                textFeeds_[index_t_]["t_label"] = label_e_
-                index_e_ += 1
-                index_t_ += 1
-            elif time_cha_ < 0:
-                index_e_ += 1
-            else:
-                textFeeds_[index_t_]["name"] = ""
-                textFeeds_[index_t_]["t_label"] = 0
-                index_t_ += 1
-        while index_t_ < length_t_:
-            textFeeds_[index_t_]["t_label"] = 0
-            textFeeds_[index_t_]["name"] = ""
-            index_t_ += 1
-            print(index_t_)
-
-        zhibo7m.update_one({"_id": item_["_id"]}, {"$set": {"content.textFeed": textFeeds_}})
-
-
-def extrace_zhibo7m(zhibo7m):
-    with open("zhibo7m.json", "w", encoding="utf-8") as f:
-        items = []
-        for item_ in zhibo7m.find():
-            text_feed_ = item_["content"]["textFeed"]
-            items.extend(text_feed_)
-
-        json.dump(items, f, ensure_ascii=False, indent=2, separators=(",", ": "))
+def clean_data(data_path):
+    re = []
+    thuo = thulac.thulac()
+    stop_chars = ''',?.!！;:"(){}[]，。？-；'：（）【】 ．—~'''
+    data = json.load(open(data_path, "r", encoding="utf-8"))
+    with open(data_path, "w", encoding="utf-8") as f:
+        index = 0
+        for item_ in data:
+            text_ = item_["msg"]
+            for c in stop_chars:
+                text_ = text_.replace(c, ' ')
+            item_["cut_text"] = thuo.fast_cut(text_)
+            index += 1
+            print(index)
+        print("dumping")
+        json.dump(data, f, ensure_ascii=False, indent=2, separators=(',', ': '))
 
 
 if __name__ == '__main__':
-    # thu0 = thulac.thulac()
-    # t = thu0.fast_cut("   完赛  客观来说 切尔西今天比赛的场面并不是很好看 但拿到三分比什么都重要 另外 让穆帅感到欣慰的是核心阿扎尔状态的回升 比利时人今天的突破非常犀利")
+    f = open(
+        "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-merged-3-label.json",
+        "r", encoding="utf-8")
+    data = json.load(f)
+    f.close()
+    print("f close")
+    with open(
+            "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-merged-3-label.json",
+            "w", encoding="utf-8") as f1:
+        json.dump(data, f1)
+    sys.exit()
+    clean_data(
+        "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/zhibo7m.json")
+    sys.exit()
     client = MongoClient()
     db = client["live_texts"]
-    # # bfwin007 = db["bfwin007"]
-    # # process_bfwin007(bfwin007)
-    zhibo7m = db["zhibo7m"]
-    merge_7m_label(zhibo7m)
-    print("start merge")
-    extrace_zhibo7m(zhibo7m)
-    # okoo_merge_label("/Users/harry/PycharmProjects/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-label.json")
+    bfwin007 = db["bfwin007"]
+    process_bfwin007(bfwin007)
+    #  okoo_merge_label("/Users/harry/PycharmProjects/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-label.json")
     sys.exit(0)
     # data pre-process
     data_path = 'okoo-merged-clean-cut-data.json'
