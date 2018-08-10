@@ -11,14 +11,22 @@ import gc
 import cv2
 import os
 import sys
-# sys.path.append(os.path.abspath(os.path.dirname(os.getcwd())))
+sys.path.append(os.path.abspath(os.path.dirname(os.getcwd())))
 import torch
+from football.tsn_config import Config
+from football.tsn_inference_football import football_inference, stream
 from ocr.src.ocr import OCR
 from Text_classification.text_classify.predict import Predictor
 from Text_classification.text_classify.data.load_data import DataLoader
 
 
+
 class Tcv(object):
+    football_infer_handler_ = football_inference(Config.weights, Config.arch, Config.modality,
+                                                 Config.num_class, Config.gpu, Config.scale_size,
+                                                 Config.input_size, Config.input_mean, Config.input_std,
+                                                 Config.buffer_size)
+
     def __init__(self):
         self._cap = None
         self._fps = None
@@ -35,6 +43,7 @@ class Tcv(object):
         self._time_threhold = 1
         self._cuda = torch.cuda.is_available()
         self._video_inter = 600
+        self.football_infer_handler_ = Tcv.football_infer_handler_
         pass
 
     def live_text_pred(self, sentences, clean=True):
@@ -165,6 +174,33 @@ class Tcv(object):
         # release all resource
         self._cap.release()
         cv2.destroyAllWindows()
+
+    def cut_video_penalty(self, data_path="./videos"):
+        video_paths = [os.path.join(os.getcwd(), file) for file in os.listdir(data_path) if os.path.isfile(file)]
+
+        def cut(stream_path, window_size=100):
+            stream_handle = stream(Config.test_segments, stream_path)
+            cap = cv2.VideoCapture(stream_path)
+            cap = cv2.VideoCapture(stream_path)
+            # print(cap.isOpened())
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+                    int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+            outVideo = cv2.VideoWriter("./tmp.mp4", fourcc, fps, (size[0], size[1]))
+            pre = []
+            while stream_handle.is_init:
+                stream_is_ok, frames = stream_handle.get_frame()
+                if stream_is_ok:
+                    probs = football_infer_handler.eval(frames)
+                    dianqiu_prob = probs[Config.dianqiu_class_index]
+                    dianqiu_label = dianqiu_prob > Config.dianqiu_class_thresh
+                    while len(pre) > window_size:
+                        pre.pop(0)
+                    pre.append(frames)
+                    while dianqiu_label:
+                        pass
+
 
 
 if __name__ == '__main__':

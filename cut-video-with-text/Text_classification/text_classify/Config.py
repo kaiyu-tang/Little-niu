@@ -23,11 +23,11 @@ class Config:
     embed_dim = 301
     class_num = 20
     kernel_num = 200
-    kernel_size = (1, 3, 4, 5)
+    kernel_size = (3, 4, 5)
     dropout = 0.5
     static = False
     lr = 0.001
-    textcnn_epochs = 4000
+    textcnn_epochs = 40000
     log_interval = 50
     test_interval = 50
     save_interval = 50

@@ -8,6 +8,7 @@ import json
 
 import os
 import sys
+
 sys.path.append(os.path.dirname(__file__))
 import torch
 import torch.autograd as autograd
@@ -156,15 +157,16 @@ def prepare_sen_lab():
     data = json.load(open(data_path, encoding='utf-8'))
     sentences = []
     labels = []
-    for item in data:
-        sentences.append(item['text'].split())
-        labels.append(item['merged_label'])
+    for item_ in data:
+        sentences.append([tmp_ for tmp_ in item_["cut_text"] if len(tmp_[0])])
+        labels.append(item_['merged_label'])
     data_path = './data/zhibo7m.json'
-    data = json.load(open(data_path, encoding="utf-8"))
+    f_ = open(data_path, "r", encoding="utf-8")
+    data = json.load(f_)
     al = len(data)
     count = 0
     for item_ in data:
-        sentences.append(item_["msg"].split())
+        sentences.append([tmp_ for tmp_ in item_["cut_text"] if len(tmp_[0])])
         try:
             labels.append(item_["t_label"])
         except KeyError as e:
@@ -195,14 +197,14 @@ if __name__ == '__main__':
     from sklearn.model_selection import KFold
 
     print("loaded data")
-    kf = KFold(n_splits=20)
+    kf = KFold(n_splits=10)
     iters = 0
     best_acc = 0
     for train_index, test_index in kf.split(sentences):
-        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
+        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length, clean=False,
                                  cuda=Config.cuda, batch_size=2048, PAD=Config.PAD, embed_dim=Config.embed_dim,
                                  )
-        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
+        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length, clean=False,
                                cuda=Config.cuda, evaluation=True, batch_size=2048,
                                PAD=Config.PAD, embed_dim=Config.embed_dim,
                                )

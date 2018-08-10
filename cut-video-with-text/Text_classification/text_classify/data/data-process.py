@@ -16,6 +16,8 @@ import thulac
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 
+# import opencc
+
 def okoo_merge_label(file_name):
     """
     merge the labels of the data of okoo.com to 7
@@ -180,8 +182,7 @@ def process_bfwin007(bfwin007):
 
 
 def clean_data(data_path):
-    re = []
-    thuo = thulac.thulac()
+    thuo = thulac.thulac(T2S=True)
     stop_chars = ''',?.!！;:"(){}[]，。？-；'：（）【】 ．—~'''
     data = json.load(open(data_path, "r", encoding="utf-8"))
     with open(data_path, "w", encoding="utf-8") as f:
@@ -194,33 +195,44 @@ def clean_data(data_path):
             index += 1
             print(index)
         print("dumping")
-        json.dump(data, f, ensure_ascii=False, indent=2, separators=(',', ': '))
+        json.dump(data, f, ensure_ascii=False)
 
 
 if __name__ == '__main__':
-    f = open(
-        "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-merged-3-label.json",
-        "r", encoding="utf-8")
-    data = json.load(f)
-    f.close()
-    print("f close")
-    with open(
-            "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-merged-3-label.json",
-            "w", encoding="utf-8") as f1:
-        json.dump(data, f1)
+    # f = open(
+    #     ".././data/zhibo7m.json",
+    #     "r",)
+    # data = f.read()
+    #
+    # data = json.load(str(data))
+    # f.close()
+    # print("f close")
+    # with open(
+    #         ".././data/okoo-merged-3-label.json",
+    #         "w", encoding="utf-8") as f1:
+    #     json.dump(data, f1, ensure_ascii=False)
+    # sys.exit()
+    clean_data("./zhibo7m.json")
     sys.exit()
-    clean_data(
-        "/home/atlab/Workspace/kaiyu/Demo/toys/cut-video-with-text/Text_classification/text_classify/data/zhibo7m.json")
-    sys.exit()
-    client = MongoClient()
-    db = client["live_texts"]
-    bfwin007 = db["bfwin007"]
-    process_bfwin007(bfwin007)
+    # client = MongoClient()
+    # db = client["live_texts"]
+    # bfwin007 = db["bfwin007"]
+    # with open(".././data/zhibo7m.json", "w", encoding="utf-8") as f:
+    #     data = []
+    #     for item_ in db["zhibo7m"].find():
+    #         tmps = item_["content"]["textFeed"]
+    #         new = []
+    #         for tmp in tmps:
+    #             tmp["msg"] = opencc.convert(tmp["msg"])
+    #             new.append(tmp)
+    #         data.append(new)
+    #     json.dump(data, f, ensure_ascii=False)
+    # process_bfwin007(bfwin007)
     #  okoo_merge_label("/Users/harry/PycharmProjects/toys/cut-video-with-text/Text_classification/text_classify/data/okoo-label.json")
-    sys.exit(0)
+    # sys.exit(0)
     # data pre-process
-    data_path = 'okoo-merged-clean-cut-data.json'
-    data = json.load(open(data_path, encoding='utf-8'))['all']
+    data_path = './okoo-merged-3-label.json'
+    data = json.load(open(data_path, encoding='utf-8'))
     sentences = []
     labels = []
     for item in data:

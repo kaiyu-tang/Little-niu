@@ -28,14 +28,14 @@ from icdar import restore_rectangle
 # default parameters
 tf.app.flags.DEFINE_string('test_data_path', '/tmp/ch4_test_images/images/', '')
 tf.app.flags.DEFINE_string('gpu_list', '1', '')
-tf.app.flags.DEFINE_string('checkpoint_path', './models/', '')
+tf.app.flags.DEFINE_string('checkpoint_path', './ocr/src/models/', '')
 tf.app.flags.DEFINE_string('output_dir', '../result/', '')
 tf.app.flags.DEFINE_bool('no_write_images', False, 'do not write images')
 # default model path
 FLAGS = tf.app.flags.FLAGS
 ckpt_state = tf.train.get_checkpoint_state(FLAGS.checkpoint_path)
 model_path_ = os.path.join(FLAGS.checkpoint_path, os.path.basename(ckpt_state.model_checkpoint_path))
-
+print(model_path_)
 
 class OCR(object):
     def __init__(self, model_path=model_path_):

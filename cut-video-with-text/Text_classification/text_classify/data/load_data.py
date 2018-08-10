@@ -12,7 +12,9 @@ import numpy as np
 import torch
 from gensim.models import FastText, Word2Vec
 from torch.autograd import Variable
-
+from mxnet import gluon
+import gluonnlp as nlp
+from mxnet import nd
 import thulac
 
 
@@ -23,6 +25,7 @@ class DataLoader(object):
     _small_word2vec_path = os.path.join(os.path.dirname(__file__), "word_embed/fasttext-skim-clean-2.pt")
     big_word2vec_model = FastText.load_fasttext_format(_big_word2vec_path)
     small_word2vec_model = Word2Vec.load(_small_word2vec_path)
+#    big_word2vec_model = nlp.embedding.create("fasttext", source="wiki")
     print("loaded word related model")
 
     def __init__(self, src_sents, label, max_len=16, embed_dim=301, cuda=False, batch_size=64, shuffle=True,
@@ -40,7 +43,8 @@ class DataLoader(object):
             self._thu0 = DataLoader.thu0
         else:
             del DataLoader.thu0
-            DataLoader.thu0 = ''
+            DataLoader.thu0 = None
+            self._thu0 = None
         self._max_len = max_len
         self._src_sents = np.asarray(src_sents)
         self._label = np.asarray(label, dtype=np.int64)
@@ -154,7 +158,7 @@ class DataProcess(object):
                             break
                         # cha_ = [0 for _ in range(self._part_of_speech_index_length)]
                         # cha_[int(word[1])] = 1
-                        data[index_0][index_1] = np.append(model[word[0]], int(word[1]))
+                        data[index_0][index_1] = np.append(model[word[0]], self._part_of_speech_index.index(word[1]))
                     except Exception as e:
                         print(e)
         data = data.astype(np.float32)

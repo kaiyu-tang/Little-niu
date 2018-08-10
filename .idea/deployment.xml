@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="root@180.97.147.165:36329" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;*.json;*.txt;*.mp4;*.pth;*.bin;*.zip;*.vec;*.npy;">
+  <component name="PublishConfigData" autoUpload="Always" serverName="root@180.97.147.165:24914" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;*.json;*.txt;*.mp4;*.pth;*.bin;*.zip;*.vec;*.npy;">
     <serverData>
-      <paths name="root@180.97.147.165:36329">
+      <paths name="root@180.97.147.165:24914">
         <serverdata>
           <mappings>
             <mapping deploy="/workspace/mnt/group/video/tangkaiyu/Document/toy" local="$PROJECT_DIR$" />

@@ -1,0 +1,19 @@
+0  "player retired", 退役  "substitution", 替补 "start delay",  "tenyard",  "half over", 半场结束  "end 1",  "end 5",  "start half", 上半场  "game over", 比赛结束  "end 2",  "end 4",  "end delay",  "end 14",  "lineup", 首发  "end 3",  "start",  "deletedaction", 删除 无意义  "injury time", 伤停补时  "postponed", 比赛中断  "contentious referee decisions",
+1  "offside", 越位
+2  "corner", 角球
+3  "goal", 进球  "shootoutgoal", "assist", 助攻
+5  "booking" 吃牌
+6  "dismissal", 罚下场
+7  "penalty miss", 射失点球  "penalty kick - no good", 没射进的点球
+8  "penalty", 点球  "shootoutpenalty", 点球
+
+
+11  "hand ball", 手球-犯规  "handball", 手球犯规  "foul", 犯规  "whistle", 吹哨
+12  "clearance", 解围
+13  "cross", 传中  "backpass", 后传球
+14  "freekick", 任意球
+16  "shot", 射门
+17  "goal kick", 门球  "throw in", 边线球  "throw-in", 边线球 "throw", 边线球  "goalkick", 门球
+18  "block",射门被拦截  "shootoutmiss",
+19  "save", 扑救成功  "shootoutsave", 扑救成功
+

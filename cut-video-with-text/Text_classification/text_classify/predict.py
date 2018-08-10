@@ -17,7 +17,6 @@ import json
 import random
 
 from train import eval_model
-from lxml import etree
 import torch.nn.functional as F
 from sklearn.metrics import classification_report
 # from data.load_data import DataLoader
@@ -48,11 +47,11 @@ class Predictor(object):
     # default model loading
     _textcnn = TextCNN.TextCNN()
     if torch.cuda.is_available():
-        _textcnn = torch.load(os.path.join(base_path, 'checkpoints/best_acc0.9915251713603424_steps_1360.pkl'),)
+        _textcnn = torch.load(os.path.join(base_path, "checkpoints",'best_acc0.5494602797692693_steps_200.pkl'),)
         # _textcnn = _textcnn.cuda()
         print("cuda")
     else:
-        _textcnn = torch.load(os.path.join(base_path, 'checkpoints/best_acc0.9915251713603424_steps_1360.pkl'),)
+        _textcnn = torch.load(os.path.join(base_path, "checkpoints",'best_acc0.5494602797692693_steps_200.pkl'),)
 
     _textcnn.eval()
     _data_processor = DataProcess()
