@@ -46,17 +46,19 @@ base_path = os.path.dirname(TextCNN.__file__)
 class Predictor(object):
     # default model loading
     _textcnn = TextCNN.TextCNN()
+    model_name = "best_acc0.9950530601482923_steps_49480.pkl"
     if torch.cuda.is_available():
-        _textcnn = torch.load(os.path.join(base_path, "checkpoints",'best_acc0.5494602797692693_steps_200.pkl'),)
+
+        _textcnn = torch.load(os.path.join(base_path, "checkpoints",model_name),)
         # _textcnn = _textcnn.cuda()
         print("cuda")
     else:
-        _textcnn = torch.load(os.path.join(base_path, "checkpoints",'best_acc0.5494602797692693_steps_200.pkl'),)
+        _textcnn = torch.load(os.path.join(base_path, "checkpoints",model_name),)
 
     _textcnn.eval()
     _data_processor = DataProcess()
 
-    def __init__(self, model=_textcnn, cuda=False):
+    def __init__(self, model=_textcnn, cuda=torch.cuda.is_available()):
         self._model = model
         # self.big_word2vec_model = big_word2vec_model
         # self.small_word2vec_model = small_word2vec_model

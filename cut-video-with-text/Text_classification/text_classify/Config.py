@@ -21,7 +21,7 @@ class Config:
     # textcnn
     sequence_length = 18
     embed_dim = 301
-    class_num = 20
+    class_num = 200
     kernel_num = 200
     kernel_size = (3, 4, 5)
     dropout = 0.5

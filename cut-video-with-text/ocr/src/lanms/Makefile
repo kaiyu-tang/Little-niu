@@ -1,5 +1,6 @@
-CXXFLAGS = -I include  -std=c++11 -O3 $(shell python-config --cflags)
-LDFLAGS = $(shell python-config --ldflags)
+#CXXFLAGS = -I include  -std=c++11 -O3 $(shell python3-config --cflags)
+CXXFLAGS = -I include  -std=c++11 -O3 -I/workspace/mnt/group/video/tangkaiyu/Software/anaconda3/envs/toys/include/python3.6m  -Wno-unused-result -Wsign-compare -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -O3 -pipe  -fdebug-prefix-map==/usr/local/src/conda/- -fdebug-prefix-map==/usr/local/src/conda-prefix -fuse-linker-plugin -ffat-lto-objects -flto-partition=none -flto -DNDEBUG -fwrapv -O3 -Wall -Wstrict-prototypes
+LDFLAGS = $(shell python3-config --ldflags)
 
 DEPS = lanms.h $(shell find include -xtype f)
 CXX_SOURCES = adaptor.cpp include/clipper/clipper.cpp

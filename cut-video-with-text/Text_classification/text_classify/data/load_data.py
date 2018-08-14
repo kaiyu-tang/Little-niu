@@ -120,13 +120,13 @@ class DataProcess(object):
         pass
 
     def clean(self, text, thu0, stop_chars=''',?.!！;:"(){}[]，。？-；'：（）【】 ．—~'''):
-        text = re.sub('[a-zA-Z\d]+', '', text)
+        text = re.sub('[a-zA-Z0-9]+', '', text)
         for c in stop_chars:
             text = text.replace(c, ' ')
 
         try:
             text = thu0.fast_cut(text)
-            text = [(item[0], self._part_of_speech_index.index(item[1])) for item in text if item[1] != '']
+            text = [(item[0], item[1]) for item in text if item[1] != '']
         except Exception as e:
             print("thulac error {}".format(text))
             print(e)
