@@ -46,8 +46,9 @@ class Tcv(object):
         self._live_merged = []
         self._time_threhold = 1
         self._cuda = torch.cuda.is_available()
-        self._video_inter = 600
+        self._video_inter = 60
         self.football_infer_handler_ = Tcv.football_infer_handler_
+        self._not = [0]
         pass
 
     def live_text_pred(self, sentences, clean=True):
@@ -67,12 +68,10 @@ class Tcv(object):
 
     def set_live_times(self, times):
         self._live_times = times
-        n = [0]
         tmp_p, tmp_t = [], []
         for t, p in zip(self._live_times, self._live_predicts):
-            if p not in n:
-                tmp_p.append(p)
-                tmp_t.append(t)
+            tmp_p.append(p)
+            tmp_t.append(t)
         self._live_predicts = tmp_p
         self._live_times = tmp_t
         self._merge_label()
@@ -102,6 +101,21 @@ class Tcv(object):
             start_time, end_time = end_time, start_time
         self._live_merged.append(
             (start_time, end_time, self._live_predicts[start_index]))
+        tmp = []
+        pre, las = -1, -1
+        labs = set()
+        for item_ in self._live_merged:
+            if item_[2] not in self._not:
+                if item_[0] < las:
+                    las = max(item_[1], las)
+                    labs.add(item_[2])
+                    # tmp.append(item_)
+                else:
+                    tmp.append((pre,las,labs))
+                    labs = set()
+                    pre, las = item_[0], item_[1]
+                    labs.add(item_[2])
+        self._live_merged = tmp[1:]
 
     def _get_video_time(self, time_data):
         """
@@ -110,7 +124,7 @@ class Tcv(object):
         :return: time
         """
         time_data = ' '.join(time_data)
-        time = re.findall('(\d+):(\d)', time_data)
+        time = re.findall('(\d+)[:|](\d)', time_data)
         if len(time_data) != 0:
             print()
         if len(time) == 0:
@@ -119,6 +133,7 @@ class Tcv(object):
             return int(time[0][0])
 
     def cut_video(self, video_path):
+        print(self._live_merged)
         """
         save according to text time and label
         :param video_path: the abs path of video
@@ -135,7 +150,7 @@ class Tcv(object):
         for item in self._live_merged:
             start_time = item[0]
             end_time = item[1]
-            label = item[2]
+            label = '_'.join(map(str, item[2]))
             cur_time = -1
             # go to the first start_time
             count = 0
@@ -162,8 +177,11 @@ class Tcv(object):
 
             # find start time and open the video writer
             cur_outvideo_name = os.path.join(os.getcwd(), 'tmp.mp4')
-            cur_outvideo = cv2.VideoWriter(cur_outvideo_name, self._fourcc, self._fps,
-                                           (cur_frame.shape[1], cur_frame.shape[0]))
+            try:
+                cur_outvideo = cv2.VideoWriter(cur_outvideo_name, self._fourcc, self._fps,
+                                               (cur_frame.shape[1], cur_frame.shape[0]))
+            except AttributeError as e:
+                print(e)
             # save video frame
             while cur_time != end_time:
                 cur_ret, cur_frame = self._cap.read()
@@ -186,7 +204,7 @@ class Tcv(object):
             # release current video
             cur_outvideo.release()
             os.system(
-                'ffmpeg -i tmp.mp4 -map v:0 -c:v libx264 -crf 18 -pix_fmt yuv420p -g 5 -profile:v high ,/videos/{}-{}-{}.mp4'.format(
+                'ffmpeg -i tmp.mp4 -map v:0 -c:v libx264 -crf 18 -pix_fmt yuv420p -g 5 -profile:v high ./videos/{}-{}-{}.mp4'.format(
                     start_time, end_time, label))
             os.remove(cur_outvideo_name)
         # release all resource
@@ -212,10 +230,12 @@ class Tcv(object):
             if stream_is_ok:
                 probs = self.football_infer_handler_.eval(frame)
                 dianqiu_label = probs[Config.dianqiu_class_index] > Config.dianqiu_class_thresh
+                print(dianqiu_label)
                 while pre.qsize() >= window_size:
                     pre.get()
-                pre.put(frame)
-                cv2.imshow("Video", cv2.cvtColor(np.asarray(frame[0]), cv2.COLOR_RGB2BGR))
+                cv_frame = cv2.cvtColor(np.asarray(frame[0]), cv2.COLOR_RGB2BGR)
+                pre.put(cv_frame)
+                cv2.imshow("Video", cv_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 frames = []
@@ -231,6 +251,7 @@ class Tcv(object):
                             break
                         probs = self.football_infer_handler_.eval(frame)
                         dianqiu_label = probs[Config.dianqiu_class_index] > Config.dianqiu_class_thresh
+                        print(dianqiu_label)
                         if not dianqiu_label:
                             index_ += 1
                         else:
@@ -259,7 +280,7 @@ class Tcv(object):
                     os.system(
                         'ffmpeg -i tmp.mp4 -map v:0 -c:v libx264 -crf 18 -pix_fmt yuv420p -g 5 -profile:v high {}-{}.mp4'.format(
                             name, num_of_video))
-                    print("name: {} num: {}".format(name,num_of_video))
+                    print("name: {} num: {}".format(name, num_of_video))
                     os.remove(os.path.join(os.getcwd(), "tmp.mp4"))
         stream_handle.destroy()
         return
@@ -267,7 +288,7 @@ class Tcv(object):
     def cut_video_penalty(self, data_path="./videos"):
         video_paths = [os.path.join(os.getcwd(), "videos", file) for file in os.listdir(data_path) if
                        not os.path.isdir(file)]
-        #cut("tmp.mp4")
+        # cut("tmp.mp4")
         for video_path in video_paths:
             # # encode for nvvl
             # os.system("ffmpeg -i {} -map v:0 -c:v libx264 -crf 18 -pix_fmt yuv420p -g 5 -profile:v high tmp.mp4".format(video_path))
@@ -279,7 +300,7 @@ class Tcv(object):
 
 if __name__ == '__main__':
     text_path = 'cut-text.json'
-    video_path = 'test.mp4'
+    video_path = '99-103-2.mp4'
     tcv = Tcv()
     sentences, targets, times = [], [], []
     with open(text_path, encoding='utf-8') as f:
@@ -287,8 +308,8 @@ if __name__ == '__main__':
             sentences.append(item[0])
             times.append(item[1])
             targets.append(0)
-    sentences.reverse()
-    times.reverse()
+    # sentences.reverse()
+    # times.reverse()
 
     tcv.live_text_pred(sentences)
     tcv.set_live_times(times)

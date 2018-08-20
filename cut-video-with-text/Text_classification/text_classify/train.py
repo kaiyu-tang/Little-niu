@@ -5,11 +5,8 @@
 # @Site    :   
 # @File    : train.py
 import json
-
 import os
 import sys
-
-sys.path.append(os.path.dirname(__file__))
 import torch
 import torch.autograd as autograd
 import torch.nn.functional as F
@@ -157,16 +154,15 @@ def prepare_sen_lab():
     data = json.load(open(data_path, encoding='utf-8'))
     sentences = []
     labels = []
-    for item_ in data:
-        sentences.append([tmp_ for tmp_ in item_["cut_text"] if len(tmp_[0])])
-        labels.append(item_['merged_label'])
+    for item in data:
+        sentences.append(item['text'].split())
+        labels.append(item['merged_label'])
     data_path = './data/zhibo7m.json'
-    f_ = open(data_path, "r", encoding="utf-8")
-    data = json.load(f_)
+    data = json.load(open(data_path, encoding="utf-8"))
     al = len(data)
     count = 0
     for item_ in data:
-        sentences.append([tmp_ for tmp_ in item_["cut_text"] if len(tmp_[0])])
+        sentences.append(item_["msg"].split())
         try:
             labels.append(item_["t_label"])
         except KeyError as e:
@@ -197,14 +193,14 @@ if __name__ == '__main__':
     from sklearn.model_selection import KFold
 
     print("loaded data")
-    kf = KFold(n_splits=10)
+    kf = KFold(n_splits=20)
     iters = 0
     best_acc = 0
     for train_index, test_index in kf.split(sentences):
-        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length, clean=False,
+        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
                                  cuda=Config.cuda, batch_size=2048, PAD=Config.PAD, embed_dim=Config.embed_dim,
                                  )
-        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length, clean=False,
+        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
                                cuda=Config.cuda, evaluation=True, batch_size=2048,
                                PAD=Config.PAD, embed_dim=Config.embed_dim,
                                )
