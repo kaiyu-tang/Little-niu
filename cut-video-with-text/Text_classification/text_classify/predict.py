@@ -10,7 +10,7 @@ import torch
 from pymongo import MongoClient
 
 sys.path.append(os.path.dirname(__file__))
-import TextCNN
+import Model
 from Config import Config
 from gensim.models import Word2Vec, FastText
 import json

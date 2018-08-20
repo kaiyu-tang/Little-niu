@@ -8,6 +8,7 @@ import multiprocessing
 import torch
 import os
 import sys
+
 sys.path.append(os.path.dirname(__file__))
 
 
@@ -17,27 +18,56 @@ class Config:
     dir_model = "./checkpoints"
 
     PAD = "*"
-
-    # textcnn
     sequence_length = 18
     embed_dim = 301
-    class_num = 200
-    kernel_num = 200
-    kernel_size = (3, 4, 5)
-    dropout = 0.5
-    static = False
-    lr = 0.001
-    textcnn_epochs = 40000
-    log_interval = 50
-    test_interval = 50
-    save_interval = 50
-    save_best = 50
-    early_stop = 0
-    train_proportion = 0.98
+    cls = 20
+    # textcnn
+    options = {
+        "TextRNN": {
+            "hidden_size": 300,
+            "lr": 0.0001,
+            "epoch": 4000,
+            "log_interval": 50,
+            "save_interval": 50,
+            "save_best": True,
+            "train_proportion": 0.9
+        },
+        "TextCNN": {
+            "kernel_num": 200,
+            "kernel_size": (3, 4, 5, 7, 9),
+            "drop_out": 0.5,
+            "static": False,
+            "lr": 0.001,
+            "epoch": 4000,
+            "log_interval": 50,
+            "save_interval": 50,
+            "save_best": True,
+            "train_proportion": 0.9
+        }
 
-    word_vec_train_epoch = 0
+    }
+
+    # sequence_length = 18
+    # embed_dim = 301
+    # class_num = 20
+    # kernel_num = 200
+    # kernel_size = (3, 4, 5, 7,
+    #                9)
+    # dropout = 0.5
+    # static = False
+    # lr = 0.001
+    # textcnn_epochs = 40000
+    # log_interval = 50
+    # test_interval = 50
+    # save_interval = 50
+    # save_best = 50
+    # early_stop = 0
+    # train_proportion = 0.98
+    #
+    # word_vec_train_epoch = 0
 
     # word2vec
+
     word2vec_dm_concat = 0  # very time consuming
     word2vec_net_size = 128
     word2vec_train_epoch = 40
