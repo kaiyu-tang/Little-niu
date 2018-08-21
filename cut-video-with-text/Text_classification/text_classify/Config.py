@@ -24,13 +24,15 @@ class Config:
     # textcnn
     options = {
         "TextRNN": {
-            "hidden_size": 300,
-            "lr": 0.0001,
+            "hidden_size": 200,
+            "lr": 0.001,
             "epoch": 4000,
             "log_interval": 50,
             "save_interval": 50,
+            "test_interval": 50,
             "save_best": True,
-            "train_proportion": 0.9
+            "train_proportion": 0.9,
+            "dropout": 0
         },
         "TextCNN": {
             "kernel_num": 200,
@@ -39,8 +41,9 @@ class Config:
             "static": False,
             "lr": 0.001,
             "epoch": 4000,
-            "log_interval": 50,
-            "save_interval": 50,
+            "log_interval": 20,
+            "test_interval": 20,
+            "save_interval": 20,
             "save_best": True,
             "train_proportion": 0.9
         }

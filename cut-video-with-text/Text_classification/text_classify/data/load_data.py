@@ -30,7 +30,7 @@ class DataLoader(object):
 
     def __init__(self, src_sents, label, max_len=16, embed_dim=301, cuda=False, batch_size=64, shuffle=True,
                  evaluation=False,
-                 clean=True, big_word2vec_model=None, small_word2vec_model=None, PAD='*'):
+                 clean=True, big_word2vec_model=None, small_word2vec_model=None, PAD='*',pad=True):
         self._cuda = cuda
         self.sents_size = len(src_sents)
         self._step = 0
@@ -50,6 +50,7 @@ class DataLoader(object):
         self._label = np.asarray(label, dtype=np.int64)
         self._embed_dim = embed_dim
         self._PAD = PAD
+        self._pad = pad
 
         # loading word2vec model
         if big_word2vec_model is not None:
@@ -88,7 +89,10 @@ class DataLoader(object):
         _start = self._step * self._batch_size
         _bsz = min(self._batch_size, self.sents_size - _start)
         self._step += 1
-        data = self._process.pad_to_longest(self._src_sents[_start:_start + _bsz])
+        if self._pad:
+            data = self._process.pad_to_longest(self._src_sents[_start:_start + _bsz])
+        else:
+            data = self._src_sents[_start:_start + _bsz]
         data = self._process.convert_to_vectors_concate(data, big_sequence_length=14, embed_dim=self._embed_dim)
         label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
                          volatile=self._evaluation)
@@ -103,7 +107,7 @@ class DataLoader(object):
 class DataProcess(object):
     def __init__(self, big_word2vec_model=DataLoader.big_word2vec_model,
                  small_word2vec_model=DataLoader.small_word2vec_model,
-                 max_length=16, cut_model=DataLoader.thu0, PAD='*', clean=True, evaluation=False):
+                 max_length=16, cut_model=DataLoader.thu0, PAD='*',clean=True, evaluation=False):
         self._big_word2vec_model = big_word2vec_model
         self._small_word2vec_model = small_word2vec_model
         self._cut_model = cut_model
@@ -151,7 +155,7 @@ class DataProcess(object):
         insts_num = len(insts)
         data = np.zeros((insts_num, length, embed_dim))
         for index_0, inst in enumerate(insts):
-            for index_1, word in enumerate(inst):
+            for index_1, word in enumerate(inst[:length]):
                 if word[0] != self._PAD and word[0] in model:
                     try:
                         if index_1 > length - 1:

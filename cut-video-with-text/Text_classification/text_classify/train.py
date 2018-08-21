@@ -60,11 +60,15 @@ def eval_model(model, data_iter, args):
     step = 0
     y_true = []
     y_pred = []
+    hidden_state = None
     from sklearn import metrics
     for feature, target in data_iter:
-        y_true.extend(map(int, target))
-        logit = model(feature)
-        y_pred.extend(map(int, torch.max(logit, 1)[1].view(target.size()).data))
+        y_true = np.concatenate([y_true, target])
+        if model.name == "TextCNN":
+            logit = model(feature)
+        elif model.name == "TextRNN":
+            logit, hidden_state = model(feature, hidden_state)
+        y_pred = np.concatenate([y_pred, torch.max(logit, 1)[1].view(target.size()).data])
         if len(y_pred) != len(y_true):
             print("{} {}".format(len(y_pred), len(y_true)))
     #####
@@ -110,6 +114,7 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
     model.train()
     option = args.options[model.name]
     print('start training')
+    torch.backends.cudnn.benchmark = True
     for epoch in range(option["epoch"]):
         for feature, target in train_iter:
             # feature = feature.data()
@@ -127,21 +132,23 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
             optimizer.step()
 
             steps += 1
-
-            if steps % option["log_interval"] == 0:
-                corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-                accuracy = 100.0 * corrects / target.shape[0]
+            print(steps)
+            # if steps % option["log_interval"] == 0:
+            #     corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
+            #     accuracy = 100.0 * corrects / target.shape[0]
 
             if steps % option["test_interval"] == 0:
                 dev_acc = eval_model(model, dev_iter, args)
+                model.train()
                 if dev_acc > best_acc:
                     best_acc = dev_acc
                     last_step = steps
                     if option["save_best"]:
                         save(model, args.dir_model, 'best_acc{}'.format(best_acc), steps)
                 else:
-                    if steps - last_step >= args.early_stop:
-                        print('early stop by {} steps.'.format(args.early_stop))
+                    # if steps - last_step >= args.early_stop:
+                    #     print('early stop by {} steps.'.format(args.early_stop))
+                    pass
             # elif steps % option["save_interval"] == 0:
             #     # save(model, args.dir_model, 'snapshot', steps)
             #     pass
@@ -185,20 +192,21 @@ if __name__ == '__main__':
     # train_word_vectors(text_path, Config)
 
     # train text-Cnn
-    print('loading textcnn model')
+    print('loading text model')
     textcnn = TextCNN()
     textrnn = TextRNN()
-    print('finished loading txtcnn model')
+    print('finished loading txt model')
     print('Cuda: {}'.format(Config.cuda))
     print("loading data")
 
     from sklearn.model_selection import StratifiedShuffleSplit
 
-    print("loaded data")
-    sss = StratifiedShuffleSplit(n_splits=10)
+    sss = StratifiedShuffleSplit(n_splits=10, test_size=0.01)
     iters = 0
     best_acc = 0
     from data.load_data import DataLoader
+
+    print("loaded data")
 
     for train_index, test_index in sss.split(sentences, labels):
         train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
