@@ -68,6 +68,9 @@ def eval_model(model, data_iter, args):
             logit = model(feature)
         elif model.name == "TextRNN":
             logit, hidden_state = model(feature, hidden_state)
+        elif model.name == "TextVDCNN":
+            logit = model(torch.transpose(feature, 1, 2))
+
         y_pred = np.concatenate([y_pred, torch.max(logit, 1)[1].view(target.size()).data])
         if len(y_pred) != len(y_true):
             print("{} {}".format(len(y_pred), len(y_true)))
@@ -126,6 +129,8 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
                 logit = model(feature)
             elif model.name == "TextRNN":
                 logit, hidden_state = model(feature, hidden_state)
+            elif model.name == "TextVDCNN":
+                logit = model(torch.transpose(feature, 1, 2))
 
             loss = F.cross_entropy(logit, target)
             loss.backward()

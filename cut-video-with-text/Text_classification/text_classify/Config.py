@@ -46,6 +46,18 @@ class Config:
             "save_interval": 20,
             "save_best": True,
             "train_proportion": 0.9
+        },
+        "TextVDCNN": {
+            "net_depth": 29,
+            "n_fc_neurons": 2048,
+            "shortcut": True,
+            "lr": 0.001,
+            "epoch": 4000,
+            "log_interval": 50,
+            "save_interval": 50,
+            "test_interval": 50,
+            "save_best": True,
+            "train_proportion": 0.9,
         }
 
     }
