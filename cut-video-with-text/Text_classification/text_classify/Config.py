@@ -26,13 +26,13 @@ class Config:
         "TextRNN": {
             "hidden_size": 200,
             "lr": 0.001,
-            "epoch": 4000,
+            "epoch": 400,
             "log_interval": 50,
             "save_interval": 50,
             "test_interval": 50,
             "save_best": True,
             "train_proportion": 0.9,
-            "dropout": 0
+            "dropout": 0.5
         },
         "TextCNN": {
             "kernel_num": 200,
@@ -48,14 +48,15 @@ class Config:
             "train_proportion": 0.9
         },
         "TextVDCNN": {
-            "net_depth": 29,
+            "net_depth": 49,
             "n_fc_neurons": 2048,
+            "last_pool": "k-max",
             "shortcut": True,
-            "lr": 0.001,
+            "lr": 0.0001,
             "epoch": 4000,
-            "log_interval": 50,
-            "save_interval": 50,
-            "test_interval": 50,
+            "log_interval": 2,
+            "save_interval": 2,
+            "test_interval": 2,
             "save_best": True,
             "train_proportion": 0.9,
         }

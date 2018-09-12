@@ -12,9 +12,7 @@ import numpy as np
 import torch
 from gensim.models import FastText, Word2Vec
 from torch.autograd import Variable
-from mxnet import gluon
-import gluonnlp as nlp
-from mxnet import nd
+import jieba
 import thulac
 
 
@@ -24,13 +22,14 @@ class DataLoader(object):
     _big_word2vec_path = os.path.join(os.path.dirname(__file__), 'word_embed/wiki.zh/wiki.zh.bin')
     _small_word2vec_path = os.path.join(os.path.dirname(__file__), "word_embed/fasttext-skim-clean-2.pt")
     big_word2vec_model = FastText.load_fasttext_format(_big_word2vec_path)
+    #big_word2vec_model = nlp.embedding.create("fasttext", source="wiki.zh")
     small_word2vec_model = Word2Vec.load(_small_word2vec_path)
 #    big_word2vec_model = nlp.embedding.create("fasttext", source="wiki")
     print("loaded word related model")
 
     def __init__(self, src_sents, label, max_len=16, embed_dim=301, cuda=False, batch_size=64, shuffle=True,
                  evaluation=False,
-                 clean=True, big_word2vec_model=None, small_word2vec_model=None, PAD='*',pad=True):
+                 clean=True, big_word2vec_model=None, small_word2vec_model=None, PAD='*', pad=True):
         self._cuda = cuda
         self.sents_size = len(src_sents)
         self._step = 0
@@ -68,6 +67,11 @@ class DataLoader(object):
                                     evaluation=self._evaluation, clean=self._clean)
         if shuffle:
             self._shuffle()
+        tmp = np.bincount(self._label)/self._label.shape[0]
+        self._weights = (np.ones((tmp.shape[0])) - tmp).astype(np.float32)
+
+    def get_weight(self):
+        return self._weights
 
     def _shuffle(self):
         indices = np.arange(self._src_sents.shape[0])
@@ -173,7 +177,9 @@ class DataProcess(object):
         return self._convert_to_vectors(insts, self._max_length, embed_dim=emded_dim, model=model)
 
     def convert_to_vectors_plus(self, insts, embed_dim):
-        big_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,
+        big_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,n
+
+
                                                  model=self._big_word2vec_model)
         small_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,
                                                    model=self._small_word2vec_model)

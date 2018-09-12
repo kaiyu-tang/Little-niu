@@ -6,9 +6,12 @@
 # @File    : train.py
 import json
 import os
+import time
+
 import torch
+import torch.utils.data.dataloader
 import torch.nn.functional as F
-from Model import TextCNN, TextRNN
+from Model import TextCNN, TextRNN, TextVDCNN
 from Config import Config
 from gensim.models import Word2Vec, FastText
 from gensim.models.word2vec import LineSentence
@@ -107,9 +110,9 @@ def save(model, save_dir, save_prefix, steps):
 
 
 def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
-    if args.cuda:
-        model.cuda()
+
     optimizer = torch.optim.Adam(model.parameters(), lr=args.options[model.name]["lr"])
+    optimizer = torch.optim.SGD(model.parameters(), lr=args.options[model.name]["lr"])
     # optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
     # word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     steps = 0
@@ -118,7 +121,14 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
     option = args.options[model.name]
     print('start training')
     torch.backends.cudnn.benchmark = True
+    weights = train_iter.get_weight()
+    weights = torch.from_numpy(weights)
+    # cuda model and parameters
+    if args.cuda:
+        model.cuda()
+        weights = weights.cuda()
     for epoch in range(option["epoch"]):
+        cur_time = time.time()
         for feature, target in train_iter:
             # feature = feature.data()
             # feature.data.t_()
@@ -132,31 +142,31 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
             elif model.name == "TextVDCNN":
                 logit = model(torch.transpose(feature, 1, 2))
 
-            loss = F.cross_entropy(logit, target)
+            loss = F.cross_entropy(logit, target, weight=weights)
             loss.backward()
             optimizer.step()
+        end_time = time.time()
+        steps += 1
+        print("step: {} time: {} loss: {}".format(steps, end_time-cur_time, loss))
+        # if steps % option["log_interval"] == 0:
+        #     corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
+        #     accuracy = 100.0 * corrects / target.shape[0]
 
-            steps += 1
-            print(steps)
-            # if steps % option["log_interval"] == 0:
-            #     corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-            #     accuracy = 100.0 * corrects / target.shape[0]
-
-            if steps % option["test_interval"] == 0:
-                dev_acc = eval_model(model, dev_iter, args)
-                model.train()
-                if dev_acc > best_acc:
-                    best_acc = dev_acc
-                    last_step = steps
-                    if option["save_best"]:
-                        save(model, args.dir_model, 'best_acc{}'.format(best_acc), steps)
-                else:
-                    # if steps - last_step >= args.early_stop:
-                    #     print('early stop by {} steps.'.format(args.early_stop))
-                    pass
-            # elif steps % option["save_interval"] == 0:
-            #     # save(model, args.dir_model, 'snapshot', steps)
-            #     pass
+        if steps % option["test_interval"] == 0:
+            dev_acc = eval_model(model, dev_iter, args)
+            model.train()
+            if dev_acc > best_acc:
+                best_acc = dev_acc
+                last_step = steps
+                if option["save_best"]:
+                    save(model, args.dir_model, 'best_acc{}'.format(best_acc), steps)
+            else:
+                # if steps - last_step >= args.early_stop:
+                #     print('early stop by {} steps.'.format(args.early_stop))
+                pass
+        # elif steps % option["save_interval"] == 0:
+        #     # save(model, args.dir_model, 'snapshot', steps)
+        #     pass
     return best_acc
 
 
@@ -200,13 +210,14 @@ if __name__ == '__main__':
     print('loading text model')
     textcnn = TextCNN()
     textrnn = TextRNN()
+    textvdcnn = TextVDCNN()
     print('finished loading txt model')
     print('Cuda: {}'.format(Config.cuda))
     print("loading data")
 
     from sklearn.model_selection import StratifiedShuffleSplit
 
-    sss = StratifiedShuffleSplit(n_splits=10, test_size=0.01)
+    sss = StratifiedShuffleSplit(n_splits=10, test_size=0.06)
     iters = 0
     best_acc = 0
     from data.load_data import DataLoader
@@ -214,14 +225,18 @@ if __name__ == '__main__':
     print("loaded data")
 
     for train_index, test_index in sss.split(sentences, labels):
+        start_time = time.time()
         train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
-                                 cuda=Config.cuda, batch_size=2048, PAD=Config.PAD, embed_dim=Config.embed_dim,
+                                 cuda=Config.cuda, batch_size=4096, PAD=Config.PAD, embed_dim=Config.embed_dim,
                                  )
+
         dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
-                               cuda=Config.cuda, evaluation=True, batch_size=2048,
+                               cuda=Config.cuda, evaluation=True, batch_size=4096,
                                PAD=Config.PAD, embed_dim=Config.embed_dim,
                                )
+        print(train_iters.get_weight())
+        end_time = time.time()
         iters += 1
-        print("Iter: {} Loading data successful".format(iters))
         # start train
-        best_acc = train(textrnn, train_iters, dev_iters, Config, best_acc=best_acc)
+        best_acc = train(textvdcnn, train_iters, dev_iters, Config, best_acc=best_acc)
+        print("Iter: {} time: {} Loading data successful".format(iters, end_time - start_time))

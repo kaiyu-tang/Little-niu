@@ -7,14 +7,20 @@
 """
 this file is used to process data
 """
+import csv
 import json
+import pandas as pd
+
+import numpy as np
 import os
 import re
 import sys
-from pymongo import MongoClient
+
+from gensim.models import FastText, Word2Vec
 import thulac
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-import opencc
+import jieba
+
 
 def okoo_merge_label(file_name):
     """
@@ -196,14 +202,89 @@ def clean_data(data_path):
         print("dumping")
         json.dump(data, f, ensure_ascii=False, indent=2, separators=(',', ': '))
 
+
 def count_word(data_path):
     data = []
-    with open(data_path,"r") as f0:
-        with open("all-corpus-sep.txt","w",encoding="utf-8") as f1:
+    with open(data_path, "r") as f0:
+        with open("all-corpus-sep.txt", 'w', encoding="utf-8") as f1:
             for line in f0:
-                line.replace(" ","")
+                line.replace(" ", "")
 
 
+def prepare_sen_lab(test=True):
+    # data pre-process
+    data_path = './okoo-merged-3-label.json'
+    data = json.load(open(data_path, encoding='utf-8'))
+    sentences = []
+    labels = []
+    for item in data:
+        sentences.append(item['text'])
+        labels.append(item['merged_label'])
+    # data_path = './zhibo7m.json'
+    # data = json.load(open(data_path, encoding="utf-8"))
+    # al = len(data)
+    # count = 0
+    # for item_ in data:
+    #     sentences.append(item_["msg"])
+    #     try:
+    #         labels.append(item_["t_label"])
+    #     except KeyError as e:
+    #         count += 1
+    #         labels.append(0)
+    #         print(item_["msg"])
+    #
+    # print("all: {} error: {}".format(al, count))
+
+    return sentences[:100], labels[:100]
+
+
+def word2vec(data_path):
+    sentences, labels = prepare_sen_lab()
+    big_embedding = []
+    small_embedding = []
+    big_model = FastText.load_fasttext_format(os.path.join(os.path.dirname(__file__),
+                                                           'word_embed/wiki.zh/wiki.zh.bin'))
+    small_model = Word2Vec.load(os.path.join(os.path.dirname(__file__),
+                                             "word_embed/fasttext-skim-clean-2.pt"))
+    jieba.load_userdict(os.path.join(os.path.dirname(__file__),
+                                     "English_Cn_Name_Corpus(48W).txt"))
+    big_em_ = {}
+    small_em_ = {}
+    print("load")
+    with open("full-cut.csv", "w", encoding="utf-8") as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(["index", "sentence", "label"])
+        for index, sent_ in enumerate(sentences):
+            tmp = sent_
+            # sent_ = re.sub("[a-zA-Z]", "某某", sent_)
+            sent_ = "<bos> " + sent_ + " <eos>"
+            # print(sent_)
+            sent_ = jieba.cut(sent_)
+            for word in sent_:
+                if word not in big_em_:
+                    big_em_[word] = (1, big_model[word])
+                else:
+                    big_em_[word] = (big_em_[word][0] + 1, big_em_[word][1])
+                if word in small_em_:
+                    small_em_.append(small_model[word])
+                    if word not in small_em_:
+                        small_em_[word] = (1, small_model[word])
+                    else:
+                        small_em_[word] = (small_em_[word][0] + 1, small_em_[word][1])
+
+            writer.writerow([index, tmp, labels[index]])
+    print("start sort")
+    print(len(big_em_))
+    big_em_ = sorted(big_em_.items(), key=lambda item: item[1][0], reverse=True)
+    small_em_ = sorted(small_em_.items(), key=lambda item: item[1][0], reverse=True)
+    print("end sort")
+    with open("big_voc.vec", "w", encoding="utf-8") as big_f:
+        for item in big_em_:
+            big_f.write("{} {}\n".format(item[0], item[1][1]))
+    with open("small_voc.vec", "w", encoding="utf-8") as small_f:
+        for item in small_em_:
+            small_f.write("{} {}\n".format(item[0], item[1][1]))
 
 if __name__ == '__main__':
-    pass
+    print("sdasd")
+    word2vec("aa")
