@@ -18,15 +18,15 @@ class Config:
     dir_model = "./checkpoints"
 
     PAD = "*"
-    sequence_length = 18
-    embed_dim = 301
+    sequence_length = 16
+    embed_dim = 300
     cls = 20
     # textcnn
     options = {
         "TextRNN": {
             "hidden_size": 200,
             "lr": 0.001,
-            "epoch": 400,
+            "epoch": 40,
             "log_interval": 50,
             "save_interval": 50,
             "test_interval": 50,
@@ -40,7 +40,7 @@ class Config:
             "drop_out": 0.5,
             "static": False,
             "lr": 0.001,
-            "epoch": 4000,
+            "epoch": 40,
             "log_interval": 20,
             "test_interval": 20,
             "save_interval": 20,
@@ -53,7 +53,7 @@ class Config:
             "last_pool": "k-max",
             "shortcut": True,
             "lr": 0.0001,
-            "epoch": 4000,
+            "epoch": 40,
             "log_interval": 2,
             "save_interval": 2,
             "test_interval": 2,

@@ -9,6 +9,8 @@ this file is used to process data
 """
 import csv
 import json
+from multiprocessing import cpu_count
+
 import pandas as pd
 
 import numpy as np
@@ -213,6 +215,7 @@ def count_word(data_path):
 
 def prepare_sen_lab(test=True):
     # data pre-process
+    print("loading data")
     data_path = './okoo-merged-3-label.json'
     data = json.load(open(data_path, encoding='utf-8'))
     sentences = []
@@ -220,71 +223,94 @@ def prepare_sen_lab(test=True):
     for item in data:
         sentences.append(item['text'])
         labels.append(item['merged_label'])
-    # data_path = './zhibo7m.json'
-    # data = json.load(open(data_path, encoding="utf-8"))
-    # al = len(data)
-    # count = 0
-    # for item_ in data:
-    #     sentences.append(item_["msg"])
-    #     try:
-    #         labels.append(item_["t_label"])
-    #     except KeyError as e:
-    #         count += 1
-    #         labels.append(0)
-    #         print(item_["msg"])
-    #
-    # print("all: {} error: {}".format(al, count))
+    data_path = './zhibo7m.json'
+    data = json.load(open(data_path, encoding="utf-8"))
+    al = len(data)
+    count = 0
+    for item_ in data:
+        sentences.append(item_["msg"])
+        try:
+            labels.append(item_["t_label"])
+        except KeyError as e:
+            count += 1
+            labels.append(0)
+            print(item_["msg"])
 
-    return sentences[:100], labels[:100]
+    print("all: {} error: {}".format(al, count))
+    print("finished loading")
+    return sentences, labels
 
 
 def word2vec(data_path):
     sentences, labels = prepare_sen_lab()
-    big_embedding = []
-    small_embedding = []
-    big_model = FastText.load_fasttext_format(os.path.join(os.path.dirname(__file__),
-                                                           'word_embed/wiki.zh/wiki.zh.bin'))
-    small_model = Word2Vec.load(os.path.join(os.path.dirname(__file__),
-                                             "word_embed/fasttext-skim-clean-2.pt"))
-    jieba.load_userdict(os.path.join(os.path.dirname(__file__),
-                                     "English_Cn_Name_Corpus(48W).txt"))
+    # big_model = FastText.load_fasttext_format(os.path.join(os.path.dirname(__file__),
+    #                                                        'word_embed/wiki.zh/wiki.zh.bin'))
+    # small_model = Word2Vec.load(os.path.join(os.path.dirname(__file__),
+    #                                          "word_embed/fasttext-skim-clean-2.pt"))
+    # jieba.load_userdict(os.path.join(os.path.dirname(__file__),
+    #                                  "English_Cn_Name_Corpus(48W).txt"))
+    # jieba.add_word("*", freq=len(sentences))
+    # jieba.enable_parallel(cpu_count())
     big_em_ = {}
     small_em_ = {}
     print("load")
     with open("full-cut.csv", "w", encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file)
-        writer.writerow(["index", "sentence", "label"])
+        writer.writerow(["sentence", "label"])
         for index, sent_ in enumerate(sentences):
             tmp = sent_
             # sent_ = re.sub("[a-zA-Z]", "某某", sent_)
-            sent_ = "<bos> " + sent_ + " <eos>"
             # print(sent_)
-            sent_ = jieba.cut(sent_)
-            for word in sent_:
-                if word not in big_em_:
-                    big_em_[word] = (1, big_model[word])
-                else:
-                    big_em_[word] = (big_em_[word][0] + 1, big_em_[word][1])
-                if word in small_em_:
-                    small_em_.append(small_model[word])
-                    if word not in small_em_:
-                        small_em_[word] = (1, small_model[word])
-                    else:
-                        small_em_[word] = (small_em_[word][0] + 1, small_em_[word][1])
+            # sent_ = jieba.cut(sent_, cut_all=True)
+            # sent_ = sent_
+            # for word in sent_:
+            #     if word not in big_em_:
+            #         big_em_[word] = (1, big_model[word])
+            #     else:
+            #         big_em_[word] = (big_em_[word][0] + 1, big_em_[word][1])
+            #     if word in small_model:
+            #         # small_em_.append(small_model[word])
+            #         if word not in small_em_:
+            #             small_em_[word] = (1, small_model[word])
+            #         else:
+            #             small_em_[word] = (small_em_[word][0] + 1, small_em_[word][1])
 
-            writer.writerow([index, tmp, labels[index]])
-    print("start sort")
-    print(len(big_em_))
-    big_em_ = sorted(big_em_.items(), key=lambda item: item[1][0], reverse=True)
-    small_em_ = sorted(small_em_.items(), key=lambda item: item[1][0], reverse=True)
-    print("end sort")
-    with open("big_voc.vec", "w", encoding="utf-8") as big_f:
-        for item in big_em_:
-            big_f.write("{} {}\n".format(item[0], item[1][1]))
-    with open("small_voc.vec", "w", encoding="utf-8") as small_f:
-        for item in small_em_:
-            small_f.write("{} {}\n".format(item[0], item[1][1]))
+            writer.writerow([tmp, labels[index]])
+    # print("start sort")
+    # print(len(big_em_))
+    # big_em_ = sorted(big_em_.items(), key=lambda item: item[1][0], reverse=True)
+    # small_em_ = sorted(small_em_.items(), key=lambda item: item[1][0], reverse=True)
+    # print("end sort")
+    # with open("big_voc.vec", "w", encoding="utf-8") as big_f:
+    #     for item in big_em_:
+    #         big_f.write("{} {}\n".format(item[0], item[1][1]))
+    # with open("small_voc.vec", "w", encoding="utf-8") as small_f:
+    #     for item in small_em_:
+    #         small_f.write("{} {}\n".format(item[0], item[1][1]))
+
+
+def clean(text, stop_chars=''',?.!！;:"(){}[]，。？-；'：（）【】 ．—~'''):
+    text = re.sub('[a-zA-Z0-9]+', '', text)
+    for c in stop_chars:
+        text = text.replace(c, ' ')
+    return text
+
+
+def cut(text):
+    res = jieba.lcut(text)
+    return [c for c in res if c != " "]
+
 
 if __name__ == '__main__':
-    print("sdasd")
-    word2vec("aa")
+    jieba.enable_parallel(cpu_count())
+    print("aasas")
+    data = pd.read_csv("./full-cut.csv")
+    sentences = data["sentence"]
+    labels = data["label"]
+    print("start")
+    with open("full-cut-clean.csv", "w", encoding="utf-8") as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(["sentence", "label"])
+        for index, sent_ in enumerate(sentences):
+            writer.writerow([cut(clean(sent_)), labels[index]])
+    print("finished")

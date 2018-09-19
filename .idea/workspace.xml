@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9154d788-d8f0-4689-a602-81c1ea384a02" name="Default" comment="process data">
-      <change afterPath="$PROJECT_DIR$/wordnet/show_wordnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py" beforeDir="false" afterPath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf" beforeDir="false" afterPath="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf" afterDir="false" />
@@ -20,11 +20,11 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/toys$entry.coverage" NAME="entry Coverage Results" MODIFIED="1532495988376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Crawler/bf_win007_com/zhibo360" />
-    <SUITE FILE_PATH="coverage/toys$data_process__1_.coverage" NAME="data-process (1) Coverage Results" MODIFIED="1536741530458" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data" />
+    <SUITE FILE_PATH="coverage/toys$data_process__1_.coverage" NAME="data-process (1) Coverage Results" MODIFIED="1537272316533" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data" />
     <SUITE FILE_PATH="coverage/toys$video_cut.coverage" NAME="video-cut Coverage Results" MODIFIED="1534210570132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text" />
     <SUITE FILE_PATH="coverage/toys$qiniu_qiuxing_pachong.coverage" NAME="qiniu-qiuxing-pachong Coverage Results" MODIFIED="1527056511753" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/toys$qiniu_whoscored_com_player.coverage" NAME="qiniu-whoscored.com-player Coverage Results" MODIFIED="1527130313414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Crawler" />
-    <SUITE FILE_PATH="coverage/toys$train.coverage" NAME="train Coverage Results" MODIFIED="1536729855874" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
+    <SUITE FILE_PATH="coverage/toys$train.coverage" NAME="train Coverage Results" MODIFIED="1537341993814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
     <SUITE FILE_PATH="coverage/toys$predict_cluster.coverage" NAME="predict_cluster Coverage Results" MODIFIED="1527841753636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Text-classification/text-cluster" />
     <SUITE FILE_PATH="coverage/toys$compact.coverage" NAME="compact Coverage Results" MODIFIED="1528262416749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Demo/player_info" />
     <SUITE FILE_PATH="coverage/toys$reco_main.coverage" NAME="reco_main Coverage Results" MODIFIED="1528254141540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Demo/face_reco" />
@@ -37,7 +37,7 @@
     <SUITE FILE_PATH="coverage/toys$main.coverage" NAME="main Coverage Results" MODIFIED="1529564745439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Text-classification/text-classify" />
     <SUITE FILE_PATH="coverage/toys$sdsd.coverage" NAME="sdsd Coverage Results" MODIFIED="1528100344698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/qiniu-video-classify" />
     <SUITE FILE_PATH="coverage/toys$predict.coverage" NAME="predict Coverage Results" MODIFIED="1533003917585" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
-    <SUITE FILE_PATH="coverage/toys$test.coverage" NAME="test Coverage Results" MODIFIED="1535335422710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
+    <SUITE FILE_PATH="coverage/toys$test.coverage" NAME="test Coverage Results" MODIFIED="1536832963887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
     <SUITE FILE_PATH="coverage/toys$qiniu_okooo_com_match.coverage" NAME="qiniu-okooo.com-match Coverage Results" MODIFIED="1531129503720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Crawler" />
     <SUITE FILE_PATH="coverage/toys$ocr.coverage" NAME="ocr Coverage Results" MODIFIED="1531890946105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/ocr/src" />
     <SUITE FILE_PATH="coverage/toys$data_process.coverage" NAME="data-process Coverage Results" MODIFIED="1532656536515" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Crawler/scrapy_crawler" />
@@ -46,58 +46,16 @@
     <SUITE FILE_PATH="coverage/toys$cluster.coverage" NAME="cluster Coverage Results" MODIFIED="1527742184773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Text-classification/text-cluster" />
     <SUITE FILE_PATH="coverage/toys$model_text_cnn.coverage" NAME="model-text-cnn Coverage Results" MODIFIED="1527577689183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Text-classification/text-classify" />
     <SUITE FILE_PATH="coverage/toys$entry_point.coverage" NAME="entry_point Coverage Results" MODIFIED="1532496256418" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Crawler/bf_win007_com" />
+    <SUITE FILE_PATH="coverage/toys$new_data_loader.coverage" NAME="new_data_loader Coverage Results" MODIFIED="1537329212126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data" />
     <SUITE FILE_PATH="coverage/toys$player_info.coverage" NAME="player_info Coverage Results" MODIFIED="1530153915134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/football-Demo/player_info" />
-  </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file leaf-file-name="load_data.py" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/load_data.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="330">
-                    <caret line="22" column="105" lean-forward="true" selection-start-line="22" selection-start-column="105" selection-end-line="22" selection-end-column="105" />
-                    <folding>
-                      <element signature="e#145#154#0" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1108">
-              <caret line="89" column="33" selection-start-line="89" selection-start-column="33" selection-end-line="89" selection-end-column="33" />
-              <folding>
-                <element signature="e#142#154#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/setup.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" selection-start-line="13" selection-end-line="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="232" selection-start-line="232" selection-end-line="232" />
+            <state relative-caret-position="-10">
+              <caret line="125" column="20" lean-forward="true" selection-start-line="125" selection-start-column="20" selection-end-line="125" selection-end-column="20" />
               <folding>
                 <element signature="e#141#152#0" expanded="true" />
               </folding>
@@ -105,54 +63,74 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data-process.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py">
+      <file leaf-file-name="Model.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="262" column="30" lean-forward="true" selection-start-line="262" selection-start-column="30" selection-end-line="262" selection-end-column="30" />
+            <state relative-caret-position="109">
+              <caret line="115" column="23" selection-start-line="115" selection-start-column="23" selection-end-line="115" selection-end-column="23" />
               <folding>
-                <element signature="e#191#201#0" expanded="true" />
-                <element signature="e#410#1458#0" />
-                <element signature="e#1504#2196#0" />
-                <element signature="e#2241#3633#0" />
-                <element signature="e#3690#4216#0" />
-                <element signature="e#4255#5498#0" />
-                <element signature="e#5537#6474#0" />
-                <element signature="e#6508#7074#0" />
-                <element signature="e#7107#7285#0" />
+                <element signature="e#142#154#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="English_Cn_Name_Corpus(48W).txt" pinned="true" current-in-tab="false">
-        <entry file="remoteDeploymentFS://&lt;def631af-2cab-4c37-9e71-102b1b380058&gt;/workspace/mnt/group/video/tangkaiyu/Document/toy/cut-video-with-text/Text_classification/text_classify/data/English_Cn_Name_Corpus(48W).txt">
+      <file leaf-file-name="_split.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/sklearn/model_selection/_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="3" lean-forward="true" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+            <state relative-caret-position="289">
+              <caret line="1202" column="28" lean-forward="true" selection-start-line="1202" selection-start-column="28" selection-end-line="1202" selection-end-column="28" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="small_voc.vec" pinned="true" current-in-tab="false">
-        <entry file="remoteDeploymentFS://&lt;def631af-2cab-4c37-9e71-102b1b380058&gt;/workspace/mnt/group/video/tangkaiyu/Document/toy/cut-video-with-text/Text_classification/text_classify/data/small_voc.vec">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="smart_open_lib.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.conda/envs/toys/lib/python3.6/site-packages/smart_open/smart_open_lib.py">
+      <file leaf-file-name="validation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/sklearn/utils/validation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="175" selection-start-line="175" selection-end-line="175" />
+            <state relative-caret-position="161">
+              <caret line="206" column="4" selection-start-line="206" selection-start-column="4" selection-end-line="206" selection-end-column="4" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Config.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="codecs.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-279116828/codecs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="308" selection-start-line="308" selection-end-line="308" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data-process.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="313">
+              <caret line="312" column="26" lean-forward="true" selection-start-line="312" selection-start-column="26" selection-end-line="312" selection-end-column="26" />
+              <folding>
+                <element signature="e#191#201#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Config.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="28" column="24" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
+            <state relative-caret-position="367">
+              <caret line="56" column="30" lean-forward="true" selection-start-line="56" selection-start-column="30" selection-end-line="56" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data_loader.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1005">
+              <caret line="67" column="35" lean-forward="true" selection-start-line="67" selection-start-column="35" selection-end-line="67" selection-end-column="35" />
+              <folding>
+                <element signature="e#147#165#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -161,19 +139,16 @@
         <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/nn/functional.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="329">
-              <caret line="1505" column="4" selection-start-line="1505" selection-start-column="4" selection-end-line="1505" selection-end-column="4" />
+              <caret line="1406" selection-start-line="1406" selection-end-line="1406" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="show_wordnet.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wordnet/show_wordnet.py">
+      <file leaf-file-name="multiarray.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/python_stubs/-1354746381/numpy/core/multiarray.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" column="1" selection-start-line="28" selection-end-line="28" selection-end-column="1" />
-              <folding>
-                <element signature="e#149#185#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="168">
+              <caret line="2349" column="4" selection-start-line="2349" selection-start-column="4" selection-end-line="2349" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -190,8 +165,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>len(proxies)</find>
-      <find>hugo</find>
       <find>href</find>
       <find>team_fight_table</find>
       <find>任意球</find>
@@ -220,6 +193,8 @@
       <find>F</find>
       <find>Variable</find>
       <find>print</find>
+      <find>get_pre</find>
+      <find>cuda</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -235,8 +210,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Text-classification/text-classify/predict.py" />
-        <option value="$PROJECT_DIR$/ocr/src/main.py" />
         <option value="$PROJECT_DIR$/Text-classification/text-classify/__init__.py" />
         <option value="$PROJECT_DIR$/Text-classification/text-classify/data/__init__.py" />
         <option value="$PROJECT_DIR$/Text-classify/dd.py" />
@@ -278,14 +251,16 @@
         <option value="$PROJECT_DIR$/cut-video-with-text/ocr/src/lanms/Makefile" />
         <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/bilm/training.py" />
         <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/predict.py" />
-        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py" />
         <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py" />
         <option value="$PROJECT_DIR$/wordnet/show_wordnet.py" />
-        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py" />
-        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py" />
+        <option value="&lt;def631af-2cab-4c37-9e71-102b1b380058&gt;/workspace/mnt/group/video/tangkaiyu/Document/toy/cut-video-with-text/Text_classification/text_classify/data/English_Cn_Name_Corpus(48W).txt" />
+        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py" />
         <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/load_data.py" />
         <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py" />
-        <option value="&lt;def631af-2cab-4c37-9e71-102b1b380058&gt;/workspace/mnt/group/video/tangkaiyu/Document/toy/cut-video-with-text/Text_classification/text_classify/data/English_Cn_Name_Corpus(48W).txt" />
+        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/new_data_loader.py" />
+        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py" />
+        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py" />
+        <option value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py" />
       </list>
     </option>
   </component>
@@ -299,9 +274,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="877" />
+    <option name="y" value="-1057" />
+    <option name="width" value="1920" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -344,25 +319,6 @@
             <path>
               <item name="toys" type="b2602c69:ProjectViewProjectNode" />
               <item name="toys" type="462c0819:PsiDirectoryNode" />
-              <item name="cut-video-with-text" type="462c0819:PsiDirectoryNode" />
-              <item name="Text_classification" type="462c0819:PsiDirectoryNode" />
-              <item name="text_classify" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="word_embed" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="toys" type="b2602c69:ProjectViewProjectNode" />
-              <item name="toys" type="462c0819:PsiDirectoryNode" />
-              <item name="cut-video-with-text" type="462c0819:PsiDirectoryNode" />
-              <item name="Text_classification" type="462c0819:PsiDirectoryNode" />
-              <item name="text_classify" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="word_embed" type="462c0819:PsiDirectoryNode" />
-              <item name="wiki.zh" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="toys" type="b2602c69:ProjectViewProjectNode" />
-              <item name="toys" type="462c0819:PsiDirectoryNode" />
               <item name="wordnet" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -375,7 +331,7 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/api.py" />
-    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
@@ -411,7 +367,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.data-process (1)">
+  <component name="RunManager" selected="Python.train">
     <configuration name="data-process (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="toys" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -426,6 +382,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="new_data_loader" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="toys" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -457,9 +432,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/toys/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -488,39 +463,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="video-cut" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="toys" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="sftp://root@180.97.147.165:24914/workspace/mnt/group/video/tangkaiyu/Software/anaconda3/envs/toys/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cut-video-with-text" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cut-video-with-text/video-cut.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <list>
       <item itemvalue="Python.train" />
       <item itemvalue="Python.data-process (1)" />
-      <item itemvalue="Python.video-cut" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.show_wordnet" />
+      <item itemvalue="Python.new_data_loader" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.data-process (1)" />
         <item itemvalue="Python.train" />
-        <item itemvalue="Python.show_wordnet" />
+        <item itemvalue="Python.new_data_loader" />
+        <item itemvalue="Python.data-process (1)" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.video-cut" />
+        <item itemvalue="Python.show_wordnet" />
       </list>
     </recent_temporary>
   </component>
@@ -891,36 +847,36 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-1057" width="1920" height="1057" extended-state="1" />
+    <frame x="0" y="-1057" width="1920" height="1057" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49893504" weight="0.32870865" />
-      <window_info anchor="bottom" id="Event Log" order="14" sideWeight="0.5178827" side_tool="true" weight="0.40686923" />
+      <window_info anchor="bottom" id="Event Log" order="13" sideWeight="0.6789137" side_tool="true" weight="0.5026681" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="File Transfer" order="15" sideWeight="0.45314163" weight="0.4029062" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.44089457" weight="0.45677695" />
+      <window_info anchor="bottom" id="File Transfer" order="14" sideWeight="0.45260915" weight="0.40234792" />
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49893504" weight="0.32870865" />
-      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.49928468" weight="0.26574174" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.4744409" visible="true" weight="0.40661687" />
-      <window_info anchor="right" id="Remote Host" order="3" visible="true" weight="0.45420662" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20127796" />
+      <window_info anchor="bottom" id="Python Console" order="11" sideWeight="0.49928468" weight="0.26574174" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4536741" visible="true" weight="0.45570973" />
+      <window_info anchor="bottom" id="Terminal" order="15" sideWeight="0.32108626" weight="0.5026681" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20607029" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49722221" weight="0.32657418" />
-      <window_info anchor="right" id="SciView" order="4" sideWeight="0.9339623" weight="0.33546326" />
+      <window_info anchor="right" id="SciView" order="4" sideWeight="0.9339623" weight="0.44921315" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.5255591" side_tool="true" visible="true" weight="0.40661687" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.67838126" side_tool="true" weight="0.5026681" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Coverage" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Remote Host" order="3" weight="0.45420662" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" x="0" y="0" width="310" height="677" id="Documentation" order="6" sideWeight="0.06603774" side_tool="true" weight="0.375" />
-      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="bottom" id="Messages" order="10" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="13" sideWeight="0.4797657" weight="0.32870865" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4968051" weight="0.32657418" />
+      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="12" sideWeight="0.4797657" weight="0.32870865" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1240,7 +1196,7 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py</url>
-          <line>195</line>
+          <line>197</line>
           <option name="timeStamp" value="431" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -1249,38 +1205,13 @@
           <option name="timeStamp" value="437" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py</url>
-          <line>88</line>
-          <option name="timeStamp" value="460" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py</url>
-          <line>81</line>
-          <option name="timeStamp" value="463" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py</url>
-          <line>85</line>
-          <option name="timeStamp" value="464" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py</url>
-          <line>76</line>
-          <option name="timeStamp" value="470" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py</url>
           <line>82</line>
           <option name="timeStamp" value="473" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py</url>
-          <line>16</line>
-          <option name="timeStamp" value="479" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/load_data.py</url>
-          <line>170</line>
+          <line>165</line>
           <option name="timeStamp" value="480" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
@@ -1305,18 +1236,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py</url>
-          <line>280</line>
+          <line>283</line>
           <option name="timeStamp" value="499" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py</url>
-          <line>278</line>
+          <line>281</line>
           <option name="timeStamp" value="500" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py</url>
-          <line>277</line>
+          <line>280</line>
           <option name="timeStamp" value="501" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py</url>
+          <line>16</line>
+          <option name="timeStamp" value="512" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py</url>
+          <line>315</line>
+          <option name="timeStamp" value="513" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py</url>
+          <line>105</line>
+          <option name="timeStamp" value="527" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py</url>
+          <line>132</line>
+          <option name="timeStamp" value="529" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -1329,66 +1280,64 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="507" />
+      <option name="time" value="531" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="(np.ones((tmp.shape[0])) - tmp).astype(np.float32)" language="Python" />
-        <watch expression="big_model[word]" language="Python" />
-        <watch expression="small_model[word]" language="Python" />
-        <watch expression="big_model[&quot;&lt;eos&gt;&quot;]" language="Python" />
+        <watch expression="data[train_index]" language="Python" />
+        <watch expression="feature" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>big_model[&quot;&lt;eos&gt;&quot;]</expression-string>
+        <expression-string>feature</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>small_model[word]</expression-string>
+        <expression-string>data[train_index]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>big_model[word]</expression-string>
+        <expression-string>np.bincount(self._Y.astype(np.float32))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>list(sent_)</expression-string>
+        <expression-string>np.bincount(self._Y.values.astype(np.float32))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>self._X.dtype</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>self._Y.astype(np.float64)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>self._Y</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>np.ones((self._label.shape[0]))</expression-string>
+        <expression-string>np.asarray([np.asarray(re) + np.zeros((self._seq_length, len(re[0]))), self._Y[item]])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>self._Y[12012]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string />
+        <expression-string>self._Y[0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -1424,48 +1373,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/football-Demo/face_reco/util/parse.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/label_doc_3">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/main.py" />
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/bin/train_elmo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="62" column="15" lean-forward="true" selection-start-line="62" selection-start-column="15" selection-end-line="62" selection-end-column="15" />
-          <folding>
-            <element signature="e#1#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/bin/restart.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/bilm/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2312">
-          <caret line="731" column="46" selection-start-line="731" selection-start-column="46" selection-end-line="731" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/test000.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/test000-merged-labels.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/wiki-corpus.txt" />
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/zhibo7m.json" />
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/wiki-corpus-jian.txt">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/test.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1561,13 +1468,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-279116828/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4620">
-          <caret line="308" selection-start-line="308" selection-end-line="308" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/nn/modules/activation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
@@ -1583,13 +1483,6 @@
         <state relative-caret-position="-4739" />
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/mxnet/registry.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1875">
-          <caret line="130" column="4" selection-start-line="130" selection-start-column="4" selection-end-line="130" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/gluonnlp/embedding/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1597,16 +1490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1455">
           <caret line="98" column="4" selection-start-line="98" selection-start-column="4" selection-end-line="98" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
-          <folding>
-            <element signature="e#141#164#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1621,13 +1504,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="476" selection-start-line="476" selection-end-line="476" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/utils/data/dataloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6735">
-          <caret line="449" column="26" selection-start-line="449" selection-start-column="23" selection-end-line="449" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -1658,51 +1534,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/nn/functional.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="1505" column="4" selection-start-line="1505" selection-start-column="4" selection-end-line="1505" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1108">
-          <caret line="89" column="33" selection-start-line="89" selection-start-column="33" selection-end-line="89" selection-end-column="33" />
-          <folding>
-            <element signature="e#142#154#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="28" column="24" selection-start-line="28" selection-start-column="24" selection-end-line="28" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/bilm-tf/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="232" selection-start-line="232" selection-end-line="232" />
-          <folding>
-            <element signature="e#141#152#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.conda/envs/toys/lib/python3.6/site-packages/smart_open/smart_open_lib.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="175" selection-start-line="175" selection-end-line="175" />
         </state>
       </provider>
     </entry>
@@ -1713,31 +1548,172 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py">
+    <entry file="file://$USER_HOME$/.conda/envs/toys/lib/python3.6/site-packages/smart_open/smart_open_lib.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="262" column="30" lean-forward="true" selection-start-line="262" selection-start-column="30" selection-end-line="262" selection-end-column="30" />
-          <folding>
-            <element signature="e#191#201#0" expanded="true" />
-            <element signature="e#410#1458#0" />
-            <element signature="e#1504#2196#0" />
-            <element signature="e#2241#3633#0" />
-            <element signature="e#3690#4216#0" />
-            <element signature="e#4255#5498#0" />
-            <element signature="e#5537#6474#0" />
-            <element signature="e#6508#7074#0" />
-            <element signature="e#7107#7285#0" />
-          </folding>
+        <state relative-caret-position="-11">
+          <caret line="164" selection-start-line="164" selection-end-line="164" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/mxnet/contrib/text/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/mxnet/contrib/text/embedding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1725">
+          <caret line="128" column="68" selection-start-line="128" selection-start-column="68" selection-end-line="128" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/mxnet/registry.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="45" column="39" selection-start-line="45" selection-start-column="39" selection-end-line="45" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/football-Demo/football/transforms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="24" column="10" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-279116828/xmlrpc/client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="133" selection-start-line="133" selection-end-line="133" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="1657" selection-start-line="1657" selection-end-line="1657" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/load_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="105" lean-forward="true" selection-start-line="22" selection-start-column="105" selection-end-line="22" selection-end-column="105" />
+        <state relative-caret-position="315">
+          <caret line="21" column="44" lean-forward="true" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
           <folding>
             <element signature="e#145#154#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-279116828/ntpath.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-279116828/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/sklearn/utils/validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="206" column="4" selection-start-line="206" selection-start-column="4" selection-end-line="206" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/sklearn/model_selection/_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="1202" column="28" lean-forward="true" selection-start-line="1202" selection-start-column="28" selection-end-line="1202" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/utils/data/dataloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="450" column="67" lean-forward="true" selection-start-line="450" selection-start-column="67" selection-end-line="450" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/python_stubs/-1354746381/numpy/core/multiarray.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="2349" column="4" selection-start-line="2349" selection-start-column="4" selection-end-line="2349" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="109">
+          <caret line="115" column="23" selection-start-line="115" selection-start-column="23" selection-end-line="115" selection-end-column="23" />
+          <folding>
+            <element signature="e#142#154#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2018.1/remote_sources/-1354746381/-1139105336/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="1406" selection-start-line="1406" selection-end-line="1406" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data-process.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="312" column="26" lean-forward="true" selection-start-line="312" selection-start-column="26" selection-end-line="312" selection-end-column="26" />
+          <folding>
+            <element signature="e#191#201#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10">
+          <caret line="125" column="20" lean-forward="true" selection-start-line="125" selection-start-column="20" selection-end-line="125" selection-end-column="20" />
+          <folding>
+            <element signature="e#141#152#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/data/data_loader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="67" column="35" lean-forward="true" selection-start-line="67" selection-start-column="35" selection-end-line="67" selection-end-column="35" />
+          <folding>
+            <element signature="e#147#165#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cut-video-with-text/Text_classification/text_classify/Config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="367">
+          <caret line="56" column="30" lean-forward="true" selection-start-line="56" selection-start-column="30" selection-end-line="56" selection-end-column="30" />
         </state>
       </provider>
     </entry>

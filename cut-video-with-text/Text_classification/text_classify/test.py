@@ -4,15 +4,33 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : test.py
-
-from mxnet import gluon
-from mxnet import nd
-from mxnet.contrib import text
-import gluonnlp as nlp
+import sys
 
 if __name__ == "__main__":
-    text_data = "你好"
-    #tmp = nlp.embedding.list_sources("fasttext")
-    #print(tmp)
-    embedding = nlp.embedding.create("fasttext", source="wiki.zh")
-    print(embedding["罗纳尔多"])
+    n = int(input())
+    count = 0
+    res = 0
+    ma = 0
+    if n < 2:
+        print("0 0")
+    else:
+        nums = list(map(int, input().split()))
+        flag = True
+        buy = nums[0]
+        for i in range(1, len(nums)):
+            if flag and nums[i] < buy:
+                buy = nums[i]
+            elif flag == False and nums[i] < nums[i - 1]:
+                count += 2
+                flag = True
+                buy = nums[i]
+                res += ma
+                ma = 0
+            else:
+                flag = False
+                if ma < nums[i] - buy:
+                    ma = nums[i] - buy
+        if ma:
+            res += ma
+            count += 2
+        print("{} {}".format(res, count))

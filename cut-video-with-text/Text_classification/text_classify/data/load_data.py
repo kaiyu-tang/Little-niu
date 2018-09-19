@@ -143,13 +143,8 @@ class DataProcess(object):
     def pad_to_longest(self, insts):
         re = []
         for index, inst in enumerate(insts):
-            if self._clean:
-                inst = self.clean(''.join(inst), self._cut_model)
-            inst_len = len(inst)
-            if inst_len == self._max_length:
-                inst_ = inst
-            elif inst_len < self._max_length:
-                inst_ = inst + [(self._PAD, 0)] * (self._max_length - inst_len)
+            if len(inst) < self._max_length:
+                inst_ = inst + [(self._PAD, 0)] * (self._max_length - len(inst))
             else:
                 inst_ = inst[:self._max_length]
             re.append(inst_)
@@ -177,9 +172,7 @@ class DataProcess(object):
         return self._convert_to_vectors(insts, self._max_length, embed_dim=emded_dim, model=model)
 
     def convert_to_vectors_plus(self, insts, embed_dim):
-        big_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,n
-
-
+        big_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,
                                                  model=self._big_word2vec_model)
         small_word_vecs = self._convert_to_vectors(insts, self._max_length, embed_dim=embed_dim,
                                                    model=self._small_word2vec_model)

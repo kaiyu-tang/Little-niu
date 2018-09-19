@@ -15,8 +15,9 @@ from Model import TextCNN, TextRNN, TextVDCNN
 from Config import Config
 from gensim.models import Word2Vec, FastText
 from gensim.models.word2vec import LineSentence
+from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
 import pandas as pd
-
+from data.data_loader import MyDataset
 import numpy as np
 
 
@@ -65,7 +66,8 @@ def eval_model(model, data_iter, args):
     y_pred = []
     hidden_state = None
     from sklearn import metrics
-    for feature, target in data_iter:
+    for data_ in data_iter:
+        feature, target = data_[0], data_[1]
         y_true = np.concatenate([y_true, target])
         if model.name == "TextCNN":
             logit = model(feature)
@@ -109,8 +111,7 @@ def save(model, save_dir, save_prefix, steps):
     print('Save Sucessful, path: {}'.format(save_path))
 
 
-def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
-
+def train(model, train_iter, dev_iter, args, weights, best_acc=0):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.options[model.name]["lr"])
     optimizer = torch.optim.SGD(model.parameters(), lr=args.options[model.name]["lr"])
     # optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
@@ -121,18 +122,17 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
     option = args.options[model.name]
     print('start training')
     torch.backends.cudnn.benchmark = True
-    weights = train_iter.get_weight()
-    weights = torch.from_numpy(weights)
-    # cuda model and parameters
     if args.cuda:
         model.cuda()
-        weights = weights.cuda()
+        # weights = weights.cuda()
     for epoch in range(option["epoch"]):
         cur_time = time.time()
-        for feature, target in train_iter:
-            # feature = feature.data()
-            # feature.data.t_()
-            # target.data.sub_()
+        for data_ in train_iter:
+            feature, target = data_[0], data_[1]
+            if args.cuda:
+                feature = feature.cuda()
+                target = target.cuda()
+
             hidden_state = None
             optimizer.zero_grad()
             if model.name == "TextCNN":
@@ -147,10 +147,7 @@ def train(model, train_iter, dev_iter, args, word2vec_path='', best_acc=0):
             optimizer.step()
         end_time = time.time()
         steps += 1
-        print("step: {} time: {} loss: {}".format(steps, end_time-cur_time, loss))
-        # if steps % option["log_interval"] == 0:
-        #     corrects = (torch.max(logit, 1)[1].view(target.size()).data == target.data).sum()
-        #     accuracy = 100.0 * corrects / target.shape[0]
+        print("step: {} time: {} loss: {}".format(steps, end_time - cur_time, loss))
 
         if steps % option["test_interval"] == 0:
             dev_acc = eval_model(model, dev_iter, args)
@@ -199,13 +196,9 @@ def prepare_sen_lab(test=True):
 
 if __name__ == '__main__':
 
-    sentences, labels = prepare_sen_lab()
-    data_len = len(sentences)
-    print(data_len)
     # train word2vec
     # text_path = 'data' + os.sep + 'okoo-merged-clean-cut-data.txt'
     # train_word_vectors(text_path, Config)
-
     # train text-Cnn
     print('loading text model')
     textcnn = TextCNN()
@@ -214,29 +207,30 @@ if __name__ == '__main__':
     print('finished loading txt model')
     print('Cuda: {}'.format(Config.cuda))
     print("loading data")
-
+    # data = pd.read_csv("./data/full-cut-clean.csv")
+    # sentences, labels = data["sentence"].values.astype(np.float32), data["label"].values
     from sklearn.model_selection import StratifiedShuffleSplit
 
     sss = StratifiedShuffleSplit(n_splits=10, test_size=0.06)
     iters = 0
     best_acc = 0
-    from data.load_data import DataLoader
+
+    data = MyDataset()
 
     print("loaded data")
-
-    for train_index, test_index in sss.split(sentences, labels):
+    weights = torch.from_numpy(data.get_weight())
+    if torch.cuda.is_available():
+        weights = weights.cuda()
+    for train_index, test_index in sss.split(data.X, data.Y):
         start_time = time.time()
-        train_iters = DataLoader(sentences[train_index], labels[train_index], Config.sequence_length,
-                                 cuda=Config.cuda, batch_size=4096, PAD=Config.PAD, embed_dim=Config.embed_dim,
-                                 )
+        train_sampler = SubsetRandomSampler(train_index)
+        dev_sampler = SubsetRandomSampler(test_index)
+        train_iters = DataLoader(data, batch_size=2048, num_workers=8, sampler=train_sampler, pin_memory=torch.cuda.is_available())
 
-        dev_iters = DataLoader(sentences[test_index], labels[test_index], Config.sequence_length,
-                               cuda=Config.cuda, evaluation=True, batch_size=4096,
-                               PAD=Config.PAD, embed_dim=Config.embed_dim,
-                               )
-        print(train_iters.get_weight())
+        dev_iters = DataLoader(data, batch_size=2048, num_workers=8, sampler=dev_sampler, pin_memory=torch.cuda.is_available())
+        print("start")
         end_time = time.time()
         iters += 1
         # start train
-        best_acc = train(textvdcnn, train_iters, dev_iters, Config, best_acc=best_acc)
+        best_acc = train(textvdcnn, train_iters, dev_iters, Config, best_acc=best_acc, weights=weights)
         print("Iter: {} time: {} Loading data successful".format(iters, end_time - start_time))
