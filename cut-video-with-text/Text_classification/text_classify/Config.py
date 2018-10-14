@@ -53,7 +53,7 @@ class Config:
             "last_pool": "k-max",
             "shortcut": True,
             "lr": 0.0001,
-            "epoch": 40,
+            "epoch": 4,
             "log_interval": 2,
             "save_interval": 2,
             "test_interval": 2,

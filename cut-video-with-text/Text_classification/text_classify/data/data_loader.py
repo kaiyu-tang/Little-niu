@@ -4,6 +4,8 @@
 # @Author  : Kaiyu  
 # @Site    :   
 # @File    : data_loader.py
+from time import time
+
 import numpy as np
 
 from torch.utils.data import DataLoader, Dataset
@@ -44,6 +46,10 @@ class MyDataset(Dataset):
         return self._X
 
     @property
+    def voca_size(self):
+        return self._vocab_size
+
+    @property
     def Y(self):
         return self._Y
 
@@ -52,7 +58,7 @@ class MyDataset(Dataset):
 
     def load_vec(self, vec_path):
         word2idx = {}
-        count = 0
+        count = 1
         vec = {}
         with open(vec_path, "r", encoding="utf-8", newline="\n", errors="ignore") as f:
             for line in f:
@@ -73,6 +79,12 @@ class MyDataset(Dataset):
         else:
             return np.zeros(self._embed_dim)
 
+    def word2idx(self, word):
+        if word in self._word2idx:
+            return self._word2idx[word]
+        else:
+            return 0
+
     def get_embed(self):
         embed = np.zeros((self._vocab_size, self._embed_dim), dtype=np.float32)
         for word in self._word2idx:
@@ -81,18 +93,15 @@ class MyDataset(Dataset):
         return embed
 
     def __getitem__(self, item):
-        re = np.zeros((self._seq_length, self._embed_dim), dtype=np.float32)
+        # st_time = time()
+        re = np.zeros((self._seq_length, self._embed_dim), dtype=np.int64)
         for index, word in enumerate(self._X[item]):
             if index < self._seq_length:
-                re[index] = self.word2vec(word)
+                re[index] = self.word2idx(word)
             else:
                 break
-
+        # print("data time: {}".format(time()-st_time))
         return re, self._Y[item]
-
-        # return np.asarray([np.asarray(re, dtype=np.float32) +
-        #                    np.zeros((self._seq_length, len(re[0])), dtype=np.float32),
-        #                    self._Y[item]])
 
     def __len__(self):
         return len(self._X)
