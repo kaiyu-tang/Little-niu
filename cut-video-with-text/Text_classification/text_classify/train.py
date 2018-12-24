@@ -111,22 +111,25 @@ def save(model, save_dir, save_prefix, steps):
 
 def train(model, train_iter, dev_iter, args, weights, best_acc=0):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.options[model.name]["lr"])
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.options[model.name]["lr"])
+    #optimizer = torch.optim.SGD(model.parameters(), lr=args.options[model.name]["lr"])
     # optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
     # word2vec_model = Word2Vec.load(os.path.join(Config.dir_model, Config.word2vec_model_name))
     steps = 0
     last_step = 0
     model.train()
     option = args.options[model.name]
-    print('start training')
+    print('start training {}'.format(model.name))
+    #print(-1)
     torch.backends.cudnn.benchmark = True
         # weights = weights.cuda()
     for epoch in range(option["epoch"]):
         cur_time = time.time()
         for data_ in train_iter:
-            feature, target = data_[0], data_[1]
+            feature, target = data_[0].long(), data_[1]
+            if model.name == "TextRNN":
+                pass
             if args.cuda:
-                feature = feature.cuda()
+                feature = feature.float().cuda()
                 target = target.cuda()
             hidden_state = None
             optimizer.zero_grad()
@@ -225,7 +228,7 @@ if __name__ == '__main__':
         start_time = time.time()
         train_sampler = SubsetRandomSampler(train_index)
         dev_sampler = SubsetRandomSampler(test_index)
-        train_iters = DataLoader(data, batch_size=2, num_workers=8, sampler=train_sampler,
+        train_iters = DataLoader(data, batch_size=64, num_workers=8, sampler=train_sampler,
                                  )
 
         dev_iters = DataLoader(data, batch_size=2, num_workers=8, sampler=dev_sampler,

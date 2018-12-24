@@ -97,7 +97,7 @@ class DataLoader(object):
             data = self._process.pad_to_longest(self._src_sents[_start:_start + _bsz])
         else:
             data = self._src_sents[_start:_start + _bsz]
-        data = self._process.convert_to_vectors_concate(data, big_sequence_length=14, embed_dim=self._embed_dim)
+        data = self._process.convert_to_vectors_plus(data, big_sequence_length=14, embed_dim=self._embed_dim)
         label = Variable(torch.from_numpy(self._label[_start:_start + _bsz]),
                          volatile=self._evaluation)
         if self._cuda:
